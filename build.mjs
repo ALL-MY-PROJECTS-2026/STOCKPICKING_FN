@@ -42,12 +42,15 @@ try {
   const jsFile = outs.find((f) => f.endsWith(".js"));
   const cssFile = outs.find((f) => f.endsWith(".css"));
   let html = readFileSync("index.html", "utf8");
-  const cssLink = cssFile ? `<link rel="stylesheet" href="/assets/${cssFile}" />\n    ` : "";
+  // 상대경로(assets/...) — GitHub Pages 프로젝트 서브패스(/REPO/)에서도 동작.
+  const cssLink = cssFile ? `<link rel="stylesheet" href="assets/${cssFile}" />\n    ` : "";
   html = html.replace(
     '<script type="module" src="/src/main.jsx"></script>',
-    `${cssLink}<script type="module" src="/assets/${jsFile}"></script>`
+    `${cssLink}<script type="module" src="assets/${jsFile}"></script>`
   );
   writeFileSync("dist/index.html", html);
+  // GitHub Pages: Jekyll 처리 비활성(_ 시작 파일/폴더 보존)
+  writeFileSync("dist/.nojekyll", "");
   console.log(`OK js=${jsFile} css=${cssFile}`);
   process.exit(0);
 } catch (e) {

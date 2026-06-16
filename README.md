@@ -41,6 +41,18 @@ curl -u admin:<PASS> -X POST "http://localhost:8000/api/tunnel/start"
 - **named 터널**(고정 도메인): BN `.env` 에 `CF_TUNNEL_TOKEN`/`CF_TUNNEL_HOSTNAME` 설정 시 재시작해도 URL 동일.
 - 매매/보유주 API 는 Cloudflare 외부에서 자동 차단(발굴 데이터만 노출).
 
+### GitHub Pages(github.io) 배포 + BN CORS
+FN 은 정적 빌드라 **GitHub Pages 로 호스팅** 가능하다. HashRouter 라 서버 rewrite 불필요, 에셋은 상대경로(`assets/...`)라 프로젝트 서브패스(`/STOCKPICKING_FN/`)에서도 동작한다.
+
+1) **BN(Cloudflare HTTPS)** 가 떠 있어야 한다(github.io=HTTPS → BN=HTTPS, 혼합콘텐츠 없음).
+2) **BN CORS**: `*.github.io` 는 기본 허용된다(BN `CORS_ORIGIN_REGEX`). 좁히려면 BN `.env` 에
+   `BN_CORS_REGEX=https://all-my-projects-2026\.github\.io`.
+3) **배포(자동)**: `.github/workflows/pages.yml` 가 push 시 빌드→Pages 배포.
+   - repo **Settings > Pages > Source = GitHub Actions**
+   - repo **Settings > Variables > Actions** 에 `BN_BASE = https://<BN-Cloudflare-도메인>` 등록
+     (빌드 시 주입). 미설정이면 런타임에 `?bn=https://...` 로도 지정 가능.
+4) 결과 URL 예: `https://all-my-projects-2026.github.io/STOCKPICKING_FN/`
+
 ## 5. 구조
 ```
 src/
