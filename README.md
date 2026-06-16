@@ -51,6 +51,8 @@ FN 은 정적 빌드라 **GitHub Pages 로 호스팅** 가능하다. HashRouter 
    - repo **Settings > Pages > Source = GitHub Actions**
    - repo **Settings > Variables > Actions** 에 `BN_BASE = https://<BN-Cloudflare-도메인>` 등록
      (빌드 시 주입). 미설정이면 런타임에 `?bn=https://...` 로도 지정 가능.
+   - **자동 등록**: BN 을 `BN_AUTOTUNNEL=1` + `FN_REPO`/`GH_PAT` 로 띄우면, BN 부팅 시
+     터널 URL 이 이 `BN_BASE` 변수에 자동 반영되고 본 워크플로가 자동 재빌드한다(BN README 참고).
 4) 결과 URL 예: `https://all-my-projects-2026.github.io/STOCKPICKING_FN/`
 
 ## 5. 구조
