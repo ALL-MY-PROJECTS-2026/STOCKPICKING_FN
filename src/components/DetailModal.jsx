@@ -160,6 +160,38 @@ function ChartAI({ ai }) {
   );
 }
 
+/** 애널리스트 목표가 — /api/targets/{code} */
+function Targets({ list, price }) {
+  if (!Array.isArray(list) || list.length === 0) return null;
+  return (
+    <div className="sect">
+      <div className="sect-hd"><i className="ti ti-target-arrow" />애널리스트 목표가
+        <span className="sect-sub">{list.length}건</span></div>
+      <div className="card" style={{ overflowX: "auto" }}>
+        <table className="tbl">
+          <thead><tr><th>증권사</th><th>의견</th><th className="r">목표가</th><th className="r">상승여력</th><th className="r">일자</th></tr></thead>
+          <tbody>
+            {list.slice(0, 8).map((t, i) => {
+              const up = price && t.target ? ((t.target - price) / price) * 100 : null;
+              const ok = /매수|비중확대|적극/.test(t.opinion || "");
+              const bad = /매도|비중축소/.test(t.opinion || "");
+              return (
+                <tr key={i}>
+                  <td><b>{stripEmoji(t.firm)}</b>{t.title && <div style={{ fontSize: ".7rem", color: "var(--faint)" }}>{stripEmoji(t.title)}</div>}</td>
+                  <td>{t.opinion ? <Badge kind={ok ? "up" : bad ? "down" : "mut"}>{t.opinion}</Badge> : "-"}</td>
+                  <td className="r num">{t.target ? won(t.target) : "-"}</td>
+                  <td className="r num" style={up != null ? { color: `var(--${dir(up)})` } : null}>{up != null ? pct(up, 1) : "-"}</td>
+                  <td className="r num" style={{ color: "var(--faint)" }}>{t.date}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function MajorHolders({ holders }) {
   if (!holders || holders.length === 0) return null;
   return (
@@ -183,12 +215,13 @@ function Modal({ seed, onClose }) {
   const [det, setDet] = useState(null);      // /api/stock-detail
   const [hist, setHist] = useState(null);    // /api/historical
   const [ai, setAi] = useState(null);        // /api/chart-ai
+  const [tg, setTg] = useState(null);        // /api/targets
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let alive = true;
-    setLoading(true); setError(null); setDet(null); setHist(null); setAi(null);
+    setLoading(true); setError(null); setDet(null); setHist(null); setAi(null); setTg(null);
     apiGet("/api/predict/" + seed.code)
       .then((r) => alive && setD(r))
       .catch((e) => alive && setError(e.message))
@@ -201,6 +234,9 @@ function Modal({ seed, onClose }) {
       .catch(() => { });
     apiGet("/api/chart-ai/" + seed.code)
       .then((r) => alive && setAi(r))
+      .catch(() => { });
+    apiGet("/api/targets/" + seed.code)
+      .then((r) => alive && setTg(r))
       .catch(() => { });
     return () => { alive = false; };
   }, [seed.code]);
@@ -288,6 +324,8 @@ function Modal({ seed, onClose }) {
                 <MajorHolders holders={det.major_holders} />
               </>
             ) : <div className="sk" style={{ height: 90 }} />}
+
+            <Targets list={tg} price={price} />
 
             <div className="feat-grid">
               {Object.entries(feats).map(([k, v]) => (
