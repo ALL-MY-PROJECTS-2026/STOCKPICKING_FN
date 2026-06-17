@@ -7,6 +7,7 @@ import AppShell from "./components/AppShell.jsx";
 import Discover from "./pages/Discover.jsx";
 import ThemesPage from "./pages/ThemesPage.jsx";
 import ReboundPage from "./pages/ReboundPage.jsx";
+import FlowPage from "./pages/FlowPage.jsx";
 import ValuePage from "./pages/ValuePage.jsx";
 import BookmarkPage from "./pages/BookmarkPage.jsx";
 import EtfPage from "./pages/EtfPage.jsx";
@@ -22,6 +23,7 @@ const router = createHashRouter([
       { index: true, element: <Discover /> },
       { path: "themes", element: <ThemesPage /> },
       { path: "rebound", element: <ReboundPage /> },
+      { path: "flow", element: <FlowPage /> },
       { path: "value", element: <ValuePage /> },
       { path: "bookmarks", element: <BookmarkPage /> },
       { path: "etf", element: <EtfPage /> },
