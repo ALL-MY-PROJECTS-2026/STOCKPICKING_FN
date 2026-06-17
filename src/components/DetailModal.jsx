@@ -44,14 +44,31 @@ function Tip({ k, children }) {
   return <span className="k" title={TIPS[k] || undefined}>{children}{TIPS[k] && <i className="ti ti-help-circle help" />}</span>;
 }
 
-function InvestorFlow({ flow }) {
+/* 근거 지표 출처 링크 (외부 새 탭) */
+const SRC = {
+  main: (c) => `https://finance.naver.com/item/main.naver?code=${c}`,
+  fin: (c) => `https://finance.naver.com/item/coinfo.naver?code=${c}`,
+  frgn: (c) => `https://finance.naver.com/item/frgn.naver?code=${c}`,
+  dart: (name) => `https://dart.fss.or.kr/dsab007/main.do?textCrpNm=${encodeURIComponent(name || "")}`,
+};
+function SrcLink({ href, label = "출처" }) {
+  if (!href) return null;
+  return (
+    <a className="src-link" href={href} target="_blank" rel="noopener noreferrer"
+      title="근거 데이터 출처(새 탭)" onClick={(e) => e.stopPropagation()}>
+      {label}<i className="ti ti-external-link" />
+    </a>
+  );
+}
+
+function InvestorFlow({ flow, code }) {
   if (!flow) return null;
   const rows = [["외국인", flow.foreign], ["기관", flow.institution], ["개인", flow.individual]];
   const max = Math.max(1, ...rows.map(([, v]) => Math.abs(v || 0)));
   return (
     <div className="sect">
       <div className="sect-hd"><i className="ti ti-users-group" /><Tip k="투자자동향">투자자 동향</Tip>
-        <span className="sect-sub">최근 1거래일 순매수</span></div>
+        <span className="sect-sub">최근 1거래일 순매수</span>{code && <SrcLink href={SRC.frgn(code)} />}</div>
       <div className="flow">
         {rows.map(([label, v]) => {
           const d = dir(v); const w = Math.round((Math.abs(v || 0) / max) * 100);
@@ -113,7 +130,7 @@ function ForceAnalysis({ flow, summary }) {
   );
 }
 
-function Financials({ fin, short, exh }) {
+function Financials({ fin, short, exh, code }) {
   const hasFin = fin && (fin.revenue || fin.op_margin != null);
   if (!hasFin && !short) return null;
   const cells = hasFin ? [
@@ -132,7 +149,8 @@ function Financials({ fin, short, exh }) {
     <div className="sect">
       <div className="sect-hd"><i className="ti ti-report-money" />재무제표
         {fin?.fin_grade && <span className={"score s-" + (fin.fin_grade <= "B" ? "hi" : "md")} style={{ marginLeft: 6 }}>등급 {fin.fin_grade}</span>}
-        {fin?.bsns_year && <span className="sect-sub">{fin.bsns_year}년</span>}</div>
+        {fin?.bsns_year && <span className="sect-sub">{fin.bsns_year}년</span>}
+        {code && <SrcLink href={SRC.fin(code)} />}</div>
       <div className="feat-grid">
         {cells.map(([k, v, yoy, tipKey], i) => (
           <div className="feat" key={i}>
@@ -220,7 +238,12 @@ function Targets({ list, price }) {
               const bad = /매도|비중축소/.test(t.opinion || "");
               return (
                 <tr key={i}>
-                  <td><b>{stripEmoji(t.firm)}</b>{t.title && <div style={{ fontSize: ".7rem", color: "var(--faint)" }}>{stripEmoji(t.title)}</div>}</td>
+                  <td>
+                    {t.link
+                      ? <a className="src-inline" href={t.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}><b>{stripEmoji(t.firm)}</b><i className="ti ti-external-link" /></a>
+                      : <b>{stripEmoji(t.firm)}</b>}
+                    {t.title && <div style={{ fontSize: ".7rem", color: "var(--faint)" }}>{stripEmoji(t.title)}</div>}
+                  </td>
                   <td>{t.opinion ? <Badge kind={ok ? "up" : bad ? "down" : "mut"}>{t.opinion}</Badge> : "-"}</td>
                   <td className="r num">{t.target ? won(t.target) : "-"}</td>
                   <td className="r num" style={up != null ? { color: `var(--${dir(up)})` } : null}>{up != null ? pct(up, 1) : "-"}</td>
@@ -235,12 +258,12 @@ function Targets({ list, price }) {
   );
 }
 
-function MajorHolders({ holders }) {
+function MajorHolders({ holders, name }) {
   if (!holders || holders.length === 0) return null;
   return (
     <div className="sect">
       <div className="sect-hd"><i className="ti ti-building-bank" /><Tip k="대량보유">대량보유 (5%+)</Tip>
-        <span className="sect-sub">DART 공시</span></div>
+        <span className="sect-sub">DART 공시</span><SrcLink href={SRC.dart(name)} label="DART" /></div>
       <div className="holders">
         {holders.map((h, i) => (
           <div className="holder" key={i}>
@@ -307,6 +330,7 @@ function Modal({ seed, onClose }) {
             <div className="modal-name">{seed.name || d?.name || det?.name}</div>
             <div className="code num" style={{ color: "var(--faint)" }}>
               {seed.code}{seed.theme ? " · " + seed.theme : ""}
+              <SrcLink href={SRC.main(seed.code)} label="네이버" />
             </div>
             {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>SERVER 북마크</Badge></span>}
           </div>
@@ -344,7 +368,8 @@ function Modal({ seed, onClose }) {
             {Array.isArray(hist?.bars) && hist.bars.length > 1 && (
               <div className="sect">
                 <div className="sect-hd"><i className="ti ti-chart-line" />가격 추이
-                  <span className="sect-sub">최근 {hist.bars.length}일{hist.source ? " · " + hist.source : ""}</span></div>
+                  <span className="sect-sub">최근 {hist.bars.length}일{hist.source ? " · " + hist.source : ""}</span>
+                  <SrcLink href={SRC.main(seed.code)} label="차트" /></div>
                 <PriceChart bars={hist.bars} />
               </div>
             )}
@@ -362,10 +387,10 @@ function Modal({ seed, onClose }) {
             {/* 투자자 동향 · 재무제표 · 대량보유 (stock-detail) */}
             {det ? (
               <>
-                <InvestorFlow flow={det.investor_flow} />
+                <InvestorFlow flow={det.investor_flow} code={seed.code} />
                 <ForceAnalysis flow={det.force_flow} summary={det.force_summary} />
-                <Financials fin={det.financials} short={det.short} exh={det.foreign_exhaustion} />
-                <MajorHolders holders={det.major_holders} />
+                <Financials fin={det.financials} short={det.short} exh={det.foreign_exhaustion} code={seed.code} />
+                <MajorHolders holders={det.major_holders} name={seed.name || d?.name || det?.name} />
               </>
             ) : <div className="sk" style={{ height: 90 }} />}
 

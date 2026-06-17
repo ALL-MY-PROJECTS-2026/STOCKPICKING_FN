@@ -162,6 +162,16 @@ a { color: inherit; text-decoration: none; }
 .lc-page { font-size: .78rem; font-weight: 700; min-width: 42px; text-align: center; }
 .lc-pager .btn { padding: 6px 9px; }
 
+/* 근거 출처 링크 (모달) */
+.src-link { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px;
+  font-size: .68rem; font-weight: 600; color: var(--primary); white-space: nowrap; }
+.src-link:hover { text-decoration: underline; }
+.src-link i { font-size: .85rem; }
+.code .src-link { margin-left: 6px; }
+.src-inline { display: inline-flex; align-items: center; gap: 3px; color: var(--text); }
+.src-inline:hover { color: var(--primary); text-decoration: underline; }
+.src-inline i { font-size: .8rem; color: var(--primary); }
+
 /* 세력 분석 (모달) */
 .force-rows { display: flex; flex-direction: column; gap: 12px; }
 .force-row { display: flex; flex-direction: column; gap: 5px; }
