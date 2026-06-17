@@ -21,6 +21,7 @@ const NAV = [
   { to: "/signals", icon: "shield-check", label: "신호 검증" },
   { sec: "운영" },
   { to: "/schedule", icon: "clock-play", label: "스케쥴러" },
+  { to: "/system", icon: "activity-heartbeat", label: "시스템 상태" },
 ];
 
 function IndexTicker() {
@@ -65,6 +66,7 @@ const TITLES = {
   "/etf": ["ETF 순위", "추세 · 자금 흐름 기준 ETF"],
   "/signals": ["신호 검증", "백테스트 · 신뢰도 · 캘리브레이션"],
   "/schedule": ["자동 분석 스케쥴러", "예약 실행 · 수행 로그"],
+  "/system": ["시스템 상태", "종합 상태 · 데이터 현황 · AI · 소스"],
 };
 
 export default function AppShell() {

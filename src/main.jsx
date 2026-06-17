@@ -17,6 +17,7 @@ import BookmarkPage from "./pages/BookmarkPage.jsx";
 import EtfPage from "./pages/EtfPage.jsx";
 import SignalsPage from "./pages/SignalsPage.jsx";
 import SchedulePage from "./pages/SchedulePage.jsx";
+import SystemPage from "./pages/SystemPage.jsx";
 
 // HashRouter — 정적 호스팅에서도 새로고침/딥링크 안전.
 const router = createHashRouter([
@@ -37,6 +38,7 @@ const router = createHashRouter([
       { path: "etf", element: <EtfPage /> },
       { path: "signals", element: <SignalsPage /> },
       { path: "schedule", element: <SchedulePage /> },
+      { path: "system", element: <SystemPage /> },
     ],
   },
 ]);
