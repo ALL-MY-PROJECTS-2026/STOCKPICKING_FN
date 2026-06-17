@@ -358,7 +358,7 @@ function Modal({ seed, onClose }) {
               {seed.code}{seed.theme ? " · " + seed.theme : ""}
               <SrcLink href={SRC.main(seed.code)} label="네이버" />
             </div>
-            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>SERVER 북마크</Badge></span>}
+            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>추천 종목</Badge></span>}
           </div>
           <div className="modal-price">
             <div className="num" style={{ fontSize: "1.5rem", fontWeight: 800 }}>{won(price)}</div>
