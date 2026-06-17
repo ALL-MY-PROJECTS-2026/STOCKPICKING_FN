@@ -11,6 +11,7 @@ import ReboundPage from "./pages/ReboundPage.jsx";
 import FlowPage from "./pages/FlowPage.jsx";
 import SectorFlowPage from "./pages/SectorFlowPage.jsx";
 import ValuePage from "./pages/ValuePage.jsx";
+import AlphaPage from "./pages/AlphaPage.jsx";
 import BookmarkPage from "./pages/BookmarkPage.jsx";
 import EtfPage from "./pages/EtfPage.jsx";
 import SignalsPage from "./pages/SignalsPage.jsx";
@@ -29,6 +30,7 @@ const router = createHashRouter([
       { path: "flow", element: <FlowPage /> },
       { path: "sectors", element: <SectorFlowPage /> },
       { path: "value", element: <ValuePage /> },
+      { path: "alpha", element: <AlphaPage /> },
       { path: "bookmarks", element: <BookmarkPage /> },
       { path: "etf", element: <EtfPage /> },
       { path: "signals", element: <SignalsPage /> },
