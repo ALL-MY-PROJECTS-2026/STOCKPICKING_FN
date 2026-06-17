@@ -131,6 +131,7 @@ export default function AppShell() {
   useEffect(() => { setOpen(false); }, [loc.pathname]);
 
   const [title, sub] = TITLES[loc.pathname] || ["StockPicking", ""];
+  useEffect(() => { document.title = `${title} · StockPicking`; }, [title]);
 
   return (
     <div className={"app" + (open ? " nav-open" : "")}>
