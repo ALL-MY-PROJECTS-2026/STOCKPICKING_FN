@@ -16,6 +16,7 @@ import ConsensusPage from "./pages/ConsensusPage.jsx";
 import WatchlistPage from "./pages/WatchlistPage.jsx";
 import ProposalsPage from "./pages/ProposalsPage.jsx";
 import BookmarkPage from "./pages/BookmarkPage.jsx";
+import MyBookmarksPage from "./pages/MyBookmarksPage.jsx";
 import EtfPage from "./pages/EtfPage.jsx";
 import SignalsPage from "./pages/SignalsPage.jsx";
 
@@ -37,6 +38,7 @@ const router = createHashRouter([
       { path: "watchlist", element: <WatchlistPage /> },
       { path: "proposals", element: <ProposalsPage /> },
       { path: "bookmarks", element: <BookmarkPage /> },
+      { path: "my", element: <MyBookmarksPage /> },
       { path: "etf", element: <EtfPage /> },
       { path: "signals", element: <SignalsPage /> },
     ],

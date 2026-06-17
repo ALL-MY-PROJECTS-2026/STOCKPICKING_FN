@@ -1,7 +1,7 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, Heat } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
-import { eok, fixed } from "../lib/format.js";
+import { eok, fixed, stripEmoji } from "../lib/format.js";
 
 const POSTURE_RC = { positive: "var(--up)", good: "var(--up)", neutral: "var(--flat)",
   caution: "var(--warn)", negative: "var(--down)", bad: "var(--down)" };
@@ -64,11 +64,11 @@ export default function DailyBriefPage() {
 
       {/* 헤드라인 + 행동 가이드 */}
       <div className="card card-pad brief-hero">
-        <div className="bh-line">{d.headline}</div>
+        <div className="bh-line">{stripEmoji(d.headline)}</div>
         {d.action && (
           <div className="bh-action">
-            <Badge kind="mut">{d.action.tier}</Badge>
-            <span>{d.action.text}</span>
+            <Badge kind="mut">{stripEmoji(d.action.tier)}</Badge>
+            <span>{stripEmoji(d.action.text)}</span>
           </div>
         )}
       </div>

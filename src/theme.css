@@ -153,6 +153,23 @@ a { color: inherit; text-decoration: none; }
 .why-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 3px; }
 .why-list li { font-size: .72rem; color: var(--muted); line-height: 1.4; }
 
+/* 브라우저 북마크 버튼 (카드/모달) */
+.scard-top-right { display: flex; align-items: center; gap: 6px; flex: none; }
+.mybm-btn { border: 1px solid var(--border-soft); background: var(--surface); color: var(--faint);
+  width: 26px; height: 26px; flex: none; display: grid; place-items: center; cursor: pointer;
+  border-radius: var(--r); transition: .14s; font-size: 1rem; }
+.mybm-btn:hover { color: var(--warn); border-color: var(--border); background: var(--surface-2); }
+.mybm-btn.on { color: var(--warn); border-color: var(--warn); }
+.mybm-btn.lg { width: 38px; height: 38px; font-size: 1.15rem; }
+
+/* 사이드바 BN 마지막 업데이트 */
+.last-update { display: flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: .68rem;
+  color: var(--faint); }
+.last-update i { font-size: .9rem; }
+
+/* 모달 헤더 — 액션버튼(우상단)과 가격 겹침 방지 */
+.modal-price { text-align: right; flex: none; }
+
 /* 연결상태 배너 */
 .conn-banner { display: flex; align-items: center; gap: 10px; margin: 14px 26px 0;
   padding: 10px 14px; background: var(--up-dim); border: 1px solid var(--up); color: var(--up);
@@ -423,7 +440,7 @@ a { color: inherit; text-decoration: none; }
 .holder .hn { font-size: .8rem; font-weight: 600; display: flex; align-items: center; gap: 7px; }
 .holder b { font-size: .86rem; }
 .modal-hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
-  padding: 20px 22px 16px; border-bottom: 1px solid var(--border-soft); }
+  padding: 20px 22px 16px; padding-right: 96px; border-bottom: 1px solid var(--border-soft); }
 .modal-name { font-size: 1.18rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.25; }
 .modal-body { padding: 18px 22px 22px; display: flex; flex-direction: column; gap: 16px; }
 

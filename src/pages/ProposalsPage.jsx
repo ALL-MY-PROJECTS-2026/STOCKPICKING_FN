@@ -1,7 +1,7 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
-import { won, pct, fixed } from "../lib/format.js";
+import { won, pct, fixed, stripEmoji } from "../lib/format.js";
 
 const convKind = (c) => (/(매우|상|강)/.test(c || "") ? "up" : /(하|약)/.test(c || "") ? "mut" : "warn");
 
@@ -13,7 +13,7 @@ export default function ProposalsPage() {
   return (
     <>
       <SectionHd icon="bulb" title="발굴 제안" count={loading ? null : items.length}
-        desc={data?.horizon?.text || "다중 신호 기반 관심 제안 (표시 전용·매매 아님)"}
+        desc={stripEmoji(data?.horizon?.text) || "다중 신호 기반 관심 제안 (표시 전용·매매 아님)"}
         right={data?.posture?.tier && <Badge kind="mut" dot>국면 {data.posture.tier}</Badge>} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-themes"><Skeletons n={6} /></div> :
@@ -38,7 +38,7 @@ export default function ProposalsPage() {
                     {Array.isArray(s.signals) && s.signals.length > 0 && (
                       <div className="sig-chips">{s.signals.map((g) => <span className="sig-chip" key={g}>{g}</span>)}</div>
                     )}
-                    {s.thesis && <p className="prop-thesis">{s.thesis}</p>}
+                    {s.thesis && <p className="prop-thesis">{stripEmoji(s.thesis)}</p>}
 
                     <div className="prop-zones">
                       <div><span>현재</span><b className="num">{won(z.price)}</b></div>
@@ -50,7 +50,7 @@ export default function ProposalsPage() {
                 );
               })}
             </div>
-            {data?.disclaimer && <p className="disclaimer" style={{ marginTop: 14 }}><i className="ti ti-alert-triangle" />{data.disclaimer}</p>}
+            {data?.disclaimer && <p className="disclaimer" style={{ marginTop: 14 }}><i className="ti ti-alert-triangle" />{stripEmoji(data.disclaimer)}</p>}
           </>
         )}
     </>

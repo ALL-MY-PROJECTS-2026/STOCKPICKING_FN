@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { apiGet, apiSend } from "../api.js";
-import { won, pct, dir, arrow, fixed, wonShort } from "../lib/format.js";
+import { apiGet } from "../api.js";
+import { won, pct, dir, arrow, fixed, wonShort, stripEmoji } from "../lib/format.js";
 import { ChangePill, Badge } from "./ui.jsx";
+import MyBookmarkButton from "./MyBookmarkButton.jsx";
 
 const Ctx = createContext({ open: () => {} });
 export const useDetail = () => useContext(Ctx);
@@ -98,7 +99,7 @@ function Financials({ fin, short, exh }) {
         ))}
       </div>
       {Array.isArray(fin?.fin_signals) && fin.fin_signals.length > 0 && (
-        <div className="sig-chips">{fin.fin_signals.map((s, i) => <span className="sig-chip" key={i}>{s}</span>)}</div>
+        <div className="sig-chips">{fin.fin_signals.map((s, i) => <span className="sig-chip" key={i}>{stripEmoji(s)}</span>)}</div>
       )}
     </div>
   );
@@ -113,7 +114,7 @@ function MajorHolders({ holders }) {
       <div className="holders">
         {holders.map((h, i) => (
           <div className="holder" key={i}>
-            <span className="hn">{h.name}{h.nps && <Badge kind="ok" dot>국민연금</Badge>}</span>
+            <span className="hn">{stripEmoji(h.name)}{h.nps && <Badge kind="ok" dot>국민연금</Badge>}</span>
             <b className="num">{fixed(h.ratio, 2)}%</b>
           </div>
         ))}
@@ -127,7 +128,6 @@ function Modal({ seed, onClose }) {
   const [det, setDet] = useState(null);      // /api/stock-detail
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [marked, setMarked] = useState(!!seed.bookmarked);
 
   useEffect(() => {
     let alive = true;
@@ -148,14 +148,6 @@ function Modal({ seed, onClose }) {
     return () => window.removeEventListener("keydown", esc);
   }, [onClose]);
 
-  const toggleMark = async () => {
-    let pass = localStorage.getItem("fn-pass");
-    if (!pass) { pass = window.prompt("대시보드 비밀번호"); if (!pass) return; localStorage.setItem("fn-pass", pass); }
-    const r = await apiSend("/api/bookmarks", { auth: "admin:" + pass, body: { code: seed.code, action: marked ? "remove" : "add" } });
-    if (r.ok) setMarked(!marked);
-    else { localStorage.removeItem("fn-pass"); alert("북마크 실패 — 비밀번호 확인"); }
-  };
-
   const sigColor = d?.signal_color || "var(--primary)";
   const price = d?.current_price ?? seed.price;
   const feats = d?.features || {};
@@ -164,10 +156,8 @@ function Modal({ seed, onClose }) {
     <div className="modal-scrim" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-actions">
-          <button className="icon-btn" title={marked ? "북마크 해제" : "북마크 추가"} onClick={toggleMark}>
-            <i className={"ti " + (marked ? "ti-star-filled" : "ti-star")} style={marked ? { color: "var(--warn)" } : null} />
-          </button>
-          <button className="icon-btn" onClick={onClose}><i className="ti ti-x" /></button>
+          <MyBookmarkButton stock={seed} size="lg" />
+          <button className="icon-btn" onClick={onClose} aria-label="닫기"><i className="ti ti-x" /></button>
         </div>
 
         <div className="modal-hd">
@@ -176,8 +166,9 @@ function Modal({ seed, onClose }) {
             <div className="code num" style={{ color: "var(--faint)" }}>
               {seed.code}{seed.theme ? " · " + seed.theme : ""}
             </div>
+            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>BN 북마크</Badge></span>}
           </div>
-          <div style={{ textAlign: "right" }}>
+          <div className="modal-price">
             <div className="num" style={{ fontSize: "1.5rem", fontWeight: 800 }}>{won(price)}</div>
             {seed.change != null && <ChangePill v={seed.change} />}
           </div>
@@ -192,7 +183,7 @@ function Modal({ seed, onClose }) {
             <div className="signal-banner" style={{ borderColor: sigColor + "55", background: sigColor + "12" }}>
               <div>
                 <div className="lbl">예측 신호 <span style={{ color: "var(--faint)", fontWeight: 400 }}>(1단계 룰)</span></div>
-                <div className="sig" style={{ color: sigColor }}>{d.signal_label || d.signal}</div>
+                <div className="sig" style={{ color: sigColor }}>{stripEmoji(d.signal_label || d.signal)}</div>
               </div>
               <div className="conf">
                 <div className="conf-bar"><i style={{ width: (d.confidence || 0) + "%", background: sigColor }} /></div>
@@ -211,10 +202,10 @@ function Modal({ seed, onClose }) {
             <div className="reasons">
               {(d.reasons_pos || []).length > 0 && (
                 <div className="reason-col"><div className="reason-hd up"><i className="ti ti-circle-plus" /> 긍정 근거</div>
-                  {d.reasons_pos.map((r, i) => <div key={i} className="reason-item"><i className="ti ti-point" />{r}</div>)}</div>)}
+                  {d.reasons_pos.map((r, i) => <div key={i} className="reason-item"><i className="ti ti-point" />{stripEmoji(r)}</div>)}</div>)}
               {(d.reasons_neg || []).length > 0 && (
                 <div className="reason-col"><div className="reason-hd down"><i className="ti ti-circle-minus" /> 부정 근거</div>
-                  {d.reasons_neg.map((r, i) => <div key={i} className="reason-item"><i className="ti ti-point" />{r}</div>)}</div>)}
+                  {d.reasons_neg.map((r, i) => <div key={i} className="reason-item"><i className="ti ti-point" />{stripEmoji(r)}</div>)}</div>)}
             </div>
 
             {/* 투자자 동향 · 재무제표 · 대량보유 (stock-detail) */}
@@ -235,7 +226,7 @@ function Modal({ seed, onClose }) {
               ))}
             </div>
 
-            {d.disclaimer && <div className="disclaimer"><i className="ti ti-info-circle" /> {d.disclaimer}</div>}
+            {d.disclaimer && <div className="disclaimer"><i className="ti ti-info-circle" /> {stripEmoji(d.disclaimer)}</div>}
           </div>
         )}
       </div>

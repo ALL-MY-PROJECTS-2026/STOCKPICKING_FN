@@ -35,6 +35,13 @@ export const scoreClass = (s) => (s >= 70 ? "s-hi" : s >= 50 ? "s-md" : "s-lo");
 export const fixed = (v, d = 1) =>
   v == null || isNaN(v) ? "-" : Number(v).toFixed(d);
 
+// 문자열에서 이모지/그림문자 제거 (BN 텍스트 정리용). ▲▼·화살표(25xx)는 보존.
+export const stripEmoji = (s) =>
+  typeof s === "string"
+    ? s.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}]/gu, "")
+        .replace(/\s{2,}/g, " ").trim()
+    : s;
+
 // phase tier → css class
 export const phaseClass = (tier) =>
   ({ accel: "accel", strong: "strong", early: "early", cool: "cool" }[tier] || "neutral");
