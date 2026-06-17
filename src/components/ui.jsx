@@ -1,4 +1,29 @@
+import { useRef, useState, useEffect } from "react";
 import { pct, dir, arrow, scoreClass, fixed } from "../lib/format.js";
+
+/**
+ * 뷰포트 진입 시에만 children 을 마운트(=지연 fetch). 진입 전엔 높이 확보용 스켈레톤.
+ * 화면 하단 섹션의 useApi 가 초기에 한꺼번에 발사되는 것을 방지(성능).
+ */
+export function LazyMount({ minHeight = 140, children }) {
+  const ref = useRef(null);
+  const [show, setShow] = useState(typeof IntersectionObserver === "undefined");
+  useEffect(() => {
+    if (show) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { setShow(true); io.disconnect(); }
+    }, { rootMargin: "240px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [show]);
+  return (
+    <div ref={ref}>
+      {show ? children : <div className="sk" style={{ height: minHeight, borderRadius: "var(--r)" }} />}
+    </div>
+  );
+}
 
 export function SectionHd({ icon, title, desc, count, right }) {
   return (

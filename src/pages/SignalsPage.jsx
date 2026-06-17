@@ -1,5 +1,5 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge, Heat } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, Heat, LazyMount } from "../components/ui.jsx";
 import { fixed, pct, dir, won } from "../lib/format.js";
 import { useDetail } from "../components/DetailModal.jsx";
 
@@ -439,18 +439,20 @@ function ScoreForwardMulti() {
 export default function SignalsPage() {
   return (
     <>
+      {/* 첫 화면: 즉시 로드 */}
       <TrustGauge />
       <div style={{ height: 8 }} />
       <ValidationTable />
       <BacktestSection />
       <ScoreForwardSection />
-      <ReboundValidation />
-      <TopPicksValidation />
-      <ReboundMultiHorizon />
-      <QualityValidation />
-      <AlphaSignalWeights />
-      <BacktestMulti />
-      <ScoreForwardMulti />
+      {/* 이하 섹션: 뷰포트 진입 시 지연 로드 — 마운트 시 13개 endpoint 동시 발사 방지 */}
+      <LazyMount><ReboundValidation /></LazyMount>
+      <LazyMount><TopPicksValidation /></LazyMount>
+      <LazyMount><ReboundMultiHorizon /></LazyMount>
+      <LazyMount><QualityValidation /></LazyMount>
+      <LazyMount><AlphaSignalWeights /></LazyMount>
+      <LazyMount><BacktestMulti /></LazyMount>
+      <LazyMount><ScoreForwardMulti /></LazyMount>
     </>
   );
 }
