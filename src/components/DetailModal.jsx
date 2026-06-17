@@ -279,6 +279,7 @@ function MajorHolders({ holders, name }) {
 function Modal({ seed, onClose }) {
   const [d, setD] = useState(null);          // /api/predict
   const [det, setDet] = useState(null);      // /api/stock-detail
+  const [detLoading, setDetLoading] = useState(true);
   const [hist, setHist] = useState(null);    // /api/historical
   const [ai, setAi] = useState(null);        // /api/chart-ai
   const [tg, setTg] = useState(null);        // /api/targets
@@ -287,14 +288,15 @@ function Modal({ seed, onClose }) {
 
   useEffect(() => {
     let alive = true;
-    setLoading(true); setError(null); setDet(null); setHist(null); setAi(null); setTg(null);
+    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setAi(null); setTg(null);
     apiGet("/api/predict/" + seed.code)
       .then((r) => alive && setD(r))
       .catch((e) => alive && setError(e.message))
       .finally(() => alive && setLoading(false));
     apiGet("/api/stock-detail/" + seed.code)
       .then((r) => alive && setDet(r))
-      .catch(() => { });
+      .catch(() => { })
+      .finally(() => alive && setDetLoading(false));
     apiGet("/api/historical/" + seed.code)
       .then((r) => alive && setHist(r))
       .catch(() => { });
@@ -394,7 +396,7 @@ function Modal({ seed, onClose }) {
                 <Financials fin={det.financials} short={det.short} exh={det.foreign_exhaustion} code={seed.code} />
                 <MajorHolders holders={det.major_holders} name={seed.name || d?.name || det?.name} />
               </>
-            ) : <div className="sk" style={{ height: 90 }} />}
+            ) : detLoading ? <div className="sk" style={{ height: 90 }} /> : null}
 
             <Targets list={tg} price={price} />
 
