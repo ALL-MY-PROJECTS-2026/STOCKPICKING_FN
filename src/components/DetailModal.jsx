@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { apiGet } from "../api.js";
 import { won, pct, dir, arrow, fixed, wonShort, stripEmoji } from "../lib/format.js";
-import { ChangePill, Badge } from "./ui.jsx";
+import { ChangePill, Badge, ErrBox } from "./ui.jsx";
 import MyBookmarkButton from "./MyBookmarkButton.jsx";
 
 const Ctx = createContext({ open: () => {} });
@@ -285,6 +285,8 @@ function Modal({ seed, onClose }) {
   const [tg, setTg] = useState(null);        // /api/targets
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -307,7 +309,7 @@ function Modal({ seed, onClose }) {
       .then((r) => alive && setTg(r))
       .catch(() => { });
     return () => { alive = false; };
-  }, [seed.code]);
+  }, [seed.code, reloadKey]);
 
   useEffect(() => {
     const esc = (e) => e.key === "Escape" && onClose();
@@ -315,13 +317,33 @@ function Modal({ seed, onClose }) {
     return () => window.removeEventListener("keydown", esc);
   }, [onClose]);
 
+  // 접근성: 초기 포커스 → 모달 내 Tab 트랩 → 닫을 때 직전 포커스 복원
+  useEffect(() => {
+    const prev = document.activeElement;
+    const node = modalRef.current;
+    const focusables = () =>
+      Array.from(node?.querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])') || [])
+        .filter((el) => !el.disabled && el.offsetParent !== null);
+    (node?.querySelector('.icon-btn[aria-label="닫기"]') || focusables()[0])?.focus();
+    const onKey = (e) => {
+      if (e.key !== "Tab") return;
+      const f = focusables();
+      if (f.length === 0) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    node?.addEventListener("keydown", onKey);
+    return () => { node?.removeEventListener("keydown", onKey); if (prev && prev.focus) prev.focus(); };
+  }, []);
+
   const sigColor = d?.signal_color || "var(--primary)";
   const price = d?.current_price ?? seed.price;
   const feats = d?.features || {};
 
   return (
     <div className="modal-scrim" onClick={onClose}>
-      <div className="modal" role="dialog" aria-modal="true"
+      <div className="modal" role="dialog" aria-modal="true" ref={modalRef} tabIndex={-1}
         aria-label={(seed.name || d?.name || det?.name || "종목") + " 상세"}
         onClick={(e) => e.stopPropagation()}>
         <div className="modal-actions">
@@ -347,7 +369,7 @@ function Modal({ seed, onClose }) {
         {loading ? (
           <div className="modal-body"><div className="sk" style={{ height: 200 }} /></div>
         ) : error ? (
-          <div className="modal-body"><div className="err-box">{error}</div></div>
+          <div className="modal-body"><ErrBox onRetry={() => setReloadKey((k) => k + 1)}>{error}</ErrBox></div>
         ) : (
           <div className="modal-body">
             <div className="signal-banner" style={{ borderColor: sigColor + "55", background: sigColor + "12" }}>
