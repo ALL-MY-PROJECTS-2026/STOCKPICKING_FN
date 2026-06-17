@@ -248,7 +248,8 @@ a { color: inherit; text-decoration: none; }
 .scard-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .scard .nm { font-weight: 700; font-size: .96rem; letter-spacing: -.01em; line-height: 1.2; }
 .scard .code { font-size: .68rem; color: var(--faint); font-family: var(--mono); margin-top: 2px; }
-.scard .theme-tag { font-size: .67rem; color: var(--muted); background: var(--surface-2);
+.scard .theme-tag { max-width: 120px; overflow: hidden; text-overflow: ellipsis;
+  font-size: .67rem; color: var(--muted); background: var(--surface-2);
   padding: 3px 8px; border-radius: var(--pill); white-space: nowrap; }
 .scard-price { display: flex; align-items: baseline; gap: 9px; }
 .scard-price .p { font-size: 1.18rem; font-weight: 800; letter-spacing: -.02em; }
@@ -413,7 +414,7 @@ a { color: inherit; text-decoration: none; }
 
 /* modal sections */
 .sect { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
-.sect-hd { display: flex; align-items: center; gap: 7px; font-size: .86rem; font-weight: 700; }
+.sect-hd { display: flex; align-items: center; gap: 7px; font-size: .86rem; font-weight: 700; flex-wrap: wrap; }
 .sect-hd i { color: var(--primary-2); font-size: 1.1rem; }
 .sect-sub { font-size: .68rem; color: var(--muted); font-weight: 500; margin-left: auto; }
 .help { font-size: .82rem; color: var(--faint); margin-left: 3px; cursor: help; vertical-align: middle; }
@@ -440,11 +441,11 @@ a { color: inherit; text-decoration: none; }
 .holder .hn { font-size: .8rem; font-weight: 600; display: flex; align-items: center; gap: 7px; }
 .holder b { font-size: .86rem; }
 .modal-hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
-  padding: 20px 22px 16px; padding-right: 96px; border-bottom: 1px solid var(--border-soft); }
+  padding: 20px 22px 16px; padding-right: 110px; border-bottom: 1px solid var(--border-soft); }
 .modal-name { font-size: 1.18rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.25; }
 .modal-body { padding: 18px 22px 22px; display: flex; flex-direction: column; gap: 16px; }
 
-.signal-banner { display: flex; justify-content: space-between; align-items: center; gap: 14px;
+.signal-banner { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
   padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--r-sm); }
 .signal-banner .lbl { font-size: .72rem; color: var(--muted); font-weight: 600; }
 .signal-banner .sig { font-size: 1.45rem; font-weight: 900; letter-spacing: -.02em; margin-top: 2px; }
