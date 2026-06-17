@@ -17,7 +17,7 @@ const NAV = [
   { to: "/alpha", icon: "chart-arrows", label: "알파 팩터 픽" },
   { to: "/consensus", icon: "layers-intersect", label: "신호 합치·주의" },
   { to: "/proposals", icon: "bulb", label: "발굴 제안" },
-  { to: "/bookmarks", icon: "star", label: "북마크 (BN)" },
+  { to: "/bookmarks", icon: "star", label: "북마크 (SERVER)" },
   { to: "/my", icon: "bookmark", label: "나의 북마크" },
   { to: "/watchlist", icon: "eye", label: "자동 관심종목" },
   { sec: "분석" },
@@ -65,9 +65,9 @@ function LastUpdate() {
   if (!u) return null;
   const when = u.at ? u.at.slice(5, 16) : u.date || "-";
   return (
-    <div className="last-update" title={"BN 데이터 기준 " + (u.at || u.date || "")}>
+    <div className="last-update" title={"SERVER 데이터 기준 " + (u.at || u.date || "")}>
       <i className="ti ti-refresh" aria-hidden="true" />
-      <span>BN 업데이트 {when}{u.elapsed_min != null ? ` · ${u.elapsed_min}분 전` : ""}</span>
+      <span>SERVER 업데이트 {when}{u.elapsed_min != null ? ` · ${u.elapsed_min}분 전` : ""}</span>
     </div>
   );
 }
@@ -104,7 +104,7 @@ const TITLES = {
   "/alpha": ["알파 팩터 픽", "알파 · 퀄리티 · 가치알파 팩터 랭킹"],
   "/consensus": ["신호 합치 · 주의", "다중 신호 겹침 · 과열 주의 종목"],
   "/proposals": ["발굴 제안", "다중 신호 기반 관심 제안 · 표시 전용"],
-  "/bookmarks": ["북마크 (BN)", "BN 북마크 시점 대비 수익률 추적"],
+  "/bookmarks": ["북마크 (SERVER)", "SERVER 북마크 시점 대비 수익률 추적"],
   "/my": ["나의 북마크", "이 브라우저에 저장한 관심종목"],
   "/watchlist": ["자동 관심종목", "다중 신호·근거 기반 자동 선별"],
   "/etf": ["ETF 순위", "추세 · 자금 흐름 기준 ETF"],

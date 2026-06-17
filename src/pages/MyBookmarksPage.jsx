@@ -8,7 +8,7 @@ export default function MyBookmarksPage() {
   return (
     <>
       <SectionHd icon="bookmark" title="나의 북마크" count={list.length}
-        desc="이 브라우저에 저장된 관심종목 (localStorage · BN 과 별개)" />
+        desc="이 브라우저에 저장된 관심종목 (localStorage · SERVER 와 별개)" />
       {list.length === 0 ? (
         <Empty icon="bookmark-off">카드 우측의 북마크 버튼으로 종목을 추가하세요</Empty>
       ) : (

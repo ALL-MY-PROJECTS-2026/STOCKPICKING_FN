@@ -265,7 +265,7 @@ function Modal({ seed, onClose }) {
             <div className="code num" style={{ color: "var(--faint)" }}>
               {seed.code}{seed.theme ? " · " + seed.theme : ""}
             </div>
-            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>BN 북마크</Badge></span>}
+            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>SERVER 북마크</Badge></span>}
           </div>
           <div className="modal-price">
             <div className="num" style={{ fontSize: "1.5rem", fontWeight: 800 }}>{won(price)}</div>
