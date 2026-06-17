@@ -17,7 +17,7 @@
   --border-soft:#1d2433;
   --text:      #e8edf6;
   --muted:     #8c95a8;
-  --faint:     #5b6376;
+  --faint:     #858ea2;   /* WCAG AA: 다크 본문 대비 4.5:1 확보 */
   --primary:   #5b7cfa;   /* 인디고-블루 (브랜드) */
   --primary-2: #88a0ff;
   --primary-dim:#5b7cfa22;
@@ -29,11 +29,11 @@
   --flat:      #8c95a8;
   --warn:      #f0a13a;
   --ok:        #21c177;
-  /* 각진 룩이되 0 은 아님 — 최소 radius 를 전반 적용 */
-  --r:    3px;
+  /* 각진 룩 — 기준선 0~2px 준수 */
+  --r:    2px;
   --r-sm: 2px;
   --r-xs: 2px;
-  --pill: 3px;
+  --pill: 2px;
   --sh:    0 1px 2px #00000040, 0 4px 14px #0000002e;
   --sh-sm: 0 1px 2px #00000038;
   --sh-glow: 0 0 0 1px var(--primary);
@@ -55,7 +55,7 @@
   --border-soft:#eef0f4;
   --text:      #1a1d26;
   --muted:     #5b6473;
-  --faint:     #99a0ad;
+  --faint:     #6b7280;   /* WCAG AA: 흰 배경 대비 4.5:1 확보 */
   --primary:   #3d5afe;   /* 라이트에서 또렷한 인디고-블루 */
   --primary-2: #2f49e0;
   --primary-dim:#3d5afe12;
