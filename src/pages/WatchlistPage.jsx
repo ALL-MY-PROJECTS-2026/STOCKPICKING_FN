@@ -12,7 +12,7 @@ export default function WatchlistPage() {
   const lv = useListView(items, { pageSize: 12 });
   return (
     <>
-      <SectionHd icon="star" title="자동 관심종목" count={loading ? null : items.length}
+      <SectionHd icon="eye" title="자동 워치리스트" count={loading ? null : items.length}
         desc={data?.note || "다중 신호·근거 기반 자동 선별 워치리스트"}
         right={data?.adaptive != null && <span className="count-chip">{data.adaptive ? "적응형" : "고정"} 가중</span>} />
       <ListControls view={lv} />

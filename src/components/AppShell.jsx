@@ -7,9 +7,10 @@ import ConnectionBanner from "./ConnectionBanner.jsx";
 import ErrorBoundary from "./ErrorBoundary.jsx";
 
 const NAV = [
-  { sec: "발굴" },
+  { sec: "오늘" },
   { to: "/", icon: "sparkles", label: "발굴 대시보드", end: true },
   { to: "/brief", icon: "news", label: "데일리 브리핑" },
+  { sec: "발굴" },
   { to: "/themes", icon: "flame", label: "테마 로테이션" },
   { to: "/rebound", icon: "trending-up", label: "반등 후보" },
   { to: "/flow", icon: "wave-sine", label: "수급·돌파" },
@@ -17,14 +18,15 @@ const NAV = [
   { to: "/value", icon: "diamond", label: "가치주" },
   { to: "/alpha", icon: "chart-arrows", label: "알파 팩터 픽" },
   { to: "/auto", icon: "bolt", label: "자동 픽" },
+  { sec: "신호" },
   { to: "/consensus", icon: "layers-intersect", label: "신호 합치·주의" },
   { to: "/proposals", icon: "bulb", label: "발굴 제안" },
-  { to: "/bookmarks", icon: "star", label: "북마크 (SERVER)" },
-  { to: "/my", icon: "bookmark", label: "나의 북마크" },
-  { to: "/watchlist", icon: "eye", label: "자동 관심종목" },
-  { sec: "분석" },
-  { to: "/etf", icon: "chart-candle", label: "ETF 순위" },
   { to: "/signals", icon: "shield-check", label: "신호 검증" },
+  { to: "/etf", icon: "chart-candle", label: "ETF 순위" },
+  { sec: "내 종목" },
+  { to: "/bookmarks", icon: "star", label: "추천 종목" },
+  { to: "/my", icon: "bookmark", label: "내 관심종목" },
+  { to: "/watchlist", icon: "eye", label: "자동 워치리스트" },
 ];
 
 function IndexTicker() {
@@ -123,9 +125,9 @@ const TITLES = {
   "/auto": ["자동 픽", "자동 발굴 엔진 — 점수·세력·뉴스 종합"],
   "/consensus": ["신호 합치 · 주의", "다중 신호 겹침 · 과열 주의 종목"],
   "/proposals": ["발굴 제안", "다중 신호 기반 관심 제안 · 표시 전용"],
-  "/bookmarks": ["북마크 (SERVER)", "SERVER 북마크 시점 대비 수익률 추적"],
-  "/my": ["나의 북마크", "이 브라우저에 저장한 관심종목"],
-  "/watchlist": ["자동 관심종목", "다중 신호·근거 기반 자동 선별"],
+  "/bookmarks": ["추천 종목", "운영 서버가 선별한 추천 — 시점 대비 수익률 추적"],
+  "/my": ["내 관심종목", "이 브라우저에 저장한 관심종목 (localStorage)"],
+  "/watchlist": ["자동 워치리스트", "다중 신호·근거 기반 자동 선별"],
   "/etf": ["ETF 순위", "추세 · 자금 흐름 기준 ETF"],
   "/signals": ["신호 검증", "백테스트 · 신뢰도 · 캘리브레이션"],
 };

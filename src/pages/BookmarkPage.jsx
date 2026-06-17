@@ -46,8 +46,8 @@ export default function BookmarkPage() {
   const sm = data?.summary;
   return (
     <>
-      <SectionHd icon="star" title="북마크 (SERVER)" count={loading ? null : cards.length}
-        desc="SERVER 북마크 시점 대비 수익률 추적 (읽기 전용)"
+      <SectionHd icon="star" title="추천 종목" count={loading ? null : cards.length}
+        desc="운영 서버가 선별한 추천 — 시점 대비 수익률 추적 (읽기 전용)"
         right={sm?.avg_ret_pct != null && (
           <span className="count-chip">평균 <b className={dir(sm.avg_ret_pct)} style={{ color: `var(--${dir(sm.avg_ret_pct)})` }}>{pct(sm.avg_ret_pct)}</b></span>
         )} />
