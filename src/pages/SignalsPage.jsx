@@ -320,6 +320,70 @@ function QualityValidation() {
   );
 }
 
+const consKind = (c) => (/\+/.test(c || "") ? "ok" : /[−-]/.test(c || "") ? "warn" : "mut");
+
+/** 전략 멀티윈도우 백테스트 — /api/signal-backtest-multi (전략 × 2·3·5일 시장초과 매트릭스) */
+function BacktestMulti() {
+  const { data, loading } = useApi("/api/signal-backtest-multi");
+  if (loading || !data || data.enabled === false) return null;
+  const lbs = data.lookbacks || [];
+  const axes = data.axes || [];
+  return (
+    <>
+      <SectionHd icon="layout-grid" title="전략 멀티윈도우 백테스트" desc={data.note || "전략별 2·3·5일 forward 시장초과"} />
+      <div className="card" style={{ overflowX: "auto" }}>
+        <table className="tbl">
+          <thead><tr><th>전략</th>{lbs.map((lb) => <th key={lb} className="r">{lb}일</th>)}<th className="r">일관성</th></tr></thead>
+          <tbody>
+            {axes.map((a) => {
+              const m = Object.fromEntries((a.windows || []).map((w) => [w.lb, w]));
+              return (
+                <tr key={a.key}>
+                  <td><b>{a.label}</b></td>
+                  {lbs.map((lb) => { const w = m[lb]; return <td key={lb} className="r num" style={w ? { color: `var(--${dir(w.vs_market)})` } : null}>{w ? pct(w.vs_market, 1) : "-"}</td>; })}
+                  <td className="r">{a.consistency ? <Badge kind={consKind(a.consistency)}>{a.consistency}</Badge> : "-"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+/** 점수 멀티윈도우 — /api/score-forward-multi (2·3·5일 창별 점수 예측력) */
+function ScoreForwardMulti() {
+  const { data, loading } = useApi("/api/score-forward-multi");
+  if (loading || !data || data.enabled === false) return null;
+  const w = data.windows || [];
+  return (
+    <>
+      <SectionHd icon="chart-dots-3" title="점수 멀티윈도우" desc={data.note || "발굴 점수 2·3·5일 창 종합"}
+        right={data.consistency && <Badge kind={consKind(data.consistency)} dot>{data.consistency}</Badge>} />
+      <div className="grid grid-stats" style={{ marginBottom: 6 }}>
+        <div className="card stat"><div className="k">평균 스프레드</div><div className="v num" style={{ color: `var(--${dir(data.avg_spread)})` }}>{pct(data.avg_spread, 1)}</div></div>
+        <div className="card stat"><div className="k">양의 창</div><div className="v num">{data.pos ?? "-"}/{data.total ?? "-"}</div></div>
+        <div className="card stat"><div className="k">지평 판정</div><div className="v" style={{ fontSize: "1.05rem" }}>{data.horizon || "-"}</div></div>
+      </div>
+      {w.length > 0 && (
+        <div className="card" style={{ overflowX: "auto" }}>
+          <table className="tbl">
+            <thead><tr><th>창</th><th className="r">스프레드</th><th className="r">ρ</th><th className="r">단조</th><th className="r">표본</th></tr></thead>
+            <tbody>{w.map((x) => (
+              <tr key={x.lb}><td><b>{x.lb}일</b></td>
+                <td className="r num" style={{ color: `var(--${dir(x.spread)})` }}>{pct(x.spread, 1)}</td>
+                <td className="r num">{fixed(x.rho, 2)}</td>
+                <td className="r">{x.monotonic ? "✓" : "—"}</td>
+                <td className="r num">{x.n}</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function SignalsPage() {
   return (
     <>
@@ -332,6 +396,8 @@ export default function SignalsPage() {
       <TopPicksValidation />
       <ReboundMultiHorizon />
       <QualityValidation />
+      <BacktestMulti />
+      <ScoreForwardMulti />
     </>
   );
 }
