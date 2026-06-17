@@ -70,6 +70,14 @@
 }
 
 * { box-sizing: border-box; }
+
+/* 접근성: 키보드 포커스 링 (마우스 클릭엔 미표시) */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+/* 접근성/성능: 모션 최소화 선호 시 애니메이션·전환 제거 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
 html, body, #root { height: 100%; margin: 0; }
 body {
   font-family: var(--ff);

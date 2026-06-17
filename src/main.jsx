@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createHashRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
 import "./theme.css";
 import { DetailProvider } from "./components/DetailModal.jsx";
 import AppShell from "./components/AppShell.jsx";
@@ -43,6 +43,7 @@ const router = createHashRouter([
       { path: "my", element: <MyBookmarksPage /> },
       { path: "etf", element: <EtfPage /> },
       { path: "signals", element: <SignalsPage /> },
+      { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
 ]);
