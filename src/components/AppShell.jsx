@@ -72,6 +72,27 @@ function LastUpdate() {
   );
 }
 
+function VisitorCount() {
+  const [n, setN] = useState(null);
+  useEffect(() => {
+    const cached = sessionStorage.getItem("fn-visits");
+    if (cached) { setN(Number(cached)); return; }
+    let alive = true;
+    fetch("https://api.counterapi.dev/v1/stockpicking-fn/visits/up")
+      .then((r) => r.json())
+      .then((d) => { if (alive && d && d.count != null) { setN(d.count); sessionStorage.setItem("fn-visits", String(d.count)); } })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  if (n == null) return null;
+  return (
+    <div className="last-update" title="누적 접속 수 (이 사이트 방문 합계)">
+      <i className="ti ti-users" aria-hidden="true" />
+      <span>누적 접속 {n.toLocaleString("ko-KR")}</span>
+    </div>
+  );
+}
+
 const TITLES = {
   "/": ["발굴 대시보드", "오늘의 시장 국면 · 주도 테마 · 핵심 종목"],
   "/brief": ["데일리 브리핑", "11개 발굴 위젯 한 줄 종합"],
@@ -129,6 +150,7 @@ export default function AppShell() {
           )
         )}
         <div className="sidebar-foot">
+          <VisitorCount />
           <LastUpdate />
           <div className="nav-item" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
             <i className={"ti ti-" + (theme === "dark" ? "sun" : "moon")} />

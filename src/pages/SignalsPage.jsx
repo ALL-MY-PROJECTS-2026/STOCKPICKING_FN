@@ -179,6 +179,65 @@ function ScoreForwardSection() {
   );
 }
 
+/** 반등 신호 검증 — walkforward · calibration · accuracy */
+function ReboundValidation() {
+  const wf = useApi("/api/rebound-walkforward");
+  const cal = useApi("/api/rebound-calibration");
+  const acc = useApi("/api/rebound-accuracy");
+  const w = wf.data || {}, c = cal.data || {}, a = acc.data || {};
+  const bins = c.bins || [];
+  if (wf.loading && cal.loading && acc.loading)
+    return (<><SectionHd icon="discount-check" title="반등 신호 검증" /><div className="card card-pad"><Skeletons n={1} /></div></>);
+  return (
+    <>
+      <SectionHd icon="discount-check" title="반등 신호 검증"
+        desc={c.note || "워크포워드 · 분위 캘리브레이션 · 실측 적중"} />
+      <div className="grid grid-stats" style={{ marginBottom: 6 }}>
+        <div className="card stat"><div className="k">표본외 초과수익</div>
+          <div className="num v" style={{ color: `var(--${dir(w.oos?.excess)})` }}>{w.oos ? pct(w.oos.excess, 2) : "-"}</div>
+          <div className="d">IS {w.is ? pct(w.is.excess, 2) : "-"} · t {fixed(w.oos?.t, 2)}</div></div>
+        <div className="card stat"><div className="k">과적합 여부</div>
+          <div className="v">{w.not_overfit != null ? <Badge kind={w.not_overfit ? "ok" : "warn"} dot>{w.not_overfit ? "아님" : "주의"}</Badge> : "-"}</div>
+          <div className="d">IS/OOS 일관성</div></div>
+        <div className="card stat"><div className="k">분위 단조성</div>
+          <div className="v">{c.monotonic != null ? (c.monotonic ? "단조 ✓" : "비단조") : "-"}</div>
+          <div className="d">순위상관 ρ {fixed(c.rho, 2)}</div></div>
+        <div className="card stat"><div className="k">실측 적중</div>
+          <div className="v num">{a.hit_rate != null ? fixed(a.hit_rate, 0) + "%" : "-"}</div>
+          <div className="d">{a.sig?.level || "-"}{a.sig ? (a.sig.reliable ? " · 신뢰" : " · 표본부족") : ""}</div></div>
+      </div>
+      {bins.length > 0 && (
+        <div className="card" style={{ overflowX: "auto" }}>
+          <table className="tbl">
+            <thead><tr><th>신뢰분위</th><th className="r">점수구간</th><th className="r">표본</th><th className="r">초과수익</th><th className="r">적중률</th></tr></thead>
+            <tbody>
+              {bins.map((b) => (
+                <tr key={b.q}>
+                  <td><b>Q{b.q}</b></td>
+                  <td className="r num">{b.lo}~{b.hi}</td>
+                  <td className="r num">{b.n}</td>
+                  <td className="r num" style={{ color: `var(--${dir(b.excess)})` }}>{pct(b.excess, 2)}</td>
+                  <td className="r num">{fixed(b.hit, 0)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {c.regime && (c.regime.bear || c.regime.bull) && (
+        <div className="grid grid-stats" style={{ marginTop: 6 }}>
+          <div className="card stat"><div className="k">약세장 초과수익</div>
+            <div className="v num" style={{ color: `var(--${dir(c.regime.bear?.excess)})` }}>{c.regime.bear ? pct(c.regime.bear.excess, 2) : "-"}</div>
+            <div className="d">표본 {c.regime.bear?.n ?? "-"} · 적중 {fixed(c.regime.bear?.hit, 0)}%</div></div>
+          <div className="card stat"><div className="k">강세장 초과수익</div>
+            <div className="v num" style={{ color: `var(--${dir(c.regime.bull?.excess)})` }}>{c.regime.bull ? pct(c.regime.bull.excess, 2) : "-"}</div>
+            <div className="d">표본 {c.regime.bull?.n ?? "-"} · 적중 {fixed(c.regime.bull?.hit, 0)}%</div></div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function SignalsPage() {
   return (
     <>
@@ -187,6 +246,7 @@ export default function SignalsPage() {
       <ValidationTable />
       <BacktestSection />
       <ScoreForwardSection />
+      <ReboundValidation />
     </>
   );
 }
