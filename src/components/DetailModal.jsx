@@ -419,8 +419,22 @@ function Modal({ seed, onClose }) {
 
 export function DetailProvider({ children }) {
   const [seed, setSeed] = useState(null);
-  const open = useCallback((s) => s?.code && setSeed(s), []);
-  const close = useCallback(() => setSeed(null), []);
+  // 모바일 뒤로가기로 모달 닫기: 열 때 history state push, popstate(뒤로) 단일 지점에서 닫음.
+  const open = useCallback((s) => {
+    if (!s?.code) return;
+    setSeed(s);
+    try { window.history.pushState({ fnModal: true }, ""); } catch {}
+  }, []);
+  const close = useCallback(() => {
+    // X/Esc/스크림 클릭 → history.back() 으로 push 한 state 제거(→ popstate 가 실제 닫음)
+    if (window.history.state && window.history.state.fnModal) window.history.back();
+    else setSeed(null);
+  }, []);
+  useEffect(() => {
+    const onPop = () => setSeed(null);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
   return (
     <Ctx.Provider value={{ open }}>
       {children}
