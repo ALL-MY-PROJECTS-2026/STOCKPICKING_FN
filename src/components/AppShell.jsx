@@ -4,6 +4,7 @@ import { apiGet } from "../api.js";
 import { pct, dir, arrow, won } from "../lib/format.js";
 import SearchBox from "./SearchBox.jsx";
 import ConnectionBanner from "./ConnectionBanner.jsx";
+import ErrorBoundary from "./ErrorBoundary.jsx";
 
 const NAV = [
   { sec: "발굴" },
@@ -182,7 +183,7 @@ export default function AppShell() {
           <IndexTicker />
         </header>
         <ConnectionBanner />
-        <main className="content"><Outlet /></main>
+        <main className="content"><ErrorBoundary key={loc.pathname}><Outlet /></ErrorBoundary></main>
       </div>
     </div>
   );
