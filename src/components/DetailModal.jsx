@@ -319,7 +319,9 @@ function Modal({ seed, onClose }) {
 
   return (
     <div className="modal-scrim" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal" role="dialog" aria-modal="true"
+        aria-label={(seed.name || d?.name || det?.name || "종목") + " 상세"}
+        onClick={(e) => e.stopPropagation()}>
         <div className="modal-actions">
           <MyBookmarkButton stock={seed} size="lg" />
           <button className="icon-btn" onClick={onClose} aria-label="닫기"><i className="ti ti-x" /></button>

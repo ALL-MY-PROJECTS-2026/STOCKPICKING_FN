@@ -159,7 +159,10 @@ export default function AppShell() {
         )}
         <div className="sidebar-foot">
           <LastUpdate />
-          <div className="nav-item" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          <div className="nav-item" role="button" tabIndex={0}
+            aria-label={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setTheme(theme === "dark" ? "light" : "dark"); } }}>
             <i className={"ti ti-" + (theme === "dark" ? "sun" : "moon")} />
             {theme === "dark" ? "라이트 모드" : "다크 모드"}
           </div>
@@ -168,7 +171,7 @@ export default function AppShell() {
 
       <div className="main">
         <header className="topbar">
-          <button className="icon-btn hamburger" onClick={() => setOpen(true)}><i className="ti ti-menu-2" /></button>
+          <button className="icon-btn hamburger" onClick={() => setOpen(true)} aria-label="메뉴 열기" aria-expanded={open}><i className="ti ti-menu-2" /></button>
           <div>
             <h1>{title}</h1>
             <div className="sub">{sub}</div>
