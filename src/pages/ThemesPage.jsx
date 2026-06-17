@@ -36,6 +36,12 @@ export default function ThemesPage() {
     <>
       <SectionHd icon="flame" title="테마 로테이션" count={loading ? null : themes.length}
         desc={data?.date ? `기준 ${data.date}` : "테마별 자금·열기 흐름"} />
+      {data?.degraded_note && (
+        <div className="disclaimer" style={{ marginBottom: 12 }}>
+          <i className="ti ti-alert-triangle" /> {data.degraded_note}
+          {data.degraded_from ? ` (${data.degraded_from} 기준 대체)` : ""}
+        </div>
+      )}
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-themes">
           {loading ? <Skeletons n={9} /> : themes.length === 0 ? <Empty /> :

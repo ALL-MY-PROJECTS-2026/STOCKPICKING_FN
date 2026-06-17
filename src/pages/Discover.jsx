@@ -1,7 +1,21 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
-import { fixed, eok, won } from "../lib/format.js";
+import { fixed, eok, won, stripEmoji } from "../lib/format.js";
+
+/** BN '오늘의 핵심 종합'(daily-brief) 한 줄 — BN 대시보드와 동일 소스 */
+function BriefStrip() {
+  const { data } = useApi("/api/daily-brief");
+  if (!data?.headline) return null;
+  return (
+    <div className="card card-pad brief-hero" style={{ marginBottom: 14 }}>
+      <div className="bh-line" style={{ fontSize: ".95rem" }}>
+        <i className="ti ti-bulb" style={{ color: "var(--primary)", marginRight: 6 }} />
+        {stripEmoji(data.headline)}
+      </div>
+    </div>
+  );
+}
 
 function RegimeBanner() {
   const { data, loading, error } = useApi("/api/market-regime");
@@ -56,8 +70,8 @@ function TopPicks() {
   const picks = data?.picks || [];
   return (
     <>
-      <SectionHd icon="sparkles" title="오늘의 핵심 픽" count={loading ? null : picks.length}
-        desc="열기·점수·수급 종합 상위" />
+      <SectionHd icon="sparkles" title="핵심 픽" count={loading ? null : picks.length}
+        desc="열기·점수·수급 종합 상위 (top-picks)" />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-stocks">
           {loading ? <Skeletons n={8} /> : picks.length === 0 ? <Empty>오늘 픽 없음</Empty> :
@@ -119,15 +133,40 @@ function ReboundMini() {
   );
 }
 
+function SharpReboundMini() {
+  const { data, loading } = useApi("/api/sharp-rebound");
+  const items = (data?.items || []).slice(0, 6);
+  return (
+    <>
+      <SectionHd icon="rocket" title="급반등 (다음날)" count={loading ? null : items.length}
+        desc="단기 급반등 신호 · 백테스트 엣지" />
+      <div className="grid grid-stocks">
+        {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty>급반등 후보 없음</Empty> :
+          items.map((s) => (
+            <StockCard key={s.code} s={s} score={s.score}
+              badge={s.tier_edge ? <Badge kind="up" dot>{s.tier_edge}</Badge> : null}
+              metrics={[
+                { k: "낙폭", v: "-" + fixed(s.drop, 0) + "%", cls: "down" },
+                { k: "순매수", v: eok(s.net_eok), cls: s.net_eok >= 0 ? "up" : "down" },
+                { k: "PER", v: fixed(s.per, 1) },
+              ]} />
+          ))}
+      </div>
+    </>
+  );
+}
+
 export default function Discover() {
   return (
     <>
+      <BriefStrip />
       <RegimeBanner />
       <div style={{ height: 14 }} />
       <StatRow />
       <TopPicks />
       <ValuePicks />
       <ReboundMini />
+      <SharpReboundMini />
     </>
   );
 }
