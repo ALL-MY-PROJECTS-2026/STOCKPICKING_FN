@@ -135,6 +135,10 @@ a { color: inherit; text-decoration: none; }
 .topbar .sub { font-size: .72rem; color: var(--muted); }
 .tick-row { display: flex; gap: 10px; margin-left: 12px; align-items: center; }
 
+/* watchlist why 목록 */
+.why-list { margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 3px; }
+.why-list li { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+
 /* 연결상태 배너 */
 .conn-banner { display: flex; align-items: center; gap: 10px; margin: 14px 26px 0;
   padding: 10px 14px; background: var(--up-dim); border: 1px solid var(--up); color: var(--up);
