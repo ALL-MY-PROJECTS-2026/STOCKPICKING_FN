@@ -28,7 +28,7 @@ export function LazyMount({ minHeight = 140, children }) {
 export function SectionHd({ icon, title, desc, count, right }) {
   return (
     <div className="section-hd">
-      {icon && <div className="ico"><i className={"ti ti-" + icon} /></div>}
+      {icon && <div className="ico"><i className={"ti ti-" + icon} aria-hidden="true" /></div>}
       <h2>{title}</h2>
       {count != null && <span className="count-chip">{count}</span>}
       {desc && <span className="desc">{desc}</span>}
@@ -47,7 +47,7 @@ export function ChangePill({ v, pill = true }) {
 }
 
 export function Score({ v }) {
-  return <span className={"score " + scoreClass(v)}><i className="ti ti-bolt" />{fixed(v, 1)}</span>;
+  return <span className={"score " + scoreClass(v)}><i className="ti ti-bolt" aria-hidden="true" />{fixed(v, 1)}</span>;
 }
 
 export function Heat({ v }) {
@@ -59,13 +59,13 @@ export function Skeletons({ n = 8, cls = "sk-card" }) {
 }
 
 export function Empty({ icon = "mood-empty", children }) {
-  return <div className="empty"><i className={"ti ti-" + icon} />{children || "데이터 없음"}</div>;
+  return <div className="empty"><i className={"ti ti-" + icon} aria-hidden="true" />{children || "데이터 없음"}</div>;
 }
 
 export function ErrBox({ children, onRetry }) {
   return (
     <div className="err-box">
-      <i className="ti ti-alert-triangle" /> {children}
+      <i className="ti ti-alert-triangle" aria-hidden="true" /> {children}
       {onRetry && <button className="btn" style={{ marginLeft: 12 }} onClick={onRetry}>다시 시도</button>}
     </div>
   );

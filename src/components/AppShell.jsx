@@ -167,7 +167,7 @@ export default function AppShell() {
             <NavLink key={n.to} to={n.to} end={n.end}
               title={(TITLES[n.to] && TITLES[n.to][1]) || n.label}
               className={({ isActive }) => "nav-item" + (isActive ? " active" : "")}>
-              <i className={"ti ti-" + n.icon} />{n.label}
+              <i className={"ti ti-" + n.icon} aria-hidden="true" />{n.label}
             </NavLink>
           )
         )}
@@ -177,7 +177,7 @@ export default function AppShell() {
             aria-label={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setTheme(theme === "dark" ? "light" : "dark"); } }}>
-            <i className={"ti ti-" + (theme === "dark" ? "sun" : "moon")} />
+            <i className={"ti ti-" + (theme === "dark" ? "sun" : "moon")} aria-hidden="true" />
             {theme === "dark" ? "라이트 모드" : "다크 모드"}
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function AppShell() {
       <div className="main">
         <div className="notice-strip"><i className="ti ti-info-circle" aria-hidden="true" /> 임시 공개중입니다 · 추후 인증 기능 추가 예정</div>
         <header className="topbar">
-          <button className="icon-btn hamburger" onClick={() => setOpen(true)} aria-label="메뉴 열기" aria-expanded={open}><i className="ti ti-menu-2" /></button>
+          <button className="icon-btn hamburger" onClick={() => setOpen(true)} aria-label="메뉴 열기" aria-expanded={open}><i className="ti ti-menu-2" aria-hidden="true" /></button>
           <div>
             <h1>{title}</h1>
             <div className="sub">{sub}</div>

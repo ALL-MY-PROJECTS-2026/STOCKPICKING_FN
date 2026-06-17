@@ -12,6 +12,7 @@ export default function ConnectionBanner() {
   useEffect(() => {
     let alive = true;
     const ping = async () => {
+      if (document.hidden) return; // 백그라운드 탭에선 폴링 생략(IndexTicker/LastUpdate 와 동일)
       try {
         const r = await fetch(BN_BASE + "/api/health", { cache: "no-store" });
         if (alive) { setDown(!r.ok); setChecked(true); }
