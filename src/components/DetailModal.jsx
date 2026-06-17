@@ -70,6 +70,49 @@ function InvestorFlow({ flow }) {
   );
 }
 
+/** 세력 분석 — stock-detail.force_flow + force_summary (투자자 분류별 며칠째·규모·일별·정보점수) */
+const forceEok = (v) =>
+  v == null || isNaN(v) ? "-"
+    : Math.abs(v) >= 10000 ? (v >= 0 ? "+" : "") + (v / 10000).toFixed(1) + "조"
+      : (v >= 0 ? "+" : "") + Math.round(v).toLocaleString("ko-KR") + "억";
+
+function ForceAnalysis({ flow, summary }) {
+  if (!flow || !flow.foreign) return null;
+  const rows = [["외국인", flow.foreign], ["기관", flow.institution], ["개인", flow.individual]];
+  return (
+    <div className="sect">
+      <div className="sect-hd"><i className="ti ti-users-group" />세력 분석
+        {summary?.label && <Badge kind="mut" dot>{summary.label}</Badge>}
+        {summary?.score != null && <span className="sect-sub" title={summary.note || undefined}>정보점수 {fixed(summary.score, 0)}{summary.note ? <i className="ti ti-help-circle help" /> : null}</span>}
+      </div>
+      <div className="force-rows">
+        {rows.map(([label, o]) => {
+          if (!o) return null;
+          const max = Math.max(1, ...(o.daily_eok || []).map((v) => Math.abs(v || 0)));
+          return (
+            <div className="force-row" key={label}>
+              <div className="fr-head">
+                <span className="fr-name">{label}</span>
+                {o.streak_buy > 0
+                  ? <Badge kind="up" dot>{o.streak_buy}일 연속매수</Badge>
+                  : <span className="fr-flat">연속매수 없음</span>}
+                <span className="fr-cum">누적 <b className="num" style={{ color: `var(--${dir(o.cum_net_eok)})` }}>{forceEok(o.cum_net_eok)}</b></span>
+              </div>
+              <div className="fr-spark">
+                {(o.daily_eok || []).map((v, i) => (
+                  <i key={i} className={dir(v)} title={(flow.series_dates?.[i] || "") + " " + forceEok(v)}
+                    style={{ height: Math.max(8, (Math.abs(v || 0) / max) * 100) + "%" }} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {summary?.note && <p className="force-note">{stripEmoji(summary.note)}</p>}
+    </div>
+  );
+}
+
 function Financials({ fin, short, exh }) {
   const hasFin = fin && (fin.revenue || fin.op_margin != null);
   if (!hasFin && !short) return null;
@@ -320,6 +363,7 @@ function Modal({ seed, onClose }) {
             {det ? (
               <>
                 <InvestorFlow flow={det.investor_flow} />
+                <ForceAnalysis flow={det.force_flow} summary={det.force_summary} />
                 <Financials fin={det.financials} short={det.short} exh={det.foreign_exhaustion} />
                 <MajorHolders holders={det.major_holders} />
               </>
