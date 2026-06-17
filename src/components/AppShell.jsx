@@ -31,8 +31,10 @@ function IndexTicker() {
   const [idx, setIdx] = useState(null);
   useEffect(() => {
     let alive = true;
-    const load = () =>
+    const load = () => {
+      if (document.hidden) return; // 백그라운드 탭에선 폴링 생략(성능)
       apiGet("/api/kr-indices").then((d) => { if (alive) setIdx(d); }).catch(() => {});
+    };
     load();
     const t = setInterval(load, 30000);
     return () => { alive = false; clearInterval(t); };
@@ -59,7 +61,7 @@ function LastUpdate() {
   const [u, setU] = useState(null);
   useEffect(() => {
     let alive = true;
-    const load = () => apiGet("/api/last-update").then((d) => { if (alive) setU(d); }).catch(() => {});
+    const load = () => { if (document.hidden) return; apiGet("/api/last-update").then((d) => { if (alive) setU(d); }).catch(() => {}); };
     load();
     const t = setInterval(load, 60000);
     return () => { alive = false; clearInterval(t); };
