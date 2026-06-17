@@ -107,6 +107,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--panel);
   border-right: 1px solid var(--border-soft);
   display: flex; flex-direction: column; padding: 18px 14px; gap: 6px; z-index: 30;
+  overflow-y: auto; overscroll-behavior: contain;
 }
 .brand { display: flex; align-items: center; gap: 11px; padding: 6px 10px 16px; }
 .brand-logo {
