@@ -70,55 +70,67 @@ FN 은 정적 빌드라 **GitHub Pages 로 호스팅** 가능하다. HashRouter 
 ## 5. 구조
 ```
 src/
- api.js REST 클라이언트 (BN_BASE 결정 + apiGet/apiSend[Basic 인증])
+ api.js          REST 클라이언트 (BN_BASE 결정 + apiGet) — GET 전용·인증 없음(보안)
  lib/
- useApi.js GET 훅 (data/loading/error/reload)
- format.js 숫자·통화·등락·점수 포맷 (상승빨강/하락파랑)
+ useApi.js       GET 훅 (data/loading/error/reload)
+ useListView.js  목록 필터+페이징 훅 (10개 초과 시 컨트롤 노출)
+ myBookmarks.js  브라우저(localStorage) 북마크 (SERVER 와 별개)
+ format.js       숫자·통화·등락·점수 포맷 + stripEmoji (상승빨강/하락파랑)
  components/
- AppShell.jsx 사이드바 + 토픽바(KOSPI/KOSDAQ 티커) + 테마토글 + 라우팅
- StockCard.jsx 종목 카드(공용) — 클릭 시 상세 모달
- DetailModal.jsx 종목 상세 모달 + Context(useDetail)
- ui.jsx SectionHd·ChangePill·Score·Heat·Badge·Skeleton·Empty·Segmented
- pages/
- Discover.jsx 발굴 대시보드(국면·통계·핵심픽·가치주·반등)
- ThemesPage.jsx 테마 로테이션
- ReboundPage.jsx 반등 후보
- ValuePage.jsx 가치주
- BookmarkPage.jsx 북마크/관심종목(수익률 추적)
- EtfPage.jsx ETF 순위
- SignalsPage.jsx 신호 검증(신뢰도 게이지 + 가치팩터 랭킹)
- SchedulePage.jsx 스케쥴러(상태·로그) + MySQL 적재 패널
- theme.css 디자인 시스템 (라이트 기본/다크 토글, 그라데이션 미사용)
-index.html 무플래시 테마 인라인 스크립트(기본 라이트)
-build.mjs esbuild 번들러 (BN_BASE 주입)
+ AppShell.jsx    사이드바 + 상단바(검색·누적접속·KOSPI/KOSDAQ 티커) + 테마토글 + 라우팅
+ SearchBox.jsx   전역 종목 검색(디바운스)
+ ConnectionBanner.jsx  SERVER 다운 감지 배너
+ MyBookmarkButton.jsx  브라우저 북마크 토글 버튼
+ StockCard.jsx   종목 카드(공용) — 클릭 시 상세 모달
+ DetailModal.jsx 상세 모달(예측·가격차트·AI·투자자·세력·재무·대량보유·목표가·출처링크)
+ ui.jsx          SectionHd·ChangePill·Score·Heat·Badge·Skeleton·Empty·Segmented·ListControls
+ pages/          Discover·DailyBrief·Themes·Rebound·Flow·SectorFlow·Value·Alpha·AutoPicks·
+                 Consensus·Watchlist·Proposals·Bookmark·MyBookmarks·Etf·Signals
+ theme.css       디자인 시스템 (라이트 기본/다크 토글, 각진 룩, 그라데이션 미사용)
+index.html       무플래시 테마 인라인 스크립트(기본 라이트) + chart.js CDN
+build.mjs        esbuild 번들러 (BN_BASE 주입)
 ```
 
 ## 6. 페이지 / 기능
 | 라우트 | 내용 |
 |---|---|
-| `/` 발굴 대시보드 | 시장국면 배너 + 통계 + 핵심픽/가치주/반등 카드 |
-| `/themes` | 테마별 heat·국면·평균등락·리더 |
-| `/rebound` | 낙폭·순매수·ROE·거래량 |
-| `/value` | ROE·PER·PBR·매집 |
-| `/bookmarks` | 북마크 시점 대비 수익률·α·재무 + 별 토글/해제 |
-| `/etf` | 그룹별 ETF 랭킹 테이블 |
-| `/signals` | 신뢰도 게이지 + 가치 팩터 Z랭킹 |
-| `/schedule` | 자동분석 스케쥴러(상태·진행바·로그) + **MySQL 전체종목 적재 패널** |
+| `/` 발굴 대시보드 | 오늘의핵심(daily-brief) + 시장국면 + 통계 + 핵심픽/가치주/반등/급반등 |
+| `/brief` 데일리 브리핑 | 헤드라인·자세·카운트·핵심픽·자금흐름·우량모멘텀/역발상 |
+| `/themes` 테마 로테이션 | heat·국면·평균등락·수급·점수 (강등 안내) |
+| `/rebound` 반등 발굴 | 3탭: 반등·급반등(tier엣지)·낙폭우량 |
+| `/flow` 수급·돌파 | 거래량 돌파·수급 급증·매집 |
+| `/sectors` 섹터 자금흐름 | 테마별 순매수 유입/유출 막대 |
+| `/value` 가치주 | ROE·PER·PBR·매집 |
+| `/alpha` 알파 팩터 픽 | 알파·퀄리티·가치알파(Segmented) |
+| `/auto` 자동 픽 | 자동 발굴 엔진(점수·세력·뉴스) |
+| `/consensus` 신호 합치·주의 | 다중신호 합치·주의 종목 |
+| `/watchlist` 자동 관심종목 | 다중신호·근거·combo 티어 |
+| `/proposals` 발굴 제안 | combo·확신·목표/손절·R/R (표시 전용) |
+| `/bookmarks` 북마크 (SERVER) | 시점 대비 수익률·α·재무 (읽기 전용) |
+| `/my` 나의 북마크 | 브라우저(localStorage) 관심종목 |
+| `/etf` ETF 순위 | 그룹별 ETF 랭킹 |
+| `/signals` 신호 검증 | 신뢰도·가치랭킹·전략백테스트·점수예측·반등검증·핵심픽실측·멀티윈도우 |
+
+> 운영(스케쥴러·시스템 상태)·매매/보유주 화면은 FN 에서 비노출. 목록은 10개 초과 시 필터+페이징.
 
 ### 종목 상세 모달 (카드/행 클릭)
-- 예측 신호(매수/관망/매도) + 신뢰도, 예상 등락/가격, 종합점수
-- 긍정/부정 근거
-- **투자자 동향**: 외국인/기관/개인 순매수 막대 (`/api/stock-detail`)
-- **재무제표**: 매출·영업이익·영업이익률·부채비율·ROE·순이익·등급·신호
-- **대량보유(5%+)**: 국민연금 등 기관 보유 (DART)
-- 지표(세력·뉴스급등·거래량Z·52주거리…) + 툴팁(help 아이콘) + 북마크 별
+- 예측 신호(매수/관망/매도) + 신뢰도, 예상 등락/가격, 종합점수, 긍정/부정 근거
+- **가격 추이**(`/api/historical`, chart.js) + **AI 차트 분석**(`/api/chart-ai`)
+- **투자자 동향**(1일) + **세력 분석**(외국인/기관/개인 며칠째·누적규모·일별, `/api/force-detail`·force_flow)
+- **재무제표**·**대량보유(5%+, DART)**·**애널리스트 목표가**(`/api/targets`)
+- 각 섹션 근거 출처 링크(네이버 금융·DART·리포트 원문) + 툴팁 + 브라우저 북마크 버튼
 
-## 7. 사용 BN 엔드포인트 (전부 GET, 매매 없음)
-`/api/top-picks` `/api/value-picks` `/api/rebound` `/api/theme-rotation`
-`/api/market-regime` `/api/kr-indices` `/api/etf-rank` `/api/signal-trust`
-`/api/validation` `/api/bookmark-value` `/api/predict/{code}` `/api/stock-detail/{code}`
-`/api/schedule`·`/api/run-status`·`/api/run-log`·`/api/run-now`·`/api/bookmarks`(POST 인증)
-`/api/mysql/status`·`/api/mysql/collect`(POST 인증)
+## 7. 사용 BN 엔드포인트 (전부 GET, 매매 없음 · FN 은 읽기 전용)
+발굴/픽: `/api/top-picks` `/api/value-picks` `/api/rebound` `/api/sharp-rebound` `/api/dip-quality`
+`/api/alpha-picks` `/api/quality-picks` `/api/value-alpha` `/api/auto-picks` `/api/breakout`
+`/api/supply-surge` `/api/accumulation` `/api/sector-flow` `/api/consensus` `/api/caution`
+`/api/risk-warning` `/api/watchlist` `/api/proposals` `/api/theme-rotation` `/api/etf-rank` `/api/daily-brief`
+시장/지표: `/api/market-regime` `/api/kr-indices` `/api/stock/search`
+검증: `/api/signal-trust` `/api/validation` `/api/signal-backtest(-multi)` `/api/score-forward(-multi)`
+`/api/rebound-walkforward` `/api/rebound-calibration` `/api/rebound-accuracy` `/api/rebound-multihorizon`
+`/api/top-picks-validation` `/api/quality-validation`
+종목상세: `/api/predict/{code}` `/api/stock-detail/{code}` `/api/historical/{code}` `/api/chart-ai/{code}`
+`/api/force-detail/{code}` `/api/targets/{code}` · 북마크: `/api/bookmark-value` · 접속: `/api/visit`
 
 ## 8. 작업 요구사항 종합 (이력)
 1. BN(REST)에서 FN(UI) 분리 비동기 REST 요청/응답. **추후 git 저장소 각각 분리**(본 분리 완료).
