@@ -91,58 +91,63 @@ function TopPicks({ picks: tp }) {
 }
 
 function ValuePicks() {
-  const { data, loading } = useApi("/api/value-picks");
+  const { data, loading, error, reload } = useApi("/api/value-picks");
   const items = (data?.items || []).slice(0, 6);
   return (
     <>
       <SectionHd icon="diamond" title="가치주 발굴" count={loading ? null : items.length}
         desc="펀더멘털 · 매집 · 모멘텀" />
-      <div className="grid grid-stocks">
-        {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty /> :
-          items.map((s) => (
-            <StockCard key={s.code} s={s} score={s.pick_score}
-              metrics={[
-                { k: "ROE", v: fixed(s.roe, 1) + "%" },
-                { k: "PER", v: fixed(s.per, 1) },
-                { k: "PBR", v: fixed(s.pbr, 2) },
-              ]} />
-          ))}
-      </div>
+      {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
+        <div className="grid grid-stocks">
+          {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty /> :
+            items.map((s) => (
+              <StockCard key={s.code} s={s} score={s.pick_score}
+                metrics={[
+                  { k: "ROE", v: fixed(s.roe, 1) + "%" },
+                  { k: "PER", v: fixed(s.per, 1) },
+                  { k: "PBR", v: fixed(s.pbr, 2) },
+                ]} />
+            ))}
+        </div>
+      )}
     </>
   );
 }
 
 function ReboundMini() {
-  const { data, loading } = useApi("/api/rebound");
+  const { data, loading, error, reload } = useApi("/api/rebound");
   const items = (data?.items || []).slice(0, 6);
   return (
     <>
       <SectionHd icon="trending-up" title="반등 후보" count={loading ? null : items.length}
         desc="낙폭 과대 + 수급 유입" />
-      <div className="grid grid-stocks">
-        {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty /> :
-          items.map((s) => (
-            <StockCard key={s.code} s={s} score={s.score}
-              metrics={[
-                { k: "낙폭", v: "-" + fixed(s.drop, 0) + "%", cls: "down" },
-                { k: "순매수", v: eok(s.net_eok), cls: s.net_eok >= 0 ? "up" : "down" },
-              ]} />
-          ))}
-      </div>
+      {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
+        <div className="grid grid-stocks">
+          {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty /> :
+            items.map((s) => (
+              <StockCard key={s.code} s={s} score={s.score}
+                metrics={[
+                  { k: "낙폭", v: "-" + fixed(s.drop, 0) + "%", cls: "down" },
+                  { k: "순매수", v: eok(s.net_eok), cls: s.net_eok >= 0 ? "up" : "down" },
+                ]} />
+            ))}
+        </div>
+      )}
     </>
   );
 }
 
 function SharpReboundMini() {
-  const { data, loading } = useApi("/api/sharp-rebound");
+  const { data, loading, error, reload } = useApi("/api/sharp-rebound");
   const items = (data?.items || []).slice(0, 6);
   return (
     <>
       <SectionHd icon="rocket" title="급반등 (다음날)" count={loading ? null : items.length}
         desc="단기 급반등 신호 · 백테스트 엣지" />
-      <div className="grid grid-stocks">
-        {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty>급반등 후보 없음</Empty> :
-          items.map((s) => (
+      {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
+        <div className="grid grid-stocks">
+          {loading ? <Skeletons n={3} /> : items.length === 0 ? <Empty>급반등 후보 없음</Empty> :
+            items.map((s) => (
             <StockCard key={s.code} s={s} score={s.score}
               badge={s.tier_edge ? <Badge kind="up" dot title={s.tier_edge}>{String(s.tier_edge).split("·")[0]}</Badge> : null}
               metrics={[
@@ -151,7 +156,8 @@ function SharpReboundMini() {
                 { k: "PER", v: fixed(s.per, 1) },
               ]} />
           ))}
-      </div>
+        </div>
+      )}
     </>
   );
 }

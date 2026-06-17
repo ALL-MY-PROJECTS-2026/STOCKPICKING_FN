@@ -186,8 +186,10 @@ function ReboundValidation() {
   const acc = useApi("/api/rebound-accuracy");
   const w = wf.data || {}, c = cal.data || {}, a = acc.data || {};
   const bins = c.bins || [];
-  if (wf.loading && cal.loading && acc.loading)
+  if (wf.loading || cal.loading || acc.loading)
     return (<><SectionHd icon="discount-check" title="반등 신호 검증" /><div className="card card-pad"><Skeletons n={1} /></div></>);
+  if (wf.error && cal.error && acc.error)
+    return (<><SectionHd icon="discount-check" title="반등 신호 검증" /><ErrBox onRetry={() => { wf.reload(); cal.reload(); acc.reload(); }}>{wf.error}</ErrBox></>);
   return (
     <>
       <SectionHd icon="discount-check" title="반등 신호 검증"
