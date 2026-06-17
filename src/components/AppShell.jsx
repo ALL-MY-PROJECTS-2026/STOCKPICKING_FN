@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { apiGet } from "../api.js";
 import { pct, dir, arrow, won } from "../lib/format.js";
+import SearchBox from "./SearchBox.jsx";
 
 const NAV = [
   { sec: "발굴" },
@@ -118,6 +119,7 @@ export default function AppShell() {
             <h1>{title}</h1>
             <div className="sub">{sub}</div>
           </div>
+          <SearchBox />
           <IndexTicker />
         </header>
         <main className="content"><Outlet /></main>
