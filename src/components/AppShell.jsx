@@ -182,6 +182,7 @@ export default function AppShell() {
       </aside>
 
       <div className="main">
+        <div className="notice-strip"><i className="ti ti-info-circle" aria-hidden="true" /> 임시 공개중입니다 · 추후 인증 기능 추가 예정</div>
         <header className="topbar">
           <button className="icon-btn hamburger" onClick={() => setOpen(true)} aria-label="메뉴 열기" aria-expanded={open}><i className="ti ti-menu-2" /></button>
           <div>
