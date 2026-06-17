@@ -1,6 +1,7 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import { useListView } from "../lib/useListView.js";
 import { fixed } from "../lib/format.js";
 
 /** 자동 관심종목 — /api/watchlist (다중신호 + combo 티어 + 근거) */
@@ -8,16 +9,18 @@ export default function WatchlistPage() {
   const { data, loading, error, reload } = useApi("/api/watchlist");
   const { open } = useDetail();
   const items = data?.items || [];
+  const lv = useListView(items, { pageSize: 12 });
   return (
     <>
       <SectionHd icon="star" title="자동 관심종목" count={loading ? null : items.length}
         desc={data?.note || "다중 신호·근거 기반 자동 선별 워치리스트"}
         right={data?.adaptive != null && <span className="count-chip">{data.adaptive ? "적응형" : "고정"} 가중</span>} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-stocks"><Skeletons n={9} /></div> :
         items.length === 0 ? <Empty /> : (
           <div className="grid grid-stocks">
-            {items.map((s) => (
+            {lv.view.map((s) => (
               <div className="card scard" key={s.code} onClick={() => open(s)}>
                 <div className="scard-top">
                   <div style={{ minWidth: 0 }}>

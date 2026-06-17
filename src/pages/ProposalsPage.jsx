@@ -1,6 +1,7 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import { useListView } from "../lib/useListView.js";
 import { won, pct, fixed, stripEmoji } from "../lib/format.js";
 
 const convKind = (c) => (/(매우|상|강)/.test(c || "") ? "up" : /(하|약)/.test(c || "") ? "mut" : "warn");
@@ -10,17 +11,19 @@ export default function ProposalsPage() {
   const { data, loading, error, reload } = useApi("/api/proposals");
   const { open } = useDetail();
   const items = data?.items || [];
+  const lv = useListView(items, { pageSize: 12 });
   return (
     <>
       <SectionHd icon="bulb" title="발굴 제안" count={loading ? null : items.length}
         desc={stripEmoji(data?.horizon?.text) || "다중 신호 기반 관심 제안 (표시 전용·매매 아님)"}
         right={data?.posture?.tier && <Badge kind="mut" dot>국면 {data.posture.tier}</Badge>} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-themes"><Skeletons n={6} /></div> :
         items.length === 0 ? <Empty /> : (
           <>
             <div className="grid grid-themes">
-              {items.map((s) => {
+              {lv.view.map((s) => {
                 const z = s.zones || {};
                 return (
                   <div className="card card-pad prop-card" key={s.code} onClick={() => open(s)}>

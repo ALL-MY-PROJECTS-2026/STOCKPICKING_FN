@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge, Segmented } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, Segmented, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import { useListView } from "../lib/useListView.js";
 import { won, fixed } from "../lib/format.js";
 
 const TABS = [
@@ -35,12 +36,14 @@ export default function AlphaPage() {
   const rows = data?.top || [];
   const tab = TABS.find((t) => t.value === sel);
   const cols = COLS[sel];
+  const lv = useListView(rows, { pageSize: 12 });
 
   return (
     <>
       <SectionHd icon={tab.icon} title="알파 팩터 픽" count={loading ? null : rows.length}
         desc={tab.desc}
         right={<Segmented value={sel} onChange={setSel} options={TABS.map((t) => ({ value: t.value, label: t.label }))} />} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="card card-pad"><Skeletons n={1} /></div> :
         rows.length === 0 ? <Empty /> : (
@@ -54,9 +57,9 @@ export default function AlphaPage() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r, i) => (
+                {lv.view.map((r, i) => (
                   <tr key={r.code} onClick={() => open(r)}>
-                    <td><span className={"rank-n" + (i < 3 ? " top" : "")}>{r.rank ?? i + 1}</span></td>
+                    <td><span className={"rank-n" + ((r.rank ?? i + 1) <= 3 ? " top" : "")}>{r.rank ?? i + 1}</span></td>
                     <td>
                       <b>{r.name}</b>
                       <span className="code num" style={{ marginLeft: 8 }}>{r.code}</span>

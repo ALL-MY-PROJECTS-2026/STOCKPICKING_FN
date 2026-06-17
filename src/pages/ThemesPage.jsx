@@ -1,5 +1,6 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Heat } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Heat, ListControls } from "../components/ui.jsx";
+import { useListView } from "../lib/useListView.js";
 import { pct, dir, arrow, fixed, phaseClass, wonShort } from "../lib/format.js";
 
 function ThemeCard({ t }) {
@@ -32,6 +33,7 @@ function ThemeCard({ t }) {
 export default function ThemesPage() {
   const { data, loading, error, reload } = useApi("/api/theme-rotation");
   const themes = (data?.themes || []).slice().sort((a, b) => b.heat - a.heat);
+  const lv = useListView(themes, { pageSize: 12, keys: ["theme"] });
   return (
     <>
       <SectionHd icon="flame" title="테마 로테이션" count={loading ? null : themes.length}
@@ -42,10 +44,11 @@ export default function ThemesPage() {
           {data.degraded_from ? ` (${data.degraded_from} 기준 대체)` : ""}
         </div>
       )}
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-themes">
           {loading ? <Skeletons n={9} /> : themes.length === 0 ? <Empty /> :
-            themes.map((t) => <ThemeCard key={t.theme} t={t} />)}
+            lv.view.map((t) => <ThemeCard key={t.theme} t={t} />)}
         </div>
       )}
     </>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge, Segmented } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, Segmented, ListControls } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
+import { useListView } from "../lib/useListView.js";
 import { fixed, eok } from "../lib/format.js";
 
 const TABS = [
@@ -49,16 +50,18 @@ export default function ReboundPage() {
   const { data, loading, error, reload } = useApi(sel);
   const items = data?.items || [];
   const tab = TABS.find((t) => t.value === sel);
+  const lv = useListView(items, { pageSize: 12 });
 
   return (
     <>
       <SectionHd icon={tab.icon} title="반등 발굴" count={loading ? null : items.length}
         desc={data?.note || tab.desc}
         right={<Segmented value={sel} onChange={setSel} options={TABS.map((t) => ({ value: t.value, label: t.label }))} />} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-stocks">
           {loading ? <Skeletons n={9} /> : items.length === 0 ? <Empty /> :
-            items.map((s) => {
+            lv.view.map((s) => {
               const { badge, metrics } = decorate(sel, s);
               return <StockCard key={s.code} s={s} score={s.score} badge={badge} metrics={metrics} />;
             })}

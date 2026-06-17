@@ -1,7 +1,8 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, ChangePill, Score } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, ChangePill, Score, ListControls } from "../components/ui.jsx";
 import { fixed } from "../lib/format.js";
 import { useDetail } from "../components/DetailModal.jsx";
+import { useListView } from "../lib/useListView.js";
 
 function Group({ g }) {
   const { open } = useDetail();
@@ -35,13 +36,15 @@ function Group({ g }) {
 export default function EtfPage() {
   const { data, loading, error, reload } = useApi("/api/etf-rank");
   const groups = (data?.groups || []).slice().sort((a, b) => b.avg_score - a.avg_score);
+  const lv = useListView(groups, { pageSize: 8, keys: ["theme"] });
   return (
     <>
       <SectionHd icon="chart-candle" title="ETF 순위" count={loading ? null : groups.length}
         desc={data?.date ? `기준 ${data.date}` : "추세·자금 흐름 기준"} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid"><Skeletons n={4} cls="sk-card" /></div> :
-          groups.length === 0 ? <Empty /> : groups.map((g) => <Group key={g.theme} g={g} />)}
+          groups.length === 0 ? <Empty /> : lv.view.map((g) => <Group key={g.theme} g={g} />)}
     </>
   );
 }

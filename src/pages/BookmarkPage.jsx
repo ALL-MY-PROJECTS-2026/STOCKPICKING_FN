@@ -1,23 +1,23 @@
-import { useState } from "react";
 import { useApi } from "../lib/useApi.js";
-import { apiSend } from "../api.js";
-import { SectionHd, Skeletons, Empty, ErrBox, ChangePill, Badge } from "../components/ui.jsx";
+import { useListView } from "../lib/useListView.js";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import MyBookmarkButton from "../components/MyBookmarkButton.jsx";
 import { won, pct, dir, arrow, fixed } from "../lib/format.js";
 
-function BmCard({ c, onRemove }) {
+/** SERVER 북마크 카드 — 읽기전용(BN 쓰기 없음). 별 대신 브라우저 북마크 버튼. */
+function BmCard({ c }) {
   const { open } = useDetail();
   return (
     <div className="card scard" onClick={() => open(c)}>
       <div className="scard-top">
         <div style={{ minWidth: 0 }}>
           <div className="nm" title={c.name}>{c.name}</div>
-          <div className="code num">{c.code} · {c.market}</div>
+          <div className="code num">{c.code}{c.market ? " · " + c.market : ""}</div>
         </div>
-        <button className="icon-btn" style={{ width: 30, height: 30, fontSize: ".95rem" }}
-          title="북마크 해제" onClick={(e) => { e.stopPropagation(); onRemove(c.code); }}>
-          <i className="ti ti-star-filled" style={{ color: "var(--warn)" }} />
-        </button>
+        <div className="scard-top-right">
+          <MyBookmarkButton stock={c} />
+        </div>
       </div>
       <div className="scard-price">
         <span className="p num">{won(c.price)}</span>
@@ -41,33 +41,23 @@ function BmCard({ c, onRemove }) {
 
 export default function BookmarkPage() {
   const { data, loading, error, reload } = useApi("/api/bookmark-value");
-  const [toast, setToast] = useState(null);
   const cards = (data?.cards || []).slice().sort((a, b) => (b.ret_pct ?? -999) - (a.ret_pct ?? -999));
-
-  const flash = (m, ok = true) => { setToast({ m, ok }); setTimeout(() => setToast(null), 2400); };
-  const remove = async (code) => {
-    let pass = localStorage.getItem("fn-pass");
-    if (!pass) { pass = window.prompt("대시보드 비밀번호"); if (!pass) return; localStorage.setItem("fn-pass", pass); }
-    const r = await apiSend("/api/bookmarks", { auth: "admin:" + pass, body: { code, action: "remove" } });
-    if (r.ok) { flash("북마크 해제됨"); reload(); }
-    else { localStorage.removeItem("fn-pass"); flash("실패 — 비밀번호 확인", false); }
-  };
-
+  const lv = useListView(cards, { pageSize: 12 });
   const sm = data?.summary;
   return (
     <>
-      <SectionHd icon="star" title="북마크 / 관심종목" count={loading ? null : cards.length}
-        desc="북마크 시점 대비 수익률 추적"
+      <SectionHd icon="star" title="북마크 (SERVER)" count={loading ? null : cards.length}
+        desc="SERVER 북마크 시점 대비 수익률 추적 (읽기 전용)"
         right={sm?.avg_ret_pct != null && (
           <span className="count-chip">평균 <b className={dir(sm.avg_ret_pct)} style={{ color: `var(--${dir(sm.avg_ret_pct)})` }}>{pct(sm.avg_ret_pct)}</b></span>
         )} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-stocks">
           {loading ? <Skeletons n={8} /> : cards.length === 0 ? <Empty icon="star-off">북마크한 종목이 없습니다</Empty> :
-            cards.map((c) => <BmCard key={c.code} c={c} onRemove={remove} />)}
+            lv.view.map((c) => <BmCard key={c.code} c={c} />)}
         </div>
       )}
-      {toast && <div className="toast-wrap"><div className={"toast " + (toast.ok ? "ok" : "err")}>{toast.m}</div></div>}
     </>
   );
 }

@@ -1,19 +1,22 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
+import { useListView } from "../lib/useListView.js";
 import { fixed, wonShort } from "../lib/format.js";
 
 export default function ValuePage() {
   const { data, loading, error, reload } = useApi("/api/value-picks");
   const items = data?.items || [];
+  const lv = useListView(items, { pageSize: 12 });
   return (
     <>
       <SectionHd icon="diamond" title="가치주 발굴" count={loading ? null : items.length}
         desc={data?.note || "펀더멘털 · 매집 · 모멘텀 결합 점수"} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-stocks">
           {loading ? <Skeletons n={9} /> : items.length === 0 ? <Empty /> :
-            items.map((s) => (
+            lv.view.map((s) => (
               <StockCard key={s.code} s={s} score={s.pick_score}
                 badge={s.bookmarked ? <Badge kind="warn" dot>관심</Badge> : null}
                 metrics={[

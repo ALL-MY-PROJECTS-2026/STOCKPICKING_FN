@@ -50,6 +50,27 @@ export function Badge({ kind = "mut", dot, children }) {
   return <span className={`badge ${kind} ${dot ? "dot" : ""}`}>{children}</span>;
 }
 
+/** 목록 필터/페이징 컨트롤 — useListView 결과를 받는다. enabled(>10)일 때만 표시. */
+export function ListControls({ view }) {
+  if (!view || !view.enabled) return null;
+  const { q, setQ, page, setPage, pages, total } = view;
+  return (
+    <div className="listctl">
+      <div className="lc-search">
+        <i className="ti ti-search" aria-hidden="true" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="이름·코드·테마 필터" aria-label="목록 필터" />
+        {q && <button className="lc-clear" onClick={() => setQ("")} aria-label="지우기"><i className="ti ti-x" /></button>}
+      </div>
+      <div className="lc-pager">
+        <span className="lc-total num">{total}개</span>
+        <button className="btn" disabled={page <= 0} onClick={() => setPage(page - 1)} aria-label="이전"><i className="ti ti-chevron-left" /></button>
+        <span className="num lc-page">{page + 1}/{pages}</span>
+        <button className="btn" disabled={page >= pages - 1} onClick={() => setPage(page + 1)} aria-label="다음"><i className="ti ti-chevron-right" /></button>
+      </div>
+    </div>
+  );
+}
+
 export function Segmented({ value, onChange, options }) {
   return (
     <div className="seg">

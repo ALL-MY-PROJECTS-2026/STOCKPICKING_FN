@@ -150,6 +150,18 @@ a { color: inherit; text-decoration: none; }
 .prop-zones em { font-size: .64rem; font-style: normal; font-weight: 600; }
 @media (max-width: 460px) { .prop-zones { grid-template-columns: repeat(2, 1fr); } }
 
+/* 목록 필터/페이징 컨트롤 */
+.listctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 2px 12px; }
+.lc-search { position: relative; display: flex; align-items: center; gap: 7px; flex: 1; min-width: 180px;
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r-sm); padding: 7px 11px; }
+.lc-search > i { color: var(--muted); font-size: 1rem; flex: none; }
+.lc-search input { border: 0; background: transparent; color: var(--text); font-size: .82rem; outline: none; width: 100%; font-family: inherit; }
+.lc-clear { border: 0; background: transparent; color: var(--faint); cursor: pointer; padding: 0 2px; font-size: .9rem; }
+.lc-pager { display: flex; align-items: center; gap: 8px; flex: none; }
+.lc-total { font-size: .72rem; color: var(--muted); }
+.lc-page { font-size: .78rem; font-weight: 700; min-width: 42px; text-align: center; }
+.lc-pager .btn { padding: 6px 9px; }
+
 /* 세력 분석 (모달) */
 .force-rows { display: flex; flex-direction: column; gap: 12px; }
 .force-row { display: flex; flex-direction: column; gap: 5px; }

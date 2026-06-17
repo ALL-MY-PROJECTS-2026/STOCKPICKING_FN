@@ -1,7 +1,8 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import { useListView } from "../lib/useListView.js";
 import { fixed } from "../lib/format.js";
 
 /** 다중 신호 합치 — /api/consensus (여러 발굴 신호가 겹친 고신뢰 종목) */
@@ -9,17 +10,19 @@ function ConsensusSection() {
   const { data, loading, error, reload } = useApi("/api/consensus");
   const { open } = useDetail();
   const items = data?.consensus || [];
+  const lv = useListView(items, { pageSize: 12 });
   return (
     <>
       <SectionHd icon="layers-intersect" title="다중 신호 합치" count={loading ? null : items.length}
         desc={data?.note || "여러 발굴 신호가 동시에 겹친 고신뢰 종목"}
         right={data?.pool && typeof data.pool === "object" &&
           <span className="count-chip">신호 {Object.keys(data.pool).length}종</span>} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-stocks"><Skeletons n={6} /></div> :
         items.length === 0 ? <Empty /> : (
           <div className="grid grid-stocks">
-            {items.map((s) => (
+            {lv.view.map((s) => (
               <div className="card scard" key={s.code} onClick={() => open(s)}>
                 <div className="scard-top">
                   <div style={{ minWidth: 0 }}>
@@ -44,16 +47,18 @@ function ConsensusSection() {
 function CautionSection() {
   const { data, loading, error, reload } = useApi("/api/caution");
   const items = data?.items || [];
+  const lv = useListView(items, { pageSize: 12 });
   return (
     <>
       <SectionHd icon="alert-triangle" title="주의 종목" count={loading ? null : items.length}
         desc={data?.note || "급등·과열 등 리스크 높은 종목 (추격 주의)"}
         right={data?.date && <span className="count-chip">기준 {data.date}</span>} />
+      <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-stocks"><Skeletons n={6} /></div> :
         items.length === 0 ? <Empty /> : (
           <div className="grid grid-stocks">
-            {items.map((s) => (
+            {lv.view.map((s) => (
               <StockCard key={s.code} s={s}
                 badge={<Badge kind="warn" dot>위험 {fixed(s.risk, 0)}</Badge>}
                 metrics={[
