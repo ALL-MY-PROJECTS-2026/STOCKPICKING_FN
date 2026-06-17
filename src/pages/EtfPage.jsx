@@ -7,7 +7,7 @@ import { useListView } from "../lib/useListView.js";
 function Group({ g }) {
   const { open } = useDetail();
   return (
-    <div className="card" style={{ overflow: "hidden", marginBottom: 16 }}>
+    <div className="card" style={{ overflowX: "auto", marginBottom: 16 }}>
       <div className="card-pad" style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 12 }}>
         <div className="nm" style={{ fontWeight: 800, fontSize: ".98rem" }}>{g.theme}</div>
         <span className="count-chip">{g.count}</span>

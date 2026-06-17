@@ -85,7 +85,7 @@ function AccumulationSection() {
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="card card-pad"><Skeletons n={1} /></div> :
         items.length === 0 ? <Empty /> : (
-          <div className="card">
+          <div className="card" style={{ overflowX: "auto" }}>
             <table className="tbl">
               <thead>
                 <tr>

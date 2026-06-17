@@ -171,6 +171,11 @@ a { color: inherit; text-decoration: none; }
 .lc-page { font-size: .78rem; font-weight: 700; min-width: 42px; text-align: center; }
 .lc-pager .btn { padding: 6px 9px; }
 
+/* 모바일: 일반 표는 가로 스크롤로(찌그러짐 방지). 래퍼 .card 는 overflow-x:auto. */
+@media (max-width: 560px) {
+  .tbl:not(.tbl-targets) { min-width: 420px; }
+}
+
 /* 애널리스트 목표가 표 — 모바일 카드 스택 (찌그러짐 방지) */
 .tbl-targets .tg-title { font-size: .7rem; color: var(--faint); }
 @media (max-width: 560px) {
@@ -242,8 +247,9 @@ a { color: inherit; text-decoration: none; }
 
 /* 연결상태 배너 */
 .conn-banner { display: flex; align-items: center; gap: 10px; margin: 14px 26px 0;
-  padding: 10px 14px; background: var(--up-dim); border: 1px solid var(--up); color: var(--up);
+  padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--warn); color: var(--warn);
   font-size: .82rem; font-weight: 600; border-radius: var(--r-sm); }
+.conn-banner .cb-msg { color: var(--text); }
 .conn-banner .cb-msg { flex: none; }
 .conn-banner .cb-url { font-family: var(--mono); font-size: .72rem; color: var(--muted);
   background: var(--surface-2); padding: 2px 7px; overflow: hidden; text-overflow: ellipsis;

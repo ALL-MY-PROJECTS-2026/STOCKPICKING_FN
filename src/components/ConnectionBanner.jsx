@@ -27,8 +27,8 @@ export default function ConnectionBanner() {
   if (!checked || !down) return null;
   return (
     <div className="conn-banner" role="alert">
-      <i className="ti ti-plug-connected-x" aria-hidden="true" />
-      <span className="cb-msg">백엔드(SERVER)에 연결할 수 없습니다 — 데이터가 표시되지 않습니다.</span>
+      <i className="ti ti-loader" aria-hidden="true" />
+      <span className="cb-msg">잠시 서버 업데이트 중이라 연결이 지연되고 있어요 — 잠시만 기다려 주세요. 복구되면 자동으로 표시됩니다.</span>
       <button className="btn" onClick={() => location.reload()}>새로고침</button>
     </div>
   );
