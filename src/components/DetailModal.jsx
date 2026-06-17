@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { apiGet } from "../api.js";
 import { won, pct, dir, arrow, fixed, wonShort, stripEmoji } from "../lib/format.js";
 import { ChangePill, Badge } from "./ui.jsx";
@@ -105,6 +105,61 @@ function Financials({ fin, short, exh }) {
   );
 }
 
+/** 가격 차트 — /api/historical (chart.js 전역 window.Chart, 상승빨강/하락파랑) */
+function PriceChart({ bars }) {
+  const ref = useRef(null);
+  const chartRef = useRef(null);
+  useEffect(() => {
+    if (!ref.current || !window.Chart || !Array.isArray(bars) || bars.length < 2) return;
+    const css = getComputedStyle(document.documentElement);
+    const up = bars[bars.length - 1].close >= bars[0].close;
+    const col = (up ? css.getPropertyValue("--up") : css.getPropertyValue("--down")).trim() || "#888";
+    const grid = css.getPropertyValue("--border-soft").trim() || "#eee";
+    const muted = css.getPropertyValue("--muted").trim() || "#888";
+    chartRef.current = new window.Chart(ref.current, {
+      type: "line",
+      data: {
+        labels: bars.map((b) => b.date),
+        datasets: [{ data: bars.map((b) => b.close), borderColor: col, borderWidth: 1.5,
+          pointRadius: 0, pointHoverRadius: 3, fill: false, tension: 0.12 }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (c) => Number(c.parsed.y).toLocaleString("ko-KR") + "원" } },
+        },
+        scales: {
+          x: { ticks: { maxTicksLimit: 5, color: muted, font: { size: 10 } }, grid: { display: false } },
+          y: { position: "right", ticks: { maxTicksLimit: 5, color: muted, font: { size: 10 },
+            callback: (v) => (v >= 1e4 ? (v / 1e4).toFixed(0) + "만" : v) }, grid: { color: grid } },
+        },
+      },
+    });
+    return () => { chartRef.current && chartRef.current.destroy(); };
+  }, [bars]);
+  return <div style={{ height: 180 }}><canvas ref={ref} /></div>;
+}
+
+/** AI 차트 분석 — /api/chart-ai */
+function ChartAI({ ai }) {
+  if (!ai || (!ai.opinion && !ai.reasoning)) return null;
+  const k = ai.opinion === "매수" ? "up" : ai.opinion === "매도" ? "down" : "mut";
+  return (
+    <div className="sect">
+      <div className="sect-hd"><i className="ti ti-robot" />AI 차트 분석
+        {ai.opinion && <span style={{ marginLeft: 6 }}><Badge kind={k} dot>{ai.opinion}</Badge></span>}
+        {ai.confidence != null && <span className="sect-sub">신뢰도 {ai.confidence}%</span>}</div>
+      {Array.isArray(ai.patterns) && ai.patterns.length > 0 && (
+        <div className="sig-chips">{ai.patterns.map((p, i) => <span className="sig-chip" key={i}>{stripEmoji(p)}</span>)}</div>
+      )}
+      {ai.reasoning && <p style={{ margin: 0, fontSize: ".8rem", color: "var(--muted)", lineHeight: 1.5 }}>{stripEmoji(ai.reasoning)}</p>}
+      {ai.analyzed_at && <span className="sect-sub" style={{ marginLeft: 0 }}>분석 {ai.analyzed_at}</span>}
+    </div>
+  );
+}
+
 function MajorHolders({ holders }) {
   if (!holders || holders.length === 0) return null;
   return (
@@ -126,18 +181,26 @@ function MajorHolders({ holders }) {
 function Modal({ seed, onClose }) {
   const [d, setD] = useState(null);          // /api/predict
   const [det, setDet] = useState(null);      // /api/stock-detail
+  const [hist, setHist] = useState(null);    // /api/historical
+  const [ai, setAi] = useState(null);        // /api/chart-ai
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let alive = true;
-    setLoading(true); setError(null); setDet(null);
+    setLoading(true); setError(null); setDet(null); setHist(null); setAi(null);
     apiGet("/api/predict/" + seed.code)
       .then((r) => alive && setD(r))
       .catch((e) => alive && setError(e.message))
       .finally(() => alive && setLoading(false));
     apiGet("/api/stock-detail/" + seed.code)
       .then((r) => alive && setDet(r))
+      .catch(() => { });
+    apiGet("/api/historical/" + seed.code)
+      .then((r) => alive && setHist(r))
+      .catch(() => { });
+    apiGet("/api/chart-ai/" + seed.code)
+      .then((r) => alive && setAi(r))
       .catch(() => { });
     return () => { alive = false; };
   }, [seed.code]);
@@ -198,6 +261,15 @@ function Modal({ seed, onClose }) {
               <div className="est"><span className="k">예상 가격</span><b className="num">{won(d.estimated_price)}</b></div>
               <div className="est"><span className="k">종합 점수</span><b className="num">{fixed(feats.score ?? d.score_raw, 1)}</b></div>
             </div>
+
+            {Array.isArray(hist?.bars) && hist.bars.length > 1 && (
+              <div className="sect">
+                <div className="sect-hd"><i className="ti ti-chart-line" />가격 추이
+                  <span className="sect-sub">최근 {hist.bars.length}일{hist.source ? " · " + hist.source : ""}</span></div>
+                <PriceChart bars={hist.bars} />
+              </div>
+            )}
+            <ChartAI ai={ai} />
 
             <div className="reasons">
               {(d.reasons_pos || []).length > 0 && (
