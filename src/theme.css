@@ -381,7 +381,8 @@ a { color: inherit; text-decoration: none; }
 
 /* badges / chips */
 .badge { display: inline-flex; align-items: center; gap: 5px; font-size: .68rem; font-weight: 700;
-  padding: 3px 9px; border-radius: var(--pill); }
+  padding: 3px 9px; border-radius: var(--pill); white-space: nowrap; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis; flex: none; }
 .badge.ok   { background: #2bd57620; color: var(--ok); }
 .badge.warn { background: #f5b14a20; color: var(--warn); }
 .badge.up   { background: var(--up-dim); color: var(--up); }

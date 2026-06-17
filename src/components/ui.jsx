@@ -46,8 +46,8 @@ export function ErrBox({ children, onRetry }) {
   );
 }
 
-export function Badge({ kind = "mut", dot, children }) {
-  return <span className={`badge ${kind} ${dot ? "dot" : ""}`}>{children}</span>;
+export function Badge({ kind = "mut", dot, children, title }) {
+  return <span className={`badge ${kind} ${dot ? "dot" : ""}`} title={title}>{children}</span>;
 }
 
 /** 목록 필터/페이징 컨트롤 — useListView 결과를 받는다. enabled(>10)일 때만 표시. */

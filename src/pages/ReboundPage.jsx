@@ -25,7 +25,7 @@ function decorate(sel, s) {
     };
   if (sel === "/api/sharp-rebound")
     return {
-      badge: s.tier_edge ? <Badge kind="up" dot>{s.tier_edge}</Badge> : s.held ? <Badge kind="ok" dot>보유</Badge> : null,
+      badge: s.tier_edge ? <Badge kind="up" dot title={s.tier_edge}>{String(s.tier_edge).split("·")[0]}</Badge> : s.held ? <Badge kind="ok" dot>보유</Badge> : null,
       metrics: [
         { k: "낙폭", v: "-" + fixed(s.drop, 0) + "%", cls: "down" },
         { k: "순매수", v: eok(s.net_eok), cls: s.net_eok >= 0 ? "up" : "down" },
