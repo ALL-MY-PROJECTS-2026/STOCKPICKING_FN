@@ -122,6 +122,7 @@ export default function AppShell() {
             <div className="nav-sec" key={"s" + i}>{n.sec}</div>
           ) : (
             <NavLink key={n.to} to={n.to} end={n.end}
+              title={(TITLES[n.to] && TITLES[n.to][1]) || n.label}
               className={({ isActive }) => "nav-item" + (isActive ? " active" : "")}>
               <i className={"ti ti-" + n.icon} />{n.label}
             </NavLink>

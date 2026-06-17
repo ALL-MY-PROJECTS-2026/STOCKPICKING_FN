@@ -29,7 +29,6 @@ export default function ConnectionBanner() {
     <div className="conn-banner" role="alert">
       <i className="ti ti-plug-connected-x" aria-hidden="true" />
       <span className="cb-msg">백엔드(BN)에 연결할 수 없습니다 — 데이터가 표시되지 않습니다.</span>
-      <code className="cb-url">{BN_BASE}</code>
       <button className="btn" onClick={() => location.reload()}>새로고침</button>
     </div>
   );
