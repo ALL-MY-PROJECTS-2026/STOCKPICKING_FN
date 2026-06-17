@@ -31,3 +31,7 @@ public/static/
 *.njsproj
 *.sln
 *.sw?
+
+# 내부 기술문서는 private repo(STOCKPICKING_FN_DOCS)에만 보관
+명령프롬프트.md
+작업보고.md
