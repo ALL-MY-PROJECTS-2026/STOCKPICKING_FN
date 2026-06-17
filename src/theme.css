@@ -171,6 +171,20 @@ a { color: inherit; text-decoration: none; }
 .lc-page { font-size: .78rem; font-weight: 700; min-width: 42px; text-align: center; }
 .lc-pager .btn { padding: 6px 9px; }
 
+/* 애널리스트 목표가 표 — 모바일 카드 스택 (찌그러짐 방지) */
+.tbl-targets .tg-title { font-size: .7rem; color: var(--faint); }
+@media (max-width: 560px) {
+  .tbl-targets thead { display: none; }
+  .tbl-targets, .tbl-targets tbody, .tbl-targets tr, .tbl-targets td { display: block; width: 100%; }
+  .tbl-targets tr { padding: 8px 0; border-bottom: 1px solid var(--border-soft); }
+  .tbl-targets tr:last-child { border-bottom: 0; }
+  .tbl-targets td { border: 0; padding: 3px 12px; text-align: left !important;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .tbl-targets td[data-label]::before { content: attr(data-label); color: var(--muted);
+    font-size: .72rem; font-weight: 600; flex: none; }
+  .tbl-targets td:first-child { display: block; font-weight: 700; padding-top: 6px; }
+}
+
 /* 근거 출처 링크 (모달) */
 .src-link { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px;
   font-size: .68rem; font-weight: 600; color: var(--primary); white-space: nowrap; }

@@ -229,7 +229,7 @@ function Targets({ list, price }) {
       <div className="sect-hd"><i className="ti ti-target-arrow" />애널리스트 목표가
         <span className="sect-sub">{list.length}건</span></div>
       <div className="card" style={{ overflowX: "auto" }}>
-        <table className="tbl">
+        <table className="tbl tbl-targets">
           <thead><tr><th>증권사</th><th>의견</th><th className="r">목표가</th><th className="r">상승여력</th><th className="r">일자</th></tr></thead>
           <tbody>
             {list.slice(0, 8).map((t, i) => {
@@ -242,12 +242,12 @@ function Targets({ list, price }) {
                     {t.link
                       ? <a className="src-inline" href={t.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}><b>{stripEmoji(t.firm)}</b><i className="ti ti-external-link" /></a>
                       : <b>{stripEmoji(t.firm)}</b>}
-                    {t.title && <div style={{ fontSize: ".7rem", color: "var(--faint)" }}>{stripEmoji(t.title)}</div>}
+                    {t.title && <div className="tg-title">{stripEmoji(t.title)}</div>}
                   </td>
-                  <td>{t.opinion ? <Badge kind={ok ? "up" : bad ? "down" : "mut"}>{t.opinion}</Badge> : "-"}</td>
-                  <td className="r num">{t.target ? won(t.target) : "-"}</td>
-                  <td className="r num" style={up != null ? { color: `var(--${dir(up)})` } : null}>{up != null ? pct(up, 1) : "-"}</td>
-                  <td className="r num" style={{ color: "var(--faint)" }}>{t.date}</td>
+                  <td data-label="의견">{t.opinion ? <Badge kind={ok ? "up" : bad ? "down" : "mut"}>{t.opinion}</Badge> : "-"}</td>
+                  <td className="r num" data-label="목표가">{t.target ? won(t.target) : "-"}</td>
+                  <td className="r num" data-label="상승여력" style={up != null ? { color: `var(--${dir(up)})` } : null}>{up != null ? pct(up, 1) : "-"}</td>
+                  <td className="r num" data-label="일자" style={{ color: "var(--faint)" }}>{t.date}</td>
                 </tr>
               );
             })}
