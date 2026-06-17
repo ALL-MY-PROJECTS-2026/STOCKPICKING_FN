@@ -135,6 +135,17 @@ a { color: inherit; text-decoration: none; }
 .topbar .sub { font-size: .72rem; color: var(--muted); }
 .tick-row { display: flex; gap: 10px; margin-left: 12px; align-items: center; }
 
+/* 연결상태 배너 */
+.conn-banner { display: flex; align-items: center; gap: 10px; margin: 14px 26px 0;
+  padding: 10px 14px; background: var(--up-dim); border: 1px solid var(--up); color: var(--up);
+  font-size: .82rem; font-weight: 600; }
+.conn-banner .cb-msg { flex: none; }
+.conn-banner .cb-url { font-family: var(--mono); font-size: .72rem; color: var(--muted);
+  background: var(--surface-2); padding: 2px 7px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; min-width: 0; }
+.conn-banner .btn { margin-left: auto; flex: none; }
+@media (max-width: 940px) { .conn-banner { margin: 12px 14px 0; flex-wrap: wrap; } .conn-banner .cb-url { order: 3; flex: 1 1 100%; } }
+
 /* 전역 검색 */
 .search { position: relative; margin-left: auto; display: flex; align-items: center; gap: 7px;
   background: var(--surface); border: 1px solid var(--border-soft); padding: 7px 11px; min-width: 230px; }

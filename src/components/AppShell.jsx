@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { apiGet } from "../api.js";
 import { pct, dir, arrow, won } from "../lib/format.js";
 import SearchBox from "./SearchBox.jsx";
+import ConnectionBanner from "./ConnectionBanner.jsx";
 
 const NAV = [
   { sec: "발굴" },
@@ -124,6 +125,7 @@ export default function AppShell() {
           <SearchBox />
           <IndexTicker />
         </header>
+        <ConnectionBanner />
         <main className="content"><Outlet /></main>
       </div>
     </div>
