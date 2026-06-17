@@ -76,18 +76,24 @@ function LastUpdate() {
 function VisitorCount() {
   const [n, setN] = useState(null);
   useEffect(() => {
-    const cached = sessionStorage.getItem("fn-visits");
-    if (cached) { setN(Number(cached)); return; }
     let alive = true;
-    fetch("https://api.counterapi.dev/v1/stockpicking-fn/visits/up")
-      .then((r) => r.json())
-      .then((d) => { if (alive && d && d.count != null) { setN(d.count); sessionStorage.setItem("fn-visits", String(d.count)); } })
+    const cached = sessionStorage.getItem("fn-visits");
+    if (sessionStorage.getItem("fn-visited") && cached) { setN(Number(cached)); return; }
+    // BN 에 접속 1회 기록(서버가 CF-IP 로 위치 로깅) + 누적 카운트 수신. 실패해도 조용히.
+    apiGet("/api/visit")
+      .then((d) => {
+        if (alive && d && d.count != null) {
+          setN(d.count);
+          sessionStorage.setItem("fn-visited", "1");
+          sessionStorage.setItem("fn-visits", String(d.count));
+        }
+      })
       .catch(() => {});
     return () => { alive = false; };
   }, []);
   if (n == null) return null;
   return (
-    <div className="topstat" title="누적 접속 수 (이 사이트 방문 합계)">
+    <div className="topstat" title="누적 접속 수 (SERVER 기록)">
       <i className="ti ti-users" aria-hidden="true" />
       <b className="num">{n.toLocaleString("ko-KR")}</b><span>누적 접속</span>
     </div>
