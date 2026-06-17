@@ -210,6 +210,16 @@ a { color: inherit; text-decoration: none; }
 .heat > i { display: block; height: 100%; border-radius: 2px;
   background: var(--primary); }
 
+/* daily brief (브리핑 페이지) */
+.brief-hero { display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--primary); }
+.brief-hero .bh-line { font-size: 1.04rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.45; }
+.brief-hero .bh-action { display: flex; align-items: flex-start; gap: 9px; font-size: .82rem; color: var(--muted); line-height: 1.5; }
+.brief-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.brief-flow-card .bf-theme { font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 4px; }
+.brief-flow-card .bf-meta { font-size: .74rem; color: var(--muted); }
+.brief-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
+@media (max-width: 760px) { .brief-flow, .brief-lists { grid-template-columns: 1fr; } }
+
 /* sector flow (자금흐름 페이지) */
 .secflow-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .secflow { display: flex; flex-direction: column; }

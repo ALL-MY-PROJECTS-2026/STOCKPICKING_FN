@@ -6,6 +6,7 @@ import { pct, dir, arrow, won } from "../lib/format.js";
 const NAV = [
   { sec: "발굴" },
   { to: "/", icon: "sparkles", label: "발굴 대시보드", end: true },
+  { to: "/brief", icon: "news", label: "데일리 브리핑" },
   { to: "/themes", icon: "flame", label: "테마 로테이션" },
   { to: "/rebound", icon: "trending-up", label: "반등 후보" },
   { to: "/flow", icon: "wave-sine", label: "수급·돌파" },
@@ -49,6 +50,7 @@ function IndexTicker() {
 
 const TITLES = {
   "/": ["발굴 대시보드", "오늘의 시장 국면 · 주도 테마 · 핵심 종목"],
+  "/brief": ["데일리 브리핑", "11개 발굴 위젯 한 줄 종합"],
   "/themes": ["테마 로테이션", "테마별 자금·열기·국면 흐름"],
   "/rebound": ["반등 후보", "낙폭 과대 + 수급 유입 종목"],
   "/flow": ["수급 · 돌파", "거래량 돌파 · 순매수 급증 · 매집"],
