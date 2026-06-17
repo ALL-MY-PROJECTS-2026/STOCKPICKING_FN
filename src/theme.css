@@ -210,6 +210,18 @@ a { color: inherit; text-decoration: none; }
 .heat > i { display: block; height: 100%; border-radius: 2px;
   background: var(--primary); }
 
+/* sector flow (자금흐름 페이지) */
+.secflow-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.secflow { display: flex; flex-direction: column; }
+.secrow { display: grid; grid-template-columns: 104px 1fr 78px; align-items: center; gap: 11px;
+  padding: 7px 0; border-bottom: 1px solid var(--border-soft); }
+.secrow:last-child { border-bottom: 0; }
+.secrow .nm { font-size: .8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.secrow .track { height: 8px; background: var(--surface-2); overflow: hidden; display: flex; }
+.secrow .track > i { display: block; height: 100%; min-width: 2px; transition: width .3s; }
+.secrow .val { text-align: right; font-size: .8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) { .secflow-cols { grid-template-columns: 1fr; } }
+
 /* badges / chips */
 .badge { display: inline-flex; align-items: center; gap: 5px; font-size: .68rem; font-weight: 700;
   padding: 3px 9px; border-radius: var(--pill); }
