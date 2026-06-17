@@ -212,7 +212,10 @@ a { color: inherit; text-decoration: none; }
   padding: 6px 11px; background: var(--surface); border: 1px solid var(--border-soft);
   border-radius: var(--r-sm); font-size: .68rem; color: var(--muted); }
 .topstat i { font-size: .9rem; align-self: center; color: var(--muted); }
-.topstat b { font-size: .84rem; color: var(--text); }
+.topstat b { font-size: .82rem; color: var(--text); }
+.topstat .ts-seg { display: inline-flex; align-items: baseline; gap: 3px; padding-left: 8px; border-left: 1px solid var(--border-soft); }
+.topstat .ts-seg:first-of-type { padding-left: 0; border-left: 0; }
+@media (max-width: 880px) { .topstat .ts-seg:nth-child(3), .topstat .ts-seg:nth-child(4) { display: none; } } /* 좁으면 오늘·누적만 (주·월 숨김) */
 @media (max-width: 640px) { .topstat { display: none; } }
 
 /* 사이드바 SERVER 마지막 업데이트 */

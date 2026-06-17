@@ -75,28 +75,36 @@ function LastUpdate() {
 }
 
 function VisitorCount() {
-  const [n, setN] = useState(null);
+  const [c, setC] = useState(null);
   useEffect(() => {
     let alive = true;
-    const cached = sessionStorage.getItem("fn-visits");
-    if (sessionStorage.getItem("fn-visited") && cached) { setN(Number(cached)); return; }
-    // BN 에 접속 1회 기록(서버가 CF-IP 로 위치 로깅) + 누적 카운트 수신. 실패해도 조용히.
+    const apply = (counts) => {
+      const v = counts && counts.total != null ? counts : (counts != null ? { total: counts } : null);
+      if (v) setC(v);
+    };
+    const cached = sessionStorage.getItem("fn-visit-counts");
+    if (sessionStorage.getItem("fn-visited") && cached) { try { apply(JSON.parse(cached)); } catch {} return; }
+    // BN 에 접속 1회 기록(서버가 CF-IP 로 위치 로깅) + 기간별 카운트 수신. 실패해도 조용히.
     apiGet("/api/visit")
       .then((d) => {
-        if (alive && d && d.count != null) {
-          setN(d.count);
-          sessionStorage.setItem("fn-visited", "1");
-          sessionStorage.setItem("fn-visits", String(d.count));
-        }
+        if (!alive || !d) return;
+        const counts = d.counts || { total: d.count };
+        apply(counts);
+        sessionStorage.setItem("fn-visited", "1");
+        sessionStorage.setItem("fn-visit-counts", JSON.stringify(counts));
       })
       .catch(() => {});
     return () => { alive = false; };
   }, []);
-  if (n == null) return null;
+  if (!c) return null;
+  const fmt = (v) => (v == null ? "-" : Number(v).toLocaleString("ko-KR"));
+  const uip = c.unique_ip;
+  const segs = [["오늘", c.today], ["주", c.week], ["월", c.month], ["누적", c.total]].filter(([, v]) => v != null);
+  const tip = "접속 통계 (SERVER 기록)" + (uip ? ` · 고유IP 오늘 ${uip.today}/누적 ${uip.total}` : "");
   return (
-    <div className="topstat" title="누적 접속 수 (SERVER 기록)">
+    <div className="topstat" title={tip} aria-label={tip}>
       <i className="ti ti-users" aria-hidden="true" />
-      <b className="num">{n.toLocaleString("ko-KR")}</b><span>누적 접속</span>
+      {segs.map(([k, v]) => (<span className="ts-seg" key={k}>{k} <b className="num">{fmt(v)}</b></span>))}
     </div>
   );
 }
