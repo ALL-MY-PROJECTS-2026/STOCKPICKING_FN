@@ -1,7 +1,19 @@
 # STOCKPICKING_FN — 국내주식 발굴 대시보드 (Frontend) · 작업지시서
 
 > **React 19 + Vite/esbuild** 단일 페이지 앱. 백엔드(BN, FastAPI REST)를 **HTTP(JSON)로만** 호출하는 **완전 독립** 프론트엔드. BN과 별도 저장소로 운영된다.
-> BN 저장소: `STOCKPICKING_BN`
+> BN 저장소: [`STOCKPICKING_BN`](https://github.com/ALL-MY-PROJECTS-2026/STOCKPICKING_BN)
+
+---
+
+## 📚 프로젝트 문서 (클릭하면 이동)
+
+| 문서 | 내용 |
+|---|---|
+| 📖 [README](README.md) | 본 문서 — 프로젝트 개요 · 실행 · 구조 · 페이지/엔드포인트 |
+| 📝 [명령프롬프트](명령프롬프트.md) | UI 전면개선 **루프 작업 기준 문서** (매 루프 이 문서 기준으로 진행) |
+| ✅ [작업보고](작업보고.md) | 작업 **완료 체크리스트 / 진행 로그** |
+
+🌐 **라이브 사이트**: https://all-my-projects-2026.github.io/STOCKPICKING_FN/
 
 ---
 
