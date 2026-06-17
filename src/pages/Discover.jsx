@@ -17,8 +17,8 @@ function BriefStrip() {
   );
 }
 
-function RegimeBanner() {
-  const { data, loading, error } = useApi("/api/market-regime");
+function RegimeBanner({ regime }) {
+  const { data, loading, error } = regime;
   if (loading) return <div className="sk" style={{ height: 112, borderRadius: "var(--r)" }} />;
   if (error || !data) return null;
   const colorMap = { 위험: "var(--up)", 경계: "var(--warn)", 중립: "var(--muted)", 양호: "var(--ok)", 강세: "var(--ok)" };
@@ -44,9 +44,9 @@ function RegimeBanner() {
   );
 }
 
-function StatRow() {
-  const { data } = useApi("/api/market-regime");
-  const tp = useApi("/api/top-picks");
+function StatRow({ regime, picks }) {
+  const { data } = regime;
+  const tp = picks;
   const stats = [
     { k: "추세 평균", v: data ? fixed(data.trend_avg, 1) + "%" : "-", icon: "trending-up" },
     { k: "시장 폭(breadth)", v: data ? fixed(data.breadth, 0) + "%" : "-", icon: "arrows-split" },
@@ -65,8 +65,8 @@ function StatRow() {
   );
 }
 
-function TopPicks() {
-  const { data, loading, error, reload } = useApi("/api/top-picks");
+function TopPicks({ picks: tp }) {
+  const { data, loading, error, reload } = tp;
   const picks = data?.picks || [];
   return (
     <>
@@ -157,13 +157,15 @@ function SharpReboundMini() {
 }
 
 export default function Discover() {
+  const regime = useApi("/api/market-regime");
+  const picks = useApi("/api/top-picks");
   return (
     <>
       <BriefStrip />
-      <RegimeBanner />
+      <RegimeBanner regime={regime} />
       <div style={{ height: 14 }} />
-      <StatRow />
-      <TopPicks />
+      <StatRow regime={regime} picks={picks} />
+      <TopPicks picks={picks} />
       <ValuePicks />
       <ReboundMini />
       <SharpReboundMini />
