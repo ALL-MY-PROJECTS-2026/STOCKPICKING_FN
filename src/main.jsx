@@ -12,6 +12,7 @@ import FlowPage from "./pages/FlowPage.jsx";
 import SectorFlowPage from "./pages/SectorFlowPage.jsx";
 import ValuePage from "./pages/ValuePage.jsx";
 import AlphaPage from "./pages/AlphaPage.jsx";
+import AutoPicksPage from "./pages/AutoPicksPage.jsx";
 import ConsensusPage from "./pages/ConsensusPage.jsx";
 import WatchlistPage from "./pages/WatchlistPage.jsx";
 import ProposalsPage from "./pages/ProposalsPage.jsx";
@@ -34,6 +35,7 @@ const router = createHashRouter([
       { path: "sectors", element: <SectorFlowPage /> },
       { path: "value", element: <ValuePage /> },
       { path: "alpha", element: <AlphaPage /> },
+      { path: "auto", element: <AutoPicksPage /> },
       { path: "consensus", element: <ConsensusPage /> },
       { path: "watchlist", element: <WatchlistPage /> },
       { path: "proposals", element: <ProposalsPage /> },
