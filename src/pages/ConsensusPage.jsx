@@ -13,7 +13,8 @@ function ConsensusSection() {
     <>
       <SectionHd icon="layers-intersect" title="다중 신호 합치" count={loading ? null : items.length}
         desc={data?.note || "여러 발굴 신호가 동시에 겹친 고신뢰 종목"}
-        right={data?.pool && <span className="count-chip">풀 {data.pool}</span>} />
+        right={data?.pool && typeof data.pool === "object" &&
+          <span className="count-chip">신호 {Object.keys(data.pool).length}종</span>} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-stocks"><Skeletons n={6} /></div> :
         items.length === 0 ? <Empty /> : (
