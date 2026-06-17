@@ -238,6 +238,88 @@ function ReboundValidation() {
   );
 }
 
+/** 핵심픽 실측 — /api/top-picks-validation */
+function TopPicksValidation() {
+  const { data, loading } = useApi("/api/top-picks-validation");
+  if (loading || !data || data.enabled === false) return null;
+  const ps = data.phase_stats || [];
+  return (
+    <>
+      <SectionHd icon="checkup-list" title="핵심픽 실측" desc={data.note || "적재시점→최신 단순 forward 수익(누적)"}
+        right={data.samples != null && <span className="count-chip">표본 {data.samples}</span>} />
+      <div className="grid grid-stats" style={{ marginBottom: 6 }}>
+        <div className="card stat"><div className="k">평균 forward</div><div className="v num" style={{ color: `var(--${dir(data.avg_fwd_ret)})` }}>{pct(data.avg_fwd_ret, 1)}</div></div>
+        <div className="card stat"><div className="k">적중률</div><div className="v num">{fixed(data.hit_rate, 0)}%</div></div>
+        <div className="card stat"><div className="k">최고</div><div className="v" style={{ fontSize: "1rem" }}>{data.best?.name || "-"}</div><div className="d num" style={{ color: "var(--up)" }}>{data.best ? pct(data.best.fwd, 1) : ""}</div></div>
+        <div className="card stat"><div className="k">최저</div><div className="v" style={{ fontSize: "1rem" }}>{data.worst?.name || "-"}</div><div className="d num" style={{ color: "var(--down)" }}>{data.worst ? pct(data.worst.fwd, 1) : ""}</div></div>
+      </div>
+      {ps.length > 0 && (
+        <div className="card" style={{ overflowX: "auto" }}>
+          <table className="tbl">
+            <thead><tr><th>국면</th><th className="r">표본</th><th className="r">평균 forward</th><th className="r">적중</th></tr></thead>
+            <tbody>{ps.map((p, i) => (
+              <tr key={i}><td><b>{p.phase}</b></td><td className="r num">{p.n}</td>
+                <td className="r num" style={{ color: `var(--${dir(p.avg_fwd)})` }}>{pct(p.avg_fwd, 1)}</td>
+                <td className="r num">{fixed(p.hit, 0)}%</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
+/** 반등 멀티호라이즌 — /api/rebound-multihorizon */
+function ReboundMultiHorizon() {
+  const { data, loading } = useApi("/api/rebound-multihorizon");
+  if (loading || !data || data.enabled === false) return null;
+  const hz = data.horizons || [];
+  return (
+    <>
+      <SectionHd icon="timeline" title="반등 멀티호라이즌" desc={data.note || "건강반등 게이트 1~4일 forward 시장초과"}
+        right={data.sign_consistent != null && <Badge kind={data.sign_consistent ? "ok" : "warn"} dot>{data.sign_consistent ? "부호일관" : "비일관"}</Badge>} />
+      {hz.length > 0 && (
+        <div className="card" style={{ overflowX: "auto" }}>
+          <table className="tbl">
+            <thead><tr><th>기간</th><th className="r">표본</th><th className="r">시장초과</th><th className="r">적중</th><th className="r">t값</th></tr></thead>
+            <tbody>{hz.map((h) => (
+              <tr key={h.hz}><td><b>{h.hz}일</b></td><td className="r num">{h.n}</td>
+                <td className="r num" style={{ color: `var(--${dir(h.excess)})` }}>{pct(h.excess, 2)}</td>
+                <td className="r num">{fixed(h.hit, 0)}%</td><td className="r num">{fixed(h.t, 2)}</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+      {data.recommend && <p className="disclaimer" style={{ marginTop: 8 }}><i className="ti ti-info-circle" /> 권장 보유: {data.recommend}</p>}
+    </>
+  );
+}
+
+/** 퀄리티 OOS IC — /api/quality-validation */
+function QualityValidation() {
+  const { data, loading } = useApi("/api/quality-validation");
+  if (loading || !data) return null;
+  const sp = data.splits || [];
+  return (
+    <>
+      <SectionHd icon="microscope" title="퀄리티 OOS 검증" desc={data.note || "표본외 정직 IC (신호선택 편향 제거)"}
+        right={data.mean_oos_ic != null && <span className="count-chip">평균 OOS IC {fixed(data.mean_oos_ic, 3)}</span>} />
+      {sp.length > 0 && (
+        <div className="card" style={{ overflowX: "auto" }}>
+          <table className="tbl">
+            <thead><tr><th>분할(cut)</th><th className="r">테스트 표본</th><th className="r">OOS IC</th><th className="r">선택수</th></tr></thead>
+            <tbody>{sp.map((s, i) => (
+              <tr key={i}><td><b>{fixed(s.cut_frac * 100, 0)}%</b></td><td className="r num">{s.n_test}</td>
+                <td className="r num" style={{ color: `var(--${dir(s.oos_ic)})` }}>{fixed(s.oos_ic, 3)}</td>
+                <td className="r num">{s.n_selected}</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function SignalsPage() {
   return (
     <>
@@ -247,6 +329,9 @@ export default function SignalsPage() {
       <BacktestSection />
       <ScoreForwardSection />
       <ReboundValidation />
+      <TopPicksValidation />
+      <ReboundMultiHorizon />
+      <QualityValidation />
     </>
   );
 }
