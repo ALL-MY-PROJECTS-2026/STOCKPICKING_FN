@@ -1,6 +1,6 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
-import { fixed, pct, dir, arrow, won } from "../lib/format.js";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, Heat } from "../components/ui.jsx";
+import { fixed, pct, dir, won } from "../lib/format.js";
 import { useDetail } from "../components/DetailModal.jsx";
 
 function TrustGauge() {
@@ -320,6 +320,56 @@ function QualityValidation() {
   );
 }
 
+/** 알파 신호 가중치 · 홀드아웃 — /api/signal-alpha (발굴 점수 팩터 결합 가중 + OOS 검증) */
+const ALPHA_COMP = {
+  sc_fund: "재무", sc_momentum: "모멘텀", sc_supply: "수급", sc_volume: "거래량",
+  sc_force: "세력", sc_news: "뉴스", sc_disc: "공시",
+};
+function AlphaSignalWeights() {
+  const { data, loading, error, reload } = useApi("/api/signal-alpha");
+  const fw = data?.full_weights || {};
+  const ho = data?.holdout || {};
+  const tw = ho.train_weights || {};
+  const comps = data?.components || Object.keys(fw);
+  const maxW = Math.max(0.0001, ...comps.map((c) => fw[c] || 0));
+  const aq = ho.alpha_quintile || {};
+  return (
+    <>
+      <SectionHd icon="adjustments-bolt" title="알파 신호 가중치" count={loading ? null : comps.length}
+        desc={data?.note || "발굴 점수 팩터 결합 가중 + 표본외(OOS) 검증"}
+        right={data?.n != null && <span className="count-chip">표본 {won(data.n)}</span>} />
+      {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
+        loading ? <div className="card card-pad"><Skeletons n={1} /></div> :
+        comps.length === 0 ? <Empty>가중치 데이터 없음</Empty> : (
+          <>
+            <div className="grid grid-stats" style={{ marginBottom: 6 }}>
+              <div className="card stat"><div className="k">알파 IC</div><div className="v num" style={{ color: `var(--${dir(ho.alpha_ic)})` }}>{fixed(ho.alpha_ic, 3)}</div><div className="d">표본외 {won(ho.n_test)}</div></div>
+              <div className="card stat"><div className="k">점수 IC</div><div className="v num">{fixed(ho.score_ic, 3)}</div></div>
+              <div className="card stat"><div className="k">상하위 스프레드</div><div className="v num" style={{ color: `var(--${dir(aq.spread)})` }}>{pct(aq.spread, 2)}</div></div>
+              <div className="card stat"><div className="k">상위분위 적중</div><div className="v num">{fixed(ho.alpha_top_quintile_hit, 0)}%</div></div>
+            </div>
+            <div className="card" style={{ overflowX: "auto" }}>
+              <table className="tbl">
+                <thead><tr><th>팩터</th><th className="r">전체 가중</th><th style={{ width: "38%" }}>비중</th><th className="r">학습 가중</th></tr></thead>
+                <tbody>
+                  {comps.slice().sort((a, b) => (fw[b] || 0) - (fw[a] || 0)).map((c) => (
+                    <tr key={c}>
+                      <td><b>{ALPHA_COMP[c] || c}</b> <span className="code" style={{ color: "var(--faint)", fontSize: ".7rem" }}>{c}</span></td>
+                      <td className="r num">{fixed((fw[c] || 0) * 100, 1)}%</td>
+                      <td><Heat v={((fw[c] || 0) / maxW) * 100} /></td>
+                      <td className="r num" style={{ color: "var(--muted)" }}>{fixed((tw[c] || 0) * 100, 1)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {data?.generated_at && <p className="disclaimer" style={{ marginTop: 8 }}><i className="ti ti-info-circle" /> 생성 {data.generated_at} · 가중은 표본 학습값(OOS 검증용), 라이브 점수와 별개</p>}
+          </>
+        )}
+    </>
+  );
+}
+
 const consKind = (c) => (/\+/.test(c || "") ? "ok" : /[−-]/.test(c || "") ? "warn" : "mut");
 
 /** 전략 멀티윈도우 백테스트 — /api/signal-backtest-multi (전략 × 2·3·5일 시장초과 매트릭스) */
@@ -396,6 +446,7 @@ export default function SignalsPage() {
       <TopPicksValidation />
       <ReboundMultiHorizon />
       <QualityValidation />
+      <AlphaSignalWeights />
       <BacktestMulti />
       <ScoreForwardMulti />
     </>
