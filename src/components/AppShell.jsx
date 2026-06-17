@@ -86,9 +86,9 @@ function VisitorCount() {
   }, []);
   if (n == null) return null;
   return (
-    <div className="last-update" title="누적 접속 수 (이 사이트 방문 합계)">
+    <div className="topstat" title="누적 접속 수 (이 사이트 방문 합계)">
       <i className="ti ti-users" aria-hidden="true" />
-      <span>누적 접속 {n.toLocaleString("ko-KR")}</span>
+      <b className="num">{n.toLocaleString("ko-KR")}</b><span>누적 접속</span>
     </div>
   );
 }
@@ -150,7 +150,6 @@ export default function AppShell() {
           )
         )}
         <div className="sidebar-foot">
-          <VisitorCount />
           <LastUpdate />
           <div className="nav-item" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
             <i className={"ti ti-" + (theme === "dark" ? "sun" : "moon")} />
@@ -166,6 +165,7 @@ export default function AppShell() {
             <h1>{title}</h1>
             <div className="sub">{sub}</div>
           </div>
+          <VisitorCount />
           <SearchBox />
           <IndexTicker />
         </header>

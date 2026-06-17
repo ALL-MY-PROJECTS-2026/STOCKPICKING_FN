@@ -198,7 +198,15 @@ a { color: inherit; text-decoration: none; }
 .mybm-btn.on { color: var(--warn); border-color: var(--warn); }
 .mybm-btn.lg { width: 38px; height: 38px; font-size: 1.15rem; }
 
-/* 사이드바 BN 마지막 업데이트 */
+/* 상단바 누적 접속 chip */
+.topstat { display: flex; align-items: baseline; gap: 6px; flex: none; white-space: nowrap;
+  padding: 6px 11px; background: var(--surface); border: 1px solid var(--border-soft);
+  border-radius: var(--r-sm); font-size: .68rem; color: var(--muted); }
+.topstat i { font-size: .9rem; align-self: center; color: var(--muted); }
+.topstat b { font-size: .84rem; color: var(--text); }
+@media (max-width: 640px) { .topstat { display: none; } }
+
+/* 사이드바 SERVER 마지막 업데이트 */
 .last-update { display: flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: .68rem;
   color: var(--faint); }
 .last-update i { font-size: .9rem; }
