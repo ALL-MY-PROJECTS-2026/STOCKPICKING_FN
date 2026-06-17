@@ -152,13 +152,13 @@ export default function DailyBriefPage() {
         <div>
           <SectionHd icon="rocket" title="우량 모멘텀" count={d.garp_n ?? garp.length} />
           <div className="holders">
-            {garp.length === 0 ? <Empty /> : garp.map((s) => <NameRow key={s.code} s={s} open={open} />)}
+            {garp.length === 0 ? <Empty /> : garp.slice(0, 12).map((s) => <NameRow key={s.code} s={s} open={open} />)}
           </div>
         </div>
         <div>
           <SectionHd icon="refresh" title="역발상" count={d.reversal_n ?? reversal.length} />
           <div className="holders">
-            {reversal.length === 0 ? <Empty /> : reversal.map((s) => <NameRow key={s.code} s={s} open={open} />)}
+            {reversal.length === 0 ? <Empty /> : reversal.slice(0, 12).map((s) => <NameRow key={s.code} s={s} open={open} />)}
           </div>
         </div>
       </div>

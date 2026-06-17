@@ -81,7 +81,7 @@ function RiskWarningSection() {
     <>
       <SectionHd icon="shield-x" title="리스크 경고" count={items.length} desc="시스템 감지 위험 신호" />
       <div className="grid grid-stocks">
-        {items.map((s) => (
+        {items.slice(0, 30).map((s) => (
           <StockCard key={s.code} s={s} badge={<Badge kind="down" dot>경고</Badge>}
             metrics={s.reason ? [{ k: "사유", v: s.reason }] : []} />
         ))}
