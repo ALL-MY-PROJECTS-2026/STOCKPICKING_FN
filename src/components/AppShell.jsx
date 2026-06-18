@@ -59,7 +59,7 @@ function IndexTicker() {
   );
 }
 
-function LastUpdate() {
+function LastUpdate({ top }) {
   const [u, setU] = useState(null);
   useEffect(() => {
     let alive = true;
@@ -71,7 +71,7 @@ function LastUpdate() {
   if (!u) return null;
   const when = u.at ? u.at.slice(5, 16) : u.date || "-";
   return (
-    <div className="last-update" title={"SERVER 데이터 기준 " + (u.at || u.date || "")}>
+    <div className={"last-update" + (top ? " at-top" : "")} title={"SERVER 데이터 기준 " + (u.at || u.date || "")}>
       <i className="ti ti-refresh" aria-hidden="true" />
       <span>SERVER 업데이트 {when}{u.elapsed_min != null ? ` · ${u.elapsed_min}분 전` : ""}</span>
     </div>
@@ -160,6 +160,7 @@ export default function AppShell() {
           </div>
           <div className="brand-txt"><b>StockPicking</b><span>국내주식 발굴</span></div>
         </div>
+        <LastUpdate top />
         {NAV.map((n, i) =>
           n.sec ? (
             <div className="nav-sec" key={"s" + i}>{n.sec}</div>
@@ -172,7 +173,6 @@ export default function AppShell() {
           )
         )}
         <div className="sidebar-foot">
-          <LastUpdate />
           <div className="nav-item" role="button" tabIndex={0}
             aria-label={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

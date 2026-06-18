@@ -247,6 +247,8 @@ a { color: inherit; text-decoration: none; }
 .last-update { display: flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: .68rem;
   color: var(--faint); }
 .last-update i { font-size: .9rem; }
+.last-update.at-top { margin: -4px 0 6px; padding-top: 4px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft); }
 
 /* 모달 헤더 — 액션버튼(우상단)과 가격 겹침 방지 */
 .modal-price { text-align: right; flex: none; }
