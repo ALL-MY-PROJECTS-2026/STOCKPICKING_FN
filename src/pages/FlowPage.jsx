@@ -57,7 +57,7 @@ function SupplySection() {
             lv.view.map((s) => (
               <StockCard key={s.code} s={s} badge={flagBadge(s)}
                 metrics={[
-                  { k: "수급", v: eok(s.supply), cls: s.supply >= 0 ? "up" : "down" },
+                  { k: "수급", v: s.supply == null ? "-" : eok(s.supply / 1e8), cls: s.supply >= 0 ? "up" : "down" },
                   { k: "강도Z", v: fixed(s.z, 1), cls: "up" },
                   { k: "연속", v: fixed(s.streak, 0) + "일" },
                 ]} />
