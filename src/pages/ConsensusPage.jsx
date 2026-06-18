@@ -1,5 +1,5 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls, LazyMount } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
 import PromptCopyButton from "../components/PromptCopyButton.jsx";
@@ -98,8 +98,8 @@ export default function ConsensusPage() {
   return (
     <>
       <ConsensusSection />
-      <CautionSection />
-      <RiskWarningSection />
+      <LazyMount><CautionSection /></LazyMount>
+      <LazyMount><RiskWarningSection /></LazyMount>
     </>
   );
 }

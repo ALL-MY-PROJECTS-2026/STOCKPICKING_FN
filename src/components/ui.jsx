@@ -12,11 +12,21 @@ export function LazyMount({ minHeight = 140, children }) {
     if (show) return;
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) { setShow(true); io.disconnect(); }
-    }, { rootMargin: "240px" });
-    io.observe(el);
-    return () => io.disconnect();
+    let done = false;
+    const reveal = () => { if (!done) { done = true; cleanup(); setShow(true); } };
+    let io;
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) reveal();
+      }, { rootMargin: "300px" });
+      io.observe(el);
+    }
+    // 안전망: IO 미발화 환경(일부 헤드리스/비페인트) 대비 — 스크롤 근접 + idle 타임아웃에도 노출해 콘텐츠가 영영 숨지 않게.
+    const onScroll = () => { const r = el.getBoundingClientRect(); if (r.top < window.innerHeight + 300) reveal(); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const t = setTimeout(reveal, 2500);
+    function cleanup() { if (io) io.disconnect(); window.removeEventListener("scroll", onScroll); clearTimeout(t); }
+    return cleanup;
   }, [show]);
   return (
     <div ref={ref}>

@@ -1,5 +1,5 @@
 import { useApi } from "../lib/useApi.js";
-import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
+import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls, LazyMount } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
 import { useListView } from "../lib/useListView.js";
@@ -118,9 +118,10 @@ function AccumulationSection() {
 export default function FlowPage() {
   return (
     <>
+      {/* 첫 화면: 즉시 / 이하 섹션: 뷰포트 진입 시 지연 로드 (초기 동시 fetch 3→1) */}
       <BreakoutSection />
-      <SupplySection />
-      <AccumulationSection />
+      <LazyMount><SupplySection /></LazyMount>
+      <LazyMount><AccumulationSection /></LazyMount>
     </>
   );
 }
