@@ -26,6 +26,22 @@ export function impRank(v) {
   return 1;
 }
 
+// 중요도 라벨/색 (0 낮음·1 보통·2 높음)
+export const IMP_META = {
+  2: { label: "높음", cls: "imp-hi" },
+  1: { label: "보통", cls: "imp-md" },
+  0: { label: "낮음", cls: "imp-lo" },
+};
+export const impMeta = (v) => IMP_META[impRank(v)];
+
+// 국내외 증시 영향 설명 — BN 필드명 변형(impact/description/market_impact 등) 방어적 수용
+export function eventImpact(e) {
+  if (!e) return "";
+  const v = e.impact ?? e.description ?? e.market_impact ?? e.impact_desc ??
+            e.explanation ?? e.explain ?? e.detail ?? e.summary ?? e.note;
+  return typeof v === "string" ? v.trim() : "";
+}
+
 function parseDate(s) {
   if (!s) return null;
   const p = String(s).slice(0, 10).split("-").map(Number);

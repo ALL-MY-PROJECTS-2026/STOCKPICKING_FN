@@ -3,9 +3,10 @@ import { useApi } from "../lib/useApi.js";
 import { useDetail } from "../components/DetailModal.jsx";
 import { SectionHd, Empty, ErrBox, Skeletons } from "../components/ui.jsx";
 import DDaySlider from "../components/DDaySlider.jsx";
+import { stripEmoji } from "../lib/format.js";
 import {
   CAL_CATS, CAT_ORDER, catMeta, marketLabel, monthGrid, asEvents,
-  ymd, ddayNum, ddayLabel, todayMidnight,
+  ymd, ddayNum, ddayLabel, todayMidnight, impMeta, impRank, eventImpact,
 } from "../lib/calendar.js";
 
 const WD = ["일", "월", "화", "수", "목", "금", "토"];
@@ -130,6 +131,9 @@ function EventRow({ e }) {
   const c = catMeta(e.category);
   const { open } = useDetail();
   const clickable = !!e.symbol;
+  const imp = impMeta(e.importance);
+  const showImp = impRank(e.importance) >= 1; // 보통·높음만 배지 표시(낮음은 생략)
+  const impact = eventImpact(e);
   return (
     <li className={"cal-ev ce-" + c.cls}>
       <span className="ce-cat"><i className={"ti ti-" + c.icon} aria-hidden="true" />{c.label}</span>
@@ -140,6 +144,7 @@ function EventRow({ e }) {
           {e.symbol ? <span className="ce-code num">{e.symbol}</span> : null}
         </button>
         <div className="ce-meta">
+          {showImp && <span className={"ce-imp " + imp.cls} title="이벤트 중요도">중요도 {imp.label}</span>}
           {e.market && <span className="ce-mkt">{marketLabel(e.market)}</span>}
           {e.source && <span className="ce-src">{e.source}</span>}
           {e.source_url && (
@@ -148,6 +153,7 @@ function EventRow({ e }) {
             </a>
           )}
         </div>
+        {impact && <p className="ce-impact"><i className="ti ti-bulb" aria-hidden="true" />{stripEmoji(impact)}</p>}
       </div>
     </li>
   );

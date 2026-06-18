@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../lib/useApi.js";
 import { useDetail } from "./DetailModal.jsx";
-import { asEvents, upcoming, catMeta, marketLabel, ddayLabel, ymd, todayMidnight } from "../lib/calendar.js";
+import { stripEmoji } from "../lib/format.js";
+import { asEvents, upcoming, catMeta, marketLabel, ddayLabel, ymd, todayMidnight, eventImpact } from "../lib/calendar.js";
 
 /**
  * 상단 D-DAY 슬라이드 — 다가오는 주요 증시 일정을 카드 슬라이드로 표시.
@@ -50,14 +51,16 @@ export default function DDaySlider() {
         {list.map((e) => {
           const c = catMeta(e.category);
           const soon = e._dd <= 3;
+          const impact = eventImpact(e);
           return (
             <button className={"dday-card dc-" + c.cls} key={e.id || e.title + e.date}
-              onClick={() => go(e)} title={e.title + (e.name ? ` · ${e.name}` : "")}>
+              onClick={() => go(e)} title={e.title + (e.name ? ` · ${e.name}` : "") + (impact ? `\n${stripEmoji(impact)}` : "")}>
               <span className={"dday-badge" + (soon ? " soon" : "")}>{ddayLabel(e._dd)}</span>
               <span className="dc-cat"><i className={"ti ti-" + c.icon} aria-hidden="true" />{c.label}
+                {e._imp >= 2 && <em className="dc-imp">핵심</em>}
                 {e.market && <em className="dc-mkt">{marketLabel(e.market)}</em>}</span>
               <span className="dc-title">{e.title}{e.name ? <b> · {e.name}</b> : null}</span>
-              <span className="dc-date num">{(e.date || "").slice(0, 10)}</span>
+              {impact ? <span className="dc-impact">{stripEmoji(impact)}</span> : <span className="dc-date num">{(e.date || "").slice(0, 10)}</span>}
             </button>
           );
         })}
