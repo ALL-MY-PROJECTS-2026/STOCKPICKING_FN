@@ -75,10 +75,11 @@ function InvestorFlow({ flow, code }) {
           return (
             <div className="flow-row" key={label}>
               <span className="flow-lbl" title={TIPS[label]}>{label}</span>
-              <div className="flow-track">
+              <div className="flow-track" aria-hidden="true">
                 <i className={"flow-bar " + d} style={{ width: Math.max(3, w) + "%" }} />
               </div>
-              <b className={"num flow-val " + d} style={{ color: `var(--${d})` }}>{toEok(v)}</b>
+              <b className={"num flow-val " + d} style={{ color: `var(--${d})` }}
+                aria-label={`${label} 순매수 ${toEok(v)}`}>{toEok(v)}</b>
             </div>
           );
         })}
@@ -115,9 +116,10 @@ function ForceAnalysis({ flow, summary }) {
                   : <span className="fr-flat">연속매수 없음</span>}
                 <span className="fr-cum">누적 <b className="num" style={{ color: `var(--${dir(o.cum_net_eok)})` }}>{forceEok(o.cum_net_eok)}</b></span>
               </div>
-              <div className="fr-spark">
+              <div className="fr-spark" role="img"
+                aria-label={`${label} 최근 ${(o.daily_eok || []).length}일 일별 순매수 추이, 누적 ${forceEok(o.cum_net_eok)}`}>
                 {(o.daily_eok || []).map((v, i) => (
-                  <i key={i} className={dir(v)} title={(flow.series_dates?.[i] || "") + " " + forceEok(v)}
+                  <i key={i} className={dir(v)} aria-hidden="true" title={(flow.series_dates?.[i] || "") + " " + forceEok(v)}
                     style={{ height: Math.max(8, (Math.abs(v || 0) / max) * 100) + "%" }} />
                 ))}
               </div>
