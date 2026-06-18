@@ -702,9 +702,37 @@ a { color: inherit; text-decoration: none; }
 .dc-impact { font-size: .68rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis;
   white-space: nowrap; }
 
+/* 대응방안 블록 */
+.ce-action { margin: 6px 0 0; font-size: .77rem; line-height: 1.5; color: var(--text);
+  display: flex; gap: 6px; background: var(--surface-2); border-radius: var(--r-sm); padding: 7px 9px; }
+.ce-action i { color: var(--ok); flex: none; margin-top: 2px; }
+.ce-lbl { display: inline-block; font-size: .62rem; font-weight: 700; color: var(--muted);
+  margin-right: 6px; letter-spacing: .02em; }
+
+/* 다가오는 중요일정 음영(런업 → 당일) */
+.cal-cell { position: relative; }
+.cal-cell.sh-far  { background: rgba(240,161,58,.07); }
+.cal-cell.sh-near { background: rgba(240,161,58,.13); }
+.cal-cell.sh-day  { background: rgba(240,161,58,.20); }
+.cal-cell.sh-day .cal-dnum { color: var(--warn); font-weight: 700; }
+.cal-grid .cal-cell.sel { background: var(--primary-dim); } /* 선택은 음영보다 우선 */
+.cal-flag { position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--warn); box-shadow: 0 0 0 2px var(--surface); }
+
+/* 음영 범례 */
+.cal-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 10px;
+  font-size: .7rem; color: var(--muted); }
+.cl-item { display: inline-flex; align-items: center; gap: 5px; }
+.cl-sw { width: 13px; height: 13px; border-radius: 2px; display: inline-block; flex: none; }
+.cl-sw.sh-day  { background: rgba(240,161,58,.22); box-shadow: inset 0 0 0 1px var(--warn); }
+.cl-sw.sh-near { background: rgba(240,161,58,.14); }
+.cl-sw.sh-far  { background: rgba(240,161,58,.08); box-shadow: inset 0 0 0 1px var(--border); }
+.cl-note { color: var(--faint); }
+
 @media (max-width: 560px) {
   .cal-cell { min-height: 58px; padding: 4px; }
   .cal-dot { width: 6px; height: 6px; }
   .dday-card { min-width: 200px; }
   .cal-filters { gap: 8px; }
+  .cal-legend { gap: 5px 10px; }
 }

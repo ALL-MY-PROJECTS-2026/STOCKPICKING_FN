@@ -7,6 +7,7 @@ import { stripEmoji } from "../lib/format.js";
 import {
   CAL_CATS, CAT_ORDER, catMeta, marketLabel, monthGrid, asEvents,
   ymd, ddayNum, ddayLabel, todayMidnight, impMeta, impRank, eventImpact,
+  eventAction, buildShadeMap,
 } from "../lib/calendar.js";
 
 const WD = ["일", "월", "화", "수", "목", "금", "토"];
@@ -35,6 +36,10 @@ export default function CalendarPage() {
     events.forEach((e) => { const k = (e.date || "").slice(0, 10); if (k) (m[k] = m[k] || []).push(e); });
     return m;
   }, [events]);
+
+  // 다가오는 중요일정 음영 맵(당일 + 직전 런업)
+  const shade = useMemo(() => buildShadeMap(events), [events]);
+  const hasShade = Object.keys(shade).length > 0;
 
   const grid = monthGrid(cur.y, cur.m);
   const monthEvents = events.filter((e) => {
@@ -91,10 +96,15 @@ export default function CalendarPage() {
             {grid.map((cell) => {
               const evs = byDay[cell.ymd] || [];
               const sel = cell.ymd === selDay;
+              const sh = shade[cell.ymd];
+              const shCls = sh ? (sh.kind === "day" ? " sh-day" : sh.dist <= 2 ? " sh-near" : " sh-far") : "";
               return (
                 <button key={cell.ymd}
-                  className={"cal-cell" + (cell.inMonth ? "" : " out") + (cell.isToday ? " today" : "") + (sel ? " sel" : "")}
-                  onClick={() => setSelDay(cell.ymd)} aria-label={`${cell.ymd} 일정 ${evs.length}건`}>
+                  className={"cal-cell" + (cell.inMonth ? "" : " out") + (cell.isToday ? " today" : "") + (sel ? " sel" : "") + shCls}
+                  onClick={() => setSelDay(cell.ymd)}
+                  title={sh ? (sh.kind === "day" ? `중요일정 당일 · ${sh.title}` : `${sh.title} D-${sh.dist} 임박`) : undefined}
+                  aria-label={`${cell.ymd} 일정 ${evs.length}건${sh ? (sh.kind === "day" ? " 중요일정 당일" : ` 중요일정 D-${sh.dist}`) : ""}`}>
+                  {sh && sh.kind === "day" && <i className="cal-flag" aria-hidden="true" />}
                   <span className={"cal-dnum" + (cell.dow === 0 ? " sun" : cell.dow === 6 ? " sat" : "")}>{cell.date.getDate()}</span>
                   <span className="cal-dots">
                     {evs.slice(0, 4).map((e, i) => (
@@ -107,6 +117,15 @@ export default function CalendarPage() {
             })}
             {loading && <div className="cal-loading"><Skeletons n={1} cls="sk-card" /></div>}
           </div>
+
+          {hasShade && (
+            <div className="cal-legend">
+              <span className="cl-item"><i className="cl-sw sh-day" /> 중요일정 당일</span>
+              <span className="cl-item"><i className="cl-sw sh-near" /> 임박(D-2 이내)</span>
+              <span className="cl-item"><i className="cl-sw sh-far" /> 다가오는 중요일정 런업</span>
+              <span className="cl-note">국내증시 영향도 큰 일정 전후를 음영으로 표시합니다.</span>
+            </div>
+          )}
 
           <div className="cal-daylist">
             <h3 className="cal-dl-hd">
@@ -134,6 +153,7 @@ function EventRow({ e }) {
   const imp = impMeta(e.importance);
   const showImp = impRank(e.importance) >= 1; // 보통·높음만 배지 표시(낮음은 생략)
   const impact = eventImpact(e);
+  const action = eventAction(e);
   return (
     <li className={"cal-ev ce-" + c.cls}>
       <span className="ce-cat"><i className={"ti ti-" + c.icon} aria-hidden="true" />{c.label}</span>
@@ -153,7 +173,8 @@ function EventRow({ e }) {
             </a>
           )}
         </div>
-        {impact && <p className="ce-impact"><i className="ti ti-bulb" aria-hidden="true" />{stripEmoji(impact)}</p>}
+        {impact && <p className="ce-impact"><i className="ti ti-bulb" aria-hidden="true" /><span><b className="ce-lbl">영향</b>{stripEmoji(impact)}</span></p>}
+        {action && <p className="ce-action"><i className="ti ti-clipboard-check" aria-hidden="true" /><span><b className="ce-lbl">대응방안</b>{stripEmoji(action)}</span></p>}
       </div>
     </li>
   );
