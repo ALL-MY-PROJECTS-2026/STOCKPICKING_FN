@@ -1,6 +1,7 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import PromptCopyButton from "../components/PromptCopyButton.jsx";
 import { useListView } from "../lib/useListView.js";
 import { won, pct, fixed, stripEmoji } from "../lib/format.js";
 
@@ -35,6 +36,7 @@ export default function ProposalsPage() {
                       <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end", flex: "none" }}>
                         {s.combo?.tier && <Badge kind="up" dot>{s.combo.tier} {s.combo.label}</Badge>}
                         {s.conviction && <Badge kind={convKind(s.conviction)}>확신 {s.conviction}</Badge>}
+                        <PromptCopyButton stock={s} />
                       </div>
                     </div>
 

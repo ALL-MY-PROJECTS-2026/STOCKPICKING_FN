@@ -2,6 +2,7 @@ import { won } from "../lib/format.js";
 import { Score, Heat, ChangePill } from "./ui.jsx";
 import { useDetail } from "./DetailModal.jsx";
 import MyBookmarkButton from "./MyBookmarkButton.jsx";
+import PromptCopyButton from "./PromptCopyButton.jsx";
 
 /**
  * 종목 카드 — top-picks / value-picks / rebound 공용.
@@ -19,6 +20,7 @@ export default function StockCard({ s, score, heat, metrics = [], badge, onClick
         </div>
         <div className="scard-top-right">
           {s.theme && <span className="theme-tag">{s.theme}</span>}
+          <PromptCopyButton stock={s} />
           <MyBookmarkButton stock={s} />
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import PromptCopyButton from "../components/PromptCopyButton.jsx";
 import { useListView } from "../lib/useListView.js";
 import { fixed } from "../lib/format.js";
 
@@ -29,7 +30,10 @@ function ConsensusSection() {
                     <div className="nm" title={s.name}>{s.name}</div>
                     <div className="code num">{s.code}</div>
                   </div>
-                  <Badge kind="up" dot>{s.count}개 신호</Badge>
+                  <div className="scard-top-right">
+                    <Badge kind="up" dot>{s.count}개 신호</Badge>
+                    <PromptCopyButton stock={s} />
+                  </div>
                 </div>
                 <div className="sig-chips">
                   {(s.signals || []).map((sig) => <span className="sig-chip" key={sig}>{sig}</span>)}

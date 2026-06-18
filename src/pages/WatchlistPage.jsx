@@ -1,6 +1,7 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import PromptCopyButton from "../components/PromptCopyButton.jsx";
 import { useListView } from "../lib/useListView.js";
 import { fixed } from "../lib/format.js";
 
@@ -27,7 +28,10 @@ export default function WatchlistPage() {
                     <div className="nm" title={s.name}>{s.name}</div>
                     <div className="code num">{s.code}</div>
                   </div>
-                  {s.combo?.tier && <Badge kind="up" dot>{s.combo.tier} {s.combo.label}</Badge>}
+                  <div className="scard-top-right">
+                    {s.combo?.tier && <Badge kind="up" dot>{s.combo.tier} {s.combo.label}</Badge>}
+                    <PromptCopyButton stock={s} />
+                  </div>
                 </div>
                 {Array.isArray(s.signals) && s.signals.length > 0 && (
                   <div className="sig-chips">

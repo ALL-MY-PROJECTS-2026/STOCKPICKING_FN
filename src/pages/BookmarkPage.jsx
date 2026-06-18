@@ -4,6 +4,7 @@ import { useListView } from "../lib/useListView.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls, Segmented } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
 import MyBookmarkButton from "../components/MyBookmarkButton.jsx";
+import PromptCopyButton from "../components/PromptCopyButton.jsx";
 import { won, pct, dir, arrow, fixed } from "../lib/format.js";
 
 const num = (v, f = -1e9) => (v == null || isNaN(v) ? f : Number(v));
@@ -43,6 +44,7 @@ function BmCard({ c }) {
           <div className="code num">{c.code}{c.market ? " · " + c.market : ""}</div>
         </div>
         <div className="scard-top-right">
+          <PromptCopyButton stock={c} />
           <MyBookmarkButton stock={c} />
         </div>
       </div>
