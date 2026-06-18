@@ -287,13 +287,14 @@ function Modal({ seed, onClose }) {
   const [tg, setTg] = useState(null);        // /api/targets
   const [loading, setLoading] = useState(true);
   const [histLoading, setHistLoading] = useState(true);
+  const [auxLoading, setAuxLoading] = useState(true); // chart-ai + targets 도착 전
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
   const modalRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
-    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setHistLoading(true); setAi(null); setTg(null);
+    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setHistLoading(true); setAi(null); setTg(null); setAuxLoading(true);
     apiGet("/api/predict/" + seed.code)
       .then((r) => alive && setD(r))
       .catch((e) => alive && setError(e.message))
@@ -306,12 +307,10 @@ function Modal({ seed, onClose }) {
       .then((r) => alive && setHist(r))
       .catch(() => { })
       .finally(() => alive && setHistLoading(false));
-    apiGet("/api/chart-ai/" + seed.code)
-      .then((r) => alive && setAi(r))
-      .catch(() => { });
-    apiGet("/api/targets/" + seed.code)
-      .then((r) => alive && setTg(r))
-      .catch(() => { });
+    Promise.allSettled([
+      apiGet("/api/chart-ai/" + seed.code).then((r) => alive && setAi(r)),
+      apiGet("/api/targets/" + seed.code).then((r) => alive && setTg(r)),
+    ]).finally(() => alive && setAuxLoading(false));
     return () => { alive = false; };
   }, [seed.code, reloadKey]);
 
@@ -409,6 +408,12 @@ function Modal({ seed, onClose }) {
               </div>
             ) : null}
             <ChartAI ai={ai} />
+            {!ai && auxLoading && (
+              <div className="sect">
+                <div className="sect-hd"><i className="ti ti-robot" aria-hidden="true" />AI 차트 분석</div>
+                <div className="sk" style={{ height: 60, borderRadius: "var(--r)" }} />
+              </div>
+            )}
 
             <div className="reasons">
               {(d.reasons_pos || []).length > 0 && (
@@ -430,6 +435,12 @@ function Modal({ seed, onClose }) {
             ) : detLoading ? <div className="sk" style={{ height: 90 }} /> : null}
 
             <Targets list={tg} price={price} />
+            {!tg && auxLoading && (
+              <div className="sect">
+                <div className="sect-hd"><i className="ti ti-target" aria-hidden="true" />애널리스트 목표가</div>
+                <div className="sk" style={{ height: 80, borderRadius: "var(--r)" }} />
+              </div>
+            )}
 
             <div className="feat-grid">
               {Object.entries(feats).map(([k, v]) => (
