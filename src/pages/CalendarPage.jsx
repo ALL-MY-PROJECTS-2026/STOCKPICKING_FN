@@ -7,7 +7,7 @@ import { stripEmoji } from "../lib/format.js";
 import {
   CAL_CATS, CAT_ORDER, catMeta, marketLabel, monthGrid, asEvents,
   ymd, ddayNum, ddayLabel, todayMidnight, impMeta, impRank, eventImpact,
-  eventAction, buildShadeMap,
+  eventAction, buildShadeMap, marketImpactRank, marketImpactMeta, isMajorEvent,
 } from "../lib/calendar.js";
 
 const WD = ["일", "월", "화", "수", "목", "금", "토"];
@@ -152,6 +152,9 @@ function EventRow({ e }) {
   const clickable = !!e.symbol;
   const imp = impMeta(e.importance);
   const showImp = impRank(e.importance) >= 1; // 보통·높음만 배지 표시(낮음은 생략)
+  const mImp = marketImpactMeta(e);
+  const showMImp = marketImpactRank(e) >= 2; // 증시영향 '큼'만 강조 배지
+  const major = isMajorEvent(e);
   const impact = eventImpact(e);
   const action = eventAction(e);
   return (
@@ -164,6 +167,8 @@ function EventRow({ e }) {
           {e.symbol ? <span className="ce-code num">{e.symbol}</span> : null}
         </button>
         <div className="ce-meta">
+          {major && <span className="ce-major" title="증시 전체에 영향이 큰 대형 일정"><i className="ti ti-alert-triangle-filled" aria-hidden="true" />증시 주요</span>}
+          {showMImp && <span className="ce-mimp" title="국내외 증시 영향도">증시영향 큼</span>}
           {showImp && <span className={"ce-imp " + imp.cls} title="이벤트 중요도">중요도 {imp.label}</span>}
           {e.market && <span className="ce-mkt">{marketLabel(e.market)}</span>}
           {e.source && <span className="ce-src">{e.source}</span>}

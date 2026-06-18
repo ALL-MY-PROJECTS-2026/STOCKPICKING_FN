@@ -50,11 +50,18 @@ export function eventAction(e) {
   return typeof v === "string" ? v.trim() : "";
 }
 
-// 다가오는 중요일정 음영 lead 일수 — BN 명시값 우선, 없으면 importance high 만 기본 3일
+// 증시 영향도(market_impact: high/medium/low) — importance 와 별개
+export const marketImpactRank = (e) => impRank(e?.market_impact);
+export const marketImpactMeta = (e) => IMP_META[marketImpactRank(e)];
+
+// 증시 전체를 움직이는 대형 일정 여부 (BN is_major 우선, 없으면 증시영향 high)
+export const isMajorEvent = (e) => e?.is_major === true || marketImpactRank(e) >= 2;
+
+// 다가오는 중요일정 음영 lead 일수 — BN 명시값 우선, 없으면 대형(증시영향 큰) 일정만 3일
 export function shadeLead(e) {
   const v = e?.shade_days ?? e?.lead_days ?? e?.alert_days ?? e?.pre_days ?? e?.highlight_days;
   if (v != null && !isNaN(v)) return Math.max(0, Math.min(10, Math.round(Number(v))));
-  return impRank(e?.importance) >= 2 ? 3 : 0;
+  return isMajorEvent(e) ? 3 : 0;
 }
 
 /**
@@ -68,7 +75,7 @@ export function buildShadeMap(events) {
     const dd = ddayNum(e.date);
     if (dd == null || dd < 0) return;          // 미래(오늘 포함)만
     const lead = shadeLead(e);
-    if (lead <= 0 && impRank(e.importance) < 2) return;
+    if (lead <= 0) return;
     const base = parseDate(e.date);
     if (!base) return;
     const put = (d, cell) => {

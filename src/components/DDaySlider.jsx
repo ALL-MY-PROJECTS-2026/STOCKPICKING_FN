@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useApi } from "../lib/useApi.js";
 import { useDetail } from "./DetailModal.jsx";
 import { stripEmoji } from "../lib/format.js";
-import { asEvents, upcoming, catMeta, marketLabel, ddayLabel, ymd, todayMidnight, eventImpact } from "../lib/calendar.js";
+import { asEvents, upcoming, catMeta, marketLabel, ddayLabel, ymd, todayMidnight, eventImpact, isMajorEvent } from "../lib/calendar.js";
 
 /**
  * 상단 D-DAY 슬라이드 — 다가오는 주요 증시 일정을 카드 슬라이드로 표시.
@@ -57,7 +57,7 @@ export default function DDaySlider() {
               onClick={() => go(e)} title={e.title + (e.name ? ` · ${e.name}` : "") + (impact ? `\n${stripEmoji(impact)}` : "")}>
               <span className={"dday-badge" + (soon ? " soon" : "")}>{ddayLabel(e._dd)}</span>
               <span className="dc-cat"><i className={"ti ti-" + c.icon} aria-hidden="true" />{c.label}
-                {e._imp >= 2 && <em className="dc-imp">핵심</em>}
+                {isMajorEvent(e) && <em className="dc-imp">증시 주요</em>}
                 {e.market && <em className="dc-mkt">{marketLabel(e.market)}</em>}</span>
               <span className="dc-title">{e.title}{e.name ? <b> · {e.name}</b> : null}</span>
               {impact ? <span className="dc-impact">{stripEmoji(impact)}</span> : <span className="dc-date num">{(e.date || "").slice(0, 10)}</span>}
