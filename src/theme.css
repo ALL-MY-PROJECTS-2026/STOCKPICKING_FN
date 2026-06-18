@@ -287,7 +287,8 @@ a { color: inherit; text-decoration: none; }
 .search-item { display: flex; align-items: center; gap: 9px; padding: 9px 12px; cursor: pointer;
   border-bottom: 1px solid var(--border-soft); }
 .search-item:last-child { border-bottom: 0; }
-.search-item:hover { background: var(--surface-2); }
+.search-item:hover, .search-item.active { background: var(--surface-2); }
+.search-item.active { box-shadow: inset 2px 0 0 var(--primary); }
 .si-nm { font-size: .84rem; font-weight: 600; }
 .si-code { font-size: .7rem; color: var(--faint); }
 .si-theme { margin-left: auto; font-size: .68rem; color: var(--muted); background: var(--surface-2); padding: 2px 7px; white-space: nowrap; }
