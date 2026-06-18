@@ -28,8 +28,13 @@ export default function DDaySlider() {
     return () => clearInterval(t);
   }, [paused, list.length]);
   useEffect(() => {
-    const el = trackRef.current?.children?.[idx];
-    if (el) el.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    // 가로 트랙만 스크롤(페이지 수직 스크롤 건드리지 않음 — scrollIntoView 는 조상 전체를 스크롤해
+    // 슬라이드 자동회전 시 페이지가 위로 끌려올라가는 버그를 유발했음).
+    const track = trackRef.current;
+    const el = track?.children?.[idx];
+    if (!track || !el) return;
+    const delta = el.getBoundingClientRect().left - track.getBoundingClientRect().left;
+    track.scrollTo({ left: track.scrollLeft + delta, behavior: "smooth" });
   }, [idx]);
 
   if ((loading && !list.length) || !list.length) return null;
