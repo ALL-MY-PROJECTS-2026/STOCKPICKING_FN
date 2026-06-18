@@ -23,10 +23,19 @@ export default function PromptCopyButton({ stock, size = "sm" }) {
     e.stopPropagation();
     if (!stock?.code) return;
     try {
-      let detail = {};
-      try { detail = (await apiGet("/api/stock-detail/" + stock.code)) || {}; } catch { detail = {}; }
-      const summary = buildObjectiveSummary(stock, detail, new Date().toISOString());
-      await copyText(JSON.stringify(summary, null, 2));
+      // 1순위: BN 객관전용 엔드포인트(점수·추천·예측·목표가 미포함 + 면책 내장)
+      let payload;
+      try {
+        const ss = await apiGet("/api/stock-summary/" + stock.code);
+        if (ss && ss.code) payload = ss;
+      } catch { /* 폴백으로 진행 */ }
+      // 폴백: stock-detail 에서 객관 필드만 클라이언트 추출
+      if (!payload) {
+        let detail = {};
+        try { detail = (await apiGet("/api/stock-detail/" + stock.code)) || {}; } catch { detail = {}; }
+        payload = buildObjectiveSummary(stock, detail, new Date().toISOString());
+      }
+      await copyText(JSON.stringify(payload, null, 2));
       setState("ok");
     } catch {
       setState("err");
