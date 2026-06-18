@@ -6,6 +6,7 @@ import { DetailProvider } from "./components/DetailModal.jsx";
 import AppShell from "./components/AppShell.jsx";
 import Discover from "./pages/Discover.jsx";
 import DailyBriefPage from "./pages/DailyBriefPage.jsx";
+import CalendarPage from "./pages/CalendarPage.jsx";
 import ThemesPage from "./pages/ThemesPage.jsx";
 import ReboundPage from "./pages/ReboundPage.jsx";
 import FlowPage from "./pages/FlowPage.jsx";
@@ -29,6 +30,7 @@ const router = createHashRouter([
     children: [
       { index: true, element: <Discover /> },
       { path: "brief", element: <DailyBriefPage /> },
+      { path: "calendar", element: <CalendarPage /> },
       { path: "themes", element: <ThemesPage /> },
       { path: "rebound", element: <ReboundPage /> },
       { path: "flow", element: <FlowPage /> },

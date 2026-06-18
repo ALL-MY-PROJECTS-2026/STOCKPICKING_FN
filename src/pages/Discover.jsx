@@ -1,6 +1,7 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
+import DDaySlider from "../components/DDaySlider.jsx";
 import { fixed, eok, won, stripEmoji } from "../lib/format.js";
 
 /** BN '오늘의 핵심 종합'(daily-brief) 한 줄 — BN 대시보드와 동일 소스 */
@@ -167,6 +168,7 @@ export default function Discover() {
   const picks = useApi("/api/top-picks");
   return (
     <>
+      <DDaySlider />
       <BriefStrip />
       <RegimeBanner regime={regime} />
       <div style={{ height: 14 }} />

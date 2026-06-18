@@ -583,3 +583,114 @@ a { color: inherit; text-decoration: none; }
   .reasons, .est-grid { grid-template-columns: 1fr; }
   .est-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ===== 이벤트 캘린더 · D-DAY 슬라이더 ===== */
+/* 카테고리 강조색(--cc) — 슬라이더/칩/도트/이벤트 공용 */
+.dc-earnings,.cc-earnings,.cd-earnings,.ce-earnings   { --cc: #3d5afe; }
+.dc-dividend,.cc-dividend,.cd-dividend,.ce-dividend   { --cc: #d99a2b; }
+.dc-ipo,.cc-ipo,.cd-ipo,.ce-ipo                       { --cc: #1ea672; }
+.dc-split,.cc-split,.cd-split,.ce-split               { --cc: #e8743b; }
+.dc-disclosure,.cc-disclosure,.cd-disclosure,.ce-disclosure { --cc: #64748b; }
+.dc-expiry,.cc-expiry,.cd-expiry,.ce-expiry           { --cc: #2f6fed; }
+.dc-macro,.cc-macro,.cd-macro,.ce-macro               { --cc: #8b5cf6; }
+.dc-etc,.cc-etc,.cd-etc,.ce-etc                       { --cc: var(--muted); }
+
+/* D-DAY 슬라이더 */
+.dday { margin-bottom: 14px; }
+.dday-hd { display: flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600;
+  color: var(--muted); margin-bottom: 7px; }
+.dday-hd .ti-calendar-star { color: var(--primary); }
+.dday-nav { margin-left: auto; display: flex; gap: 4px; }
+.dday-track { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; padding-bottom: 2px; }
+.dday-track::-webkit-scrollbar { display: none; }
+.dday-card { scroll-snap-align: start; flex: 0 0 auto; min-width: 232px; max-width: 300px;
+  text-align: left; background: var(--surface); border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--cc); border-radius: var(--r); padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 4px; cursor: pointer; position: relative;
+  font-family: inherit; transition: border-color .15s; }
+.dday-card:hover { border-color: var(--cc); }
+.dday-badge { position: absolute; top: 9px; right: 10px; font-size: .66rem; font-weight: 700;
+  color: var(--cc); background: var(--surface-2); border: 1px solid var(--cc); padding: 0 6px;
+  border-radius: var(--pill); letter-spacing: .02em; }
+.dday-badge.soon { color: #fff; background: var(--cc); }
+.dc-cat { display: flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 600; color: var(--cc); }
+.dc-mkt { font-style: normal; font-size: .6rem; color: var(--muted); border: 1px solid var(--border-soft);
+  border-radius: var(--pill); padding: 0 5px; margin-left: 2px; }
+.dc-title { font-size: .82rem; font-weight: 600; color: var(--text); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; padding-right: 48px; }
+.dc-date { font-size: .68rem; color: var(--muted); }
+.dday-dots { display: flex; gap: 5px; justify-content: center; margin-top: 7px; }
+.dday-dots button { width: 6px; height: 6px; border-radius: 50%; border: none; background: var(--border);
+  cursor: pointer; padding: 0; transition: .15s; }
+.dday-dots button.on { background: var(--primary); width: 16px; border-radius: 3px; }
+
+/* 캘린더 컨트롤 */
+.cal-monthnav { display: flex; align-items: center; gap: 4px; }
+.cal-cur { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 76px; }
+.cal-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0; }
+.cal-mkt { flex: none; }
+.cal-cats { display: flex; flex-wrap: wrap; gap: 6px; }
+.cal-chip { display: inline-flex; align-items: center; gap: 4px; font-size: .72rem; font-weight: 600;
+  color: var(--muted); background: var(--surface); border: 1px solid var(--border-soft);
+  border-radius: var(--pill); padding: 4px 9px; cursor: pointer; font-family: inherit; transition: .15s; }
+.cal-chip i { color: var(--cc); font-size: .9rem; }
+.cal-chip:hover { border-color: var(--cc); color: var(--text); }
+.cal-chip.on { color: #fff; background: var(--cc); border-color: var(--cc); }
+.cal-chip.on i { color: #fff; }
+.cal-chip.cc-clear { --cc: var(--muted); }
+
+/* 월 그리드 */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border-soft);
+  border: 1px solid var(--border-soft); border-radius: var(--r); overflow: hidden; position: relative; }
+.cal-wd { background: var(--surface-2); text-align: center; font-size: .68rem; font-weight: 700;
+  color: var(--muted); padding: 6px 0; }
+.cal-wd.sun { color: var(--up); } .cal-wd.sat { color: var(--down); }
+.cal-cell { background: var(--surface); border: 0; min-height: 78px; padding: 5px 6px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 4px; align-items: stretch; font-family: inherit;
+  text-align: left; transition: background .12s; }
+.cal-cell:hover { background: var(--surface-2); }
+.cal-cell.out { background: var(--panel); opacity: .5; }
+.cal-cell.today { box-shadow: inset 0 0 0 2px var(--primary); }
+.cal-cell.sel { background: var(--primary-dim); }
+.cal-dnum { font-size: .76rem; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.cal-dnum.sun { color: var(--up); } .cal-dnum.sat { color: var(--down); }
+.cal-dots { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.cal-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cc); flex: none; }
+.cal-more { font-size: .6rem; color: var(--muted); font-style: normal; font-weight: 600; }
+.cal-loading { position: absolute; inset: 28px 0 0; background: var(--surface); opacity: .6; pointer-events: none; }
+
+/* 선택일 이벤트 목록 */
+.cal-daylist { margin-top: 16px; }
+.cal-dl-hd { display: flex; align-items: center; gap: 8px; font-size: .92rem; font-weight: 700;
+  color: var(--text); margin: 0 0 10px; }
+.cal-dl-hd .ti { color: var(--primary); }
+.cal-dl-dday { font-size: .68rem; font-weight: 700; color: var(--primary); background: var(--primary-dim);
+  padding: 1px 7px; border-radius: var(--pill); }
+.cal-dl-dday.today { color: #fff; background: var(--primary); }
+.cal-dl-cnt { margin-left: auto; font-size: .74rem; color: var(--muted); font-weight: 600; }
+.cal-events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cal-ev { display: flex; gap: 11px; background: var(--surface); border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--cc); border-radius: var(--r); padding: 10px 12px; }
+.ce-cat { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  width: 50px; font-size: .64rem; font-weight: 600; color: var(--cc); }
+.ce-cat i { font-size: 1.1rem; }
+.ce-body { min-width: 0; flex: 1; }
+.ce-title { display: block; text-align: left; background: none; border: 0; padding: 0; font-family: inherit;
+  font-size: .86rem; font-weight: 600; color: var(--text); width: 100%; }
+.ce-title.link { cursor: pointer; }
+.ce-title.link:hover { color: var(--primary); }
+.ce-title:disabled { cursor: default; }
+.ce-code { font-size: .68rem; color: var(--faint); margin-left: 6px; }
+.ce-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 5px;
+  font-size: .7rem; color: var(--muted); }
+.ce-mkt { border: 1px solid var(--border-soft); border-radius: var(--pill); padding: 0 6px; }
+.ce-link { color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 3px; }
+.ce-link:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .cal-cell { min-height: 58px; padding: 4px; }
+  .cal-dot { width: 6px; height: 6px; }
+  .dday-card { min-width: 200px; }
+  .cal-filters { gap: 8px; }
+}
