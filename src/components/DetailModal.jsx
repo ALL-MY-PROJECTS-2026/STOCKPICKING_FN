@@ -284,13 +284,14 @@ function Modal({ seed, onClose }) {
   const [ai, setAi] = useState(null);        // /api/chart-ai
   const [tg, setTg] = useState(null);        // /api/targets
   const [loading, setLoading] = useState(true);
+  const [histLoading, setHistLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
   const modalRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
-    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setAi(null); setTg(null);
+    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setHistLoading(true); setAi(null); setTg(null);
     apiGet("/api/predict/" + seed.code)
       .then((r) => alive && setD(r))
       .catch((e) => alive && setError(e.message))
@@ -301,7 +302,8 @@ function Modal({ seed, onClose }) {
       .finally(() => alive && setDetLoading(false));
     apiGet("/api/historical/" + seed.code)
       .then((r) => alive && setHist(r))
-      .catch(() => { });
+      .catch(() => { })
+      .finally(() => alive && setHistLoading(false));
     apiGet("/api/chart-ai/" + seed.code)
       .then((r) => alive && setAi(r))
       .catch(() => { });
@@ -391,14 +393,19 @@ function Modal({ seed, onClose }) {
               <div className="est"><span className="k">종합 점수</span><b className="num">{fixed(feats.score ?? d.score_raw, 1)}</b></div>
             </div>
 
-            {Array.isArray(hist?.bars) && hist.bars.length > 1 && (
+            {Array.isArray(hist?.bars) && hist.bars.length > 1 ? (
               <div className="sect">
-                <div className="sect-hd"><i className="ti ti-chart-line" />가격 추이
+                <div className="sect-hd"><i className="ti ti-chart-line" aria-hidden="true" />가격 추이
                   <span className="sect-sub">최근 {hist.bars.length}일{hist.source ? " · " + hist.source : ""}</span>
                   <SrcLink href={SRC.main(seed.code)} label="차트" /></div>
                 <PriceChart bars={hist.bars} />
               </div>
-            )}
+            ) : histLoading ? (
+              <div className="sect">
+                <div className="sect-hd"><i className="ti ti-chart-line" aria-hidden="true" />가격 추이</div>
+                <div className="sk" style={{ height: 220, borderRadius: "var(--r)" }} />
+              </div>
+            ) : null}
             <ChartAI ai={ai} />
 
             <div className="reasons">
