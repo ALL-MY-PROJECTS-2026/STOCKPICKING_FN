@@ -69,7 +69,15 @@ function LastUpdate({ top }) {
     return () => { alive = false; clearInterval(t); };
   }, []);
   if (!u) return null;
-  const when = u.at ? u.at.slice(5, 16) : u.date || "-";
+  // 오늘 갱신이면 시각만(HH:MM), 다른 날이면 MM-DD HH:MM — 한 줄 표시 위해 압축
+  let when = "-";
+  if (u.at) {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    when = u.at.slice(0, 10) === today ? u.at.slice(11, 16) : u.at.slice(5, 16);
+  } else if (u.date) {
+    when = u.date;
+  }
   return (
     <div className={"last-update" + (top ? " at-top" : "")} title={"SERVER 데이터 기준 " + (u.at || u.date || "")}>
       <i className="ti ti-refresh" aria-hidden="true" />
