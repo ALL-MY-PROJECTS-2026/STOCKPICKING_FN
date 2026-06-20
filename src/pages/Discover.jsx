@@ -2,7 +2,7 @@ import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge } from "../components/ui.jsx";
 import StockCard from "../components/StockCard.jsx";
 import DDaySlider from "../components/DDaySlider.jsx";
-import { fixed, eok, won, stripEmoji } from "../lib/format.js";
+import { fixed, eok, won, stripEmoji, pct, dir, arrow } from "../lib/format.js";
 
 /** BN '오늘의 핵심 종합'(daily-brief) 한 줄 — BN 대시보드와 동일 소스 */
 function BriefStrip() {
@@ -14,6 +14,41 @@ function BriefStrip() {
         <i className="ti ti-bulb" style={{ color: "var(--primary)", marginRight: 6 }} />
         {stripEmoji(data.headline)}
       </div>
+    </div>
+  );
+}
+
+/** 간밤 미국 증시 컨텍스트 — /api/overnight-context (미→한 개장 영향·레짐 힌트) */
+function OvernightContext() {
+  const { data, loading, error } = useApi("/api/overnight-context");
+  if (loading) return <div className="sk" style={{ height: 92, borderRadius: "var(--r)", marginBottom: 14 }} />;
+  if (error || !data?.us_session) return null;
+  const u = data.us_session;
+  const idx = [
+    { k: "S&P 500", v: u.sp500_chg },
+    { k: "나스닥", v: u.nasdaq_chg },
+    { k: "필라델피아 반도체", v: u.sox_semi_chg },
+    { k: "美 10년물", v: u.ust_10y_chg },
+  ].filter((x) => x.v != null);
+  const rk = /위험선호|risk-on/i.test(data.regime_hint || "") ? "up" : /위험회피|risk-off/i.test(data.regime_hint || "") ? "down" : "mut";
+  return (
+    <div className="card card-pad ovc" style={{ marginBottom: 14 }}>
+      <div className="ovc-hd">
+        <i className="ti ti-world-bolt" aria-hidden="true" /> 간밤 미국 증시
+        {data.regime_hint && <Badge kind={rk} dot>{data.regime_hint}</Badge>}
+        {data.as_of && <span className="ovc-asof num">{data.as_of}</span>}
+      </div>
+      <div className="ovc-idx">
+        {idx.map((it) => (
+          <div className="ovc-i" key={it.k}>
+            <span className="k">{it.k}</span>
+            <b className="num" style={{ color: `var(--${dir(it.v)})` }}>{arrow(it.v)} {pct(it.v)}</b>
+          </div>
+        ))}
+      </div>
+      {Array.isArray(data.leading_signals) && data.leading_signals.length > 0 && (
+        <ul className="ovc-sig">{data.leading_signals.slice(0, 3).map((s, i) => <li key={i}>{stripEmoji(s)}</li>)}</ul>
+      )}
     </div>
   );
 }
@@ -170,6 +205,7 @@ export default function Discover() {
     <>
       <DDaySlider />
       <BriefStrip />
+      <OvernightContext />
       <RegimeBanner regime={regime} />
       <div style={{ height: 14 }} />
       <StatRow regime={regime} picks={picks} />
