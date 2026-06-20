@@ -393,45 +393,47 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 760px) { .secflow-cols { grid-template-columns: 1fr; } }
 
 /* 다음날 증시 예측 — 카드 그리드 */
-.nd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-bottom: 8px; }
-.nd-grid-2 { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.nd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(218px, 1fr)); gap: 14px; margin-bottom: 8px; }
+.nd-grid-2 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 @media (max-width: 480px) { .nd-grid, .nd-grid-2 { grid-template-columns: 1fr; } }
 
 /* 시나리오 카드 */
-.nd-scn { border-left: 3px solid var(--border); }
-.nd-scn.primary { border-left-color: var(--primary); }
-.nd-scn-hd { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; font-size: .92rem; font-weight: 700; }
-.nd-scn-hd i { color: var(--primary); font-size: 1.05rem; }
-.nd-scn-r { margin: 7px 0 0; font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.nd-scn { border-left: 4px solid var(--border); }
+.nd-scn.primary { border-left-color: var(--primary); background: var(--primary-dim); }
+.nd-scn-hd { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .95rem; font-weight: 700; }
+.nd-scn.primary .nd-scn-hd { font-size: 1.12rem; }
+.nd-scn-hd i { color: var(--primary); font-size: 1.15rem; }
+.nd-scn-r { margin: 8px 0 0; font-size: .82rem; color: var(--muted); line-height: 1.55; }
+.nd-scn.primary .nd-scn-r { color: var(--text); }
 
 /* 드라이버 카드 */
-.nd-driver { border-top: 3px solid var(--dc); display: flex; flex-direction: column; gap: 7px; }
+.nd-driver { border-top: 4px solid var(--dc); display: flex; flex-direction: column; gap: 9px; padding: 15px 16px; }
 .nd-driver-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.nd-driver-cat { font-weight: 700; font-size: .9rem; }
-.nd-driver-arr { font-size: 1.05rem; font-weight: 700; flex: none; }
-.nd-driver-sig { font-size: .76rem; color: var(--muted); line-height: 1.4; flex: 1; }
-.nd-driver-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.nd-chip { font-size: .66rem; color: var(--muted); background: var(--surface-2); padding: 2px 7px; border-radius: var(--r-xs); white-space: nowrap; }
+.nd-driver-cat { font-weight: 800; font-size: 1.02rem; letter-spacing: -.01em; }
+.nd-driver-arr { font-size: 1.35rem; font-weight: 800; flex: none; line-height: 1; }
+.nd-driver-sig { font-size: .86rem; color: var(--text); line-height: 1.45; flex: 1; font-weight: 500; }
+.nd-driver-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 2px; border-top: 1px solid var(--border-soft); }
+.nd-chip { font-size: .68rem; color: var(--muted); background: var(--surface-2); padding: 3px 8px; border-radius: var(--r-xs); white-space: nowrap; }
 .nd-chip.mut { color: var(--faint); }
 
 /* 영향 섹터 */
-.nd-sectors { display: flex; flex-direction: column; gap: 9px; }
-.nd-sector { display: flex; align-items: center; gap: 8px; font-size: .82rem; }
+.nd-sectors { display: flex; flex-direction: column; gap: 11px; }
+.nd-sector { display: flex; align-items: center; gap: 8px; font-size: .86rem; }
 .nd-sector b { font-weight: 700; }
-.nd-sector-d { margin-left: auto; color: var(--faint); font-size: .7rem; white-space: nowrap; }
+.nd-sector-d { margin-left: auto; color: var(--faint); font-size: .72rem; white-space: nowrap; }
 
 /* 예정 이벤트 카드 */
-.nd-event { display: flex; flex-direction: column; gap: 6px; }
+.nd-event { display: flex; flex-direction: column; gap: 7px; }
 .nd-event-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.nd-event-date { font-size: .76rem; font-weight: 700; color: var(--primary-2); }
-.nd-event-title { font-size: .8rem; line-height: 1.4; }
+.nd-event-date { font-size: .8rem; font-weight: 800; color: var(--primary-2); }
+.nd-event-title { font-size: .85rem; line-height: 1.45; }
 
 /* 뉴스 카드 */
-.nd-news-card { display: flex; flex-direction: column; gap: 7px; text-decoration: none; color: var(--text); transition: .14s; }
+.nd-news-card { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--text); transition: .14s; }
 .nd-news-card:hover { border-color: var(--primary); transform: translateY(-2px); }
 .nd-news-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.nd-news-date { font-size: .68rem; color: var(--faint); }
-.nd-news-title { font-size: .82rem; font-weight: 600; line-height: 1.45;
+.nd-news-date { font-size: .7rem; color: var(--faint); }
+.nd-news-title { font-size: .86rem; font-weight: 600; line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .nd-news-kw { font-size: .66rem; color: var(--muted); background: var(--surface-2); padding: 2px 7px; border-radius: var(--r-xs); align-self: flex-start; }
 
