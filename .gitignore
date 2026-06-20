@@ -21,6 +21,9 @@ dist-ssr
 public/*-full.html
 public/static/
 
+# Claude Code 로컬 작업/도구 (serve·keepawake·launch 등 — 공개 repo 비추적)
+.claude/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
