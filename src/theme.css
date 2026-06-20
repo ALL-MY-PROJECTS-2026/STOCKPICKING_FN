@@ -424,6 +424,16 @@ a { color: inherit; text-decoration: none; }
 .nd-driver-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 2px; border-top: 1px solid var(--border-soft); }
 .nd-chip { font-size: .68rem; color: var(--muted); background: var(--surface-2); padding: 3px 8px; border-radius: var(--r-xs); white-space: nowrap; }
 .nd-chip.mut { color: var(--faint); }
+/* 드라이버 카드 클릭→근거 펼침 */
+.nd-driver-btn { cursor: pointer; text-align: left; transition: border-color .14s, box-shadow .14s; }
+.nd-driver-btn:hover { border-color: var(--dc); }
+.nd-driver-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.nd-driver-arr { display: inline-flex; align-items: center; gap: 4px; }
+.nd-driver-chev { font-size: .9rem; color: var(--faint); }
+.nd-driver-detail { border-top: 1px solid var(--border-soft); margin-top: 2px; padding-top: 9px; display: flex; flex-direction: column; gap: 7px; }
+.nd-driver-detail .ndd-why { margin: 0; font-size: .8rem; color: var(--text); line-height: 1.5; }
+.nd-driver-detail .ndd-meta { margin: 0; font-size: .72rem; color: var(--muted); }
+.nd-driver-detail .ndd-research { margin: 0; font-size: .7rem; color: var(--faint); line-height: 1.45; }
 
 /* 영향 섹터 */
 .nd-sectors { display: flex; flex-direction: column; gap: 11px; }

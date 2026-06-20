@@ -1,6 +1,21 @@
+import { useState } from "react";
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, Heat } from "../components/ui.jsx";
 import { pct, dir, fixed, stripEmoji } from "../lib/format.js";
+
+/** 드라이버 요인별 해석 + 근거 링크 (익일 매매 영향 메커니즘) */
+const DRIVER_INFO = {
+  "야간선물": { why: "미국 지수선물(나스닥·S&P)의 야간 흐름이 한국 개장 분위기를 선반영 — 개장 직전 변동이 시초가에 직접 반영됩니다.", link: "https://www.investing.com/indices/us-spx-500-futures", label: "S&P 선물" },
+  "위험선호(VIX)": { why: "VIX(변동성·공포지수) 하락 = 위험선호(risk-on)로 위험자산 매수 우호, 상승 = 위험회피로 매도 압력.", link: "https://finance.yahoo.com/quote/%5EVIX", label: "VIX" },
+  "글로벌증시": { why: "전일 미국 증시(S&P500) 마감이 한국 증시와 동조화되어 익일 시초가에 가장 직접 반영(연구상 spillover ~70%).", link: "https://finance.yahoo.com/quote/%5EGSPC", label: "S&P 500" },
+  "반도체": { why: "필라델피아 반도체지수(SOX)는 삼성전자·SK하이닉스 등 한국 반도체 대형주(코스피 비중 큼)의 핵심 전이 채널.", link: "https://finance.yahoo.com/quote/%5ESOX", label: "SOX" },
+  "기술·성장주": { why: "나스닥 흐름은 기술·성장주 투자심리에 영향 — 성장주 갭 방향을 시사.", link: "https://finance.yahoo.com/quote/%5EIXIC", label: "나스닥" },
+  "환율": { why: "원/달러 환율 급등 시 외국인 환차손 회피 매도 압력 → 수급 부담(특히 외국인 비중 높은 대형주).", link: "https://finance.yahoo.com/quote/KRW=X", label: "USD/KRW" },
+  "금리": { why: "미국 10년물 국채금리 상승은 할인율↑로 고밸류·성장주에 부담.", link: "https://finance.yahoo.com/quote/%5ETNX", label: "美 10Y" },
+  "원자재(유가)": { why: "국제유가(WTI) 변동은 정유·화학·항공 등 관련 섹터 수익성에 영향.", link: "https://finance.yahoo.com/quote/CL=F", label: "WTI" },
+};
+const CERT_WHY = { verified: "연구로 검증된 전이 신호", "verified-channel": "검증된 핵심 전이 채널", info: "참고 정보(검증 전)" };
+const LAG_WHY = { "개장직전": "개장 직전 변동 → 시초가 반영", "익일": "익일 장중 반영", "지연": "지연 반영(시차 큼)" };
 
 const dirArrow = (d) => (d > 0 ? "▲" : d < 0 ? "▼" : "–");
 const dirCls = (d) => (d > 0 ? "up" : d < 0 ? "down" : "flat");
@@ -84,6 +99,7 @@ function PredictionValidation() {
 /** 다음날 증시 예측 — /api/next-day-insight (간밤 글로벌·수급·이벤트 종합 → 익일 시초가·장중 영향, 카드 그리드) */
 export default function NextDayPage() {
   const { data, loading, error, reload } = useApi("/api/next-day-insight");
+  const [openDriver, setOpenDriver] = useState(null);
 
   if (loading) return <><SectionHd icon="crystal-ball" title="다음날 증시 예측" /><div className="nd-grid"><Skeletons n={6} cls="sk-card" /></div></>;
   if (error) return <><SectionHd icon="crystal-ball" title="다음날 증시 예측" /><ErrBox onRetry={reload}>{error}</ErrBox></>;
@@ -126,11 +142,16 @@ export default function NextDayPage() {
       <div className="nd-grid">
         {drivers.map((d, i) => {
           const st = STRENGTH[d.strength] || STRENGTH.low;
+          const info = DRIVER_INFO[d.category];
+          const open = openDriver === i;
           return (
-            <div className="card card-pad nd-driver" style={{ "--dc": `var(--${dirCls(d.direction)})` }} key={i}>
+            <div className={"card card-pad nd-driver nd-driver-btn" + (open ? " open" : "")} style={{ "--dc": `var(--${dirCls(d.direction)})` }} key={i}
+              role="button" tabIndex={0} aria-expanded={open}
+              onClick={() => setOpenDriver(open ? null : i)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpenDriver(open ? null : i); } }}>
               <div className="nd-driver-top">
                 <span className="nd-driver-cat">{d.category}</span>
-                <span className="nd-driver-arr" style={{ color: `var(--${dirCls(d.direction)})` }}>{dirArrow(d.direction)}</span>
+                <span className="nd-driver-arr" style={{ color: `var(--${dirCls(d.direction)})` }}>{dirArrow(d.direction)}<i className={"ti ti-chevron-" + (open ? "up" : "down") + " nd-driver-chev"} aria-hidden="true" /></span>
               </div>
               <div className="nd-driver-sig">{stripEmoji(d.signal)}</div>
               <div className="nd-driver-meta">
@@ -138,6 +159,14 @@ export default function NextDayPage() {
                 <span className="nd-chip">{CERT[d.certainty] || d.certainty}</span>
                 <span className="nd-chip mut">{d.lag}</span>
               </div>
+              {open && (
+                <div className="nd-driver-detail">
+                  {info?.why && <p className="ndd-why">{info.why}</p>}
+                  <p className="ndd-meta">확신: {CERT_WHY[d.certainty] || CERT[d.certainty] || d.certainty} · 시차: {LAG_WHY[d.lag] || d.lag}</p>
+                  {data.research_basis && <p className="ndd-research">{stripEmoji(data.research_basis)}</p>}
+                  {info?.link && <a className="src-link" href={info.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>{info.label} 데이터 <i className="ti ti-external-link" aria-hidden="true" /></a>}
+                </div>
+              )}
             </div>
           );
         })}
