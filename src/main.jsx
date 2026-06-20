@@ -7,6 +7,7 @@ import AppShell from "./components/AppShell.jsx";
 import Discover from "./pages/Discover.jsx";
 import DailyBriefPage from "./pages/DailyBriefPage.jsx";
 import CalendarPage from "./pages/CalendarPage.jsx";
+import NextDayPage from "./pages/NextDayPage.jsx";
 import ThemesPage from "./pages/ThemesPage.jsx";
 import ReboundPage from "./pages/ReboundPage.jsx";
 import FlowPage from "./pages/FlowPage.jsx";
@@ -31,6 +32,7 @@ const router = createHashRouter([
       { index: true, element: <Discover /> },
       { path: "brief", element: <DailyBriefPage /> },
       { path: "calendar", element: <CalendarPage /> },
+      { path: "next-day", element: <NextDayPage /> },
       { path: "themes", element: <ThemesPage /> },
       { path: "rebound", element: <ReboundPage /> },
       { path: "flow", element: <FlowPage /> },

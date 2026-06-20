@@ -10,6 +10,7 @@ const NAV = [
   { sec: "오늘" },
   { to: "/", icon: "sparkles", label: "발굴 대시보드", end: true },
   { to: "/brief", icon: "news", label: "데일리 브리핑" },
+  { to: "/next-day", icon: "crystal-ball", label: "다음날 예측" },
   { to: "/calendar", icon: "calendar-month", label: "이벤트 캘린더" },
   { sec: "발굴" },
   { to: "/themes", icon: "flame", label: "테마 로테이션" },
@@ -125,6 +126,7 @@ function VisitorCount() {
 const TITLES = {
   "/": ["발굴 대시보드", "오늘의 시장 국면 · 주도 테마 · 핵심 종목"],
   "/brief": ["데일리 브리핑", "11개 발굴 위젯 한 줄 종합"],
+  "/next-day": ["다음날 증시 예측", "간밤 글로벌·수급·이벤트 종합 — 익일 시초가·장중 영향"],
   "/calendar": ["이벤트 캘린더", "실적·배당·IPO·분할·공시·만기·거시 일정"],
   "/themes": ["테마 로테이션", "테마별 자금·열기·국면 흐름"],
   "/rebound": ["반등 발굴", "반등 · 급반등 · 낙폭우량"],
