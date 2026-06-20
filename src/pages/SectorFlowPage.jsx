@@ -34,10 +34,10 @@ function FlowColumn({ title, icon, rows, kind }) {
 
 /** heat(가격 모멘텀) × 자금흐름 4분면 — /api/flow-heat-cross (테마 국면 교차 분류) */
 const FHC_QUADS = [
-  { key: "확증주도", icon: "flame", kind: "up", desc: "가격↑ + 자금유입 · 고확신 주도" },
-  { key: "선취매", icon: "seeding", kind: "accent", desc: "자금 먼저 유입 · 선제 매집" },
-  { key: "분산경고", icon: "alert-triangle", kind: "warn", desc: "가격↑ + 자금유출 · 기관 이탈 주의" },
-  { key: "약세", icon: "trending-down", kind: "down", desc: "가격·자금 모두 약세" },
+  { key: "확증주도", icon: "flame", kind: "up", desc: "가격↑ + 자금유입 · 고확신 주도", empty: "지금은 가격↑·자금유입을 동시에 충족하는 주도 테마가 없습니다" },
+  { key: "선취매", icon: "seeding", kind: "accent", desc: "자금 먼저 유입 · 선제 매집", empty: "해당 테마 없음" },
+  { key: "분산경고", icon: "alert-triangle", kind: "warn", desc: "가격↑ + 자금유출 · 기관 이탈 주의", empty: "해당 테마 없음" },
+  { key: "약세", icon: "trending-down", kind: "down", desc: "가격·자금 모두 약세", empty: "해당 테마 없음" },
 ];
 
 function FlowHeatCross() {
@@ -59,7 +59,7 @@ function FlowHeatCross() {
                     {qd.key}<span className="sect-sub">{rows.length}</span>
                   </div>
                   <p className="fhc-desc">{qd.desc}</p>
-                  {rows.length === 0 ? <Empty>해당 없음</Empty> : (
+                  {rows.length === 0 ? <p className="fhc-empty">{qd.empty}</p> : (
                     <ul className="fhc-list">
                       {rows.map((r) => (
                         <li key={r.theme}>
