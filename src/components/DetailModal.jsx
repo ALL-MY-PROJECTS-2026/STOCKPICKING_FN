@@ -205,6 +205,22 @@ function PriceChart({ bars }) {
   return <div style={{ height: 180 }}><canvas ref={ref} /></div>;
 }
 
+/** 북마크 추적 — /api/bookmark-tracking/{code} (북마크 시점 대비 가격 추이, 추적 종목만) */
+function BookmarkTracking({ t }) {
+  if (!t || !Array.isArray(t.series) || t.series.length < 2) return null;
+  const bars = t.series.map((s) => ({ date: (s.at || "").slice(5, 16), close: s.price }));
+  const pb = t.latest?.pct_from_baseline;
+  return (
+    <div className="sect">
+      <div className="sect-hd"><i className="ti ti-bookmark" aria-hidden="true" />북마크 추적
+        {pb != null && <Badge kind={pb >= 0 ? "up" : "down"} dot>{pct(pb)}</Badge>}
+        <span className="sect-sub">시점 {(t.baseline?.at || "").slice(0, 10)} 대비 · {t.data_points ?? t.series.length}p</span>
+      </div>
+      <PriceChart bars={bars} />
+    </div>
+  );
+}
+
 /** AI 차트 분석 — /api/chart-ai */
 function ChartAI({ ai }) {
   if (!ai || (!ai.opinion && !ai.reasoning)) return null;
@@ -285,6 +301,7 @@ function Modal({ seed, onClose }) {
   const [hist, setHist] = useState(null);    // /api/historical
   const [ai, setAi] = useState(null);        // /api/chart-ai
   const [tg, setTg] = useState(null);        // /api/targets
+  const [track, setTrack] = useState(null);  // /api/bookmark-tracking (북마크된 종목만)
   const [loading, setLoading] = useState(true);
   const [histLoading, setHistLoading] = useState(true);
   const [auxLoading, setAuxLoading] = useState(true); // chart-ai + targets 도착 전
@@ -294,7 +311,7 @@ function Modal({ seed, onClose }) {
 
   useEffect(() => {
     let alive = true;
-    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setHistLoading(true); setAi(null); setTg(null); setAuxLoading(true);
+    setLoading(true); setError(null); setDet(null); setDetLoading(true); setHist(null); setHistLoading(true); setAi(null); setTg(null); setTrack(null); setAuxLoading(true);
     apiGet("/api/predict/" + seed.code)
       .then((r) => alive && setD(r))
       .catch((e) => alive && setError(e.message))
@@ -310,6 +327,7 @@ function Modal({ seed, onClose }) {
     Promise.allSettled([
       apiGet("/api/chart-ai/" + seed.code).then((r) => alive && setAi(r)),
       apiGet("/api/targets/" + seed.code).then((r) => alive && setTg(r)),
+      apiGet("/api/bookmark-tracking/" + seed.code).then((r) => alive && setTrack(r)),
     ]).finally(() => alive && setAuxLoading(false));
     return () => { alive = false; };
   }, [seed.code, reloadKey]);
@@ -441,6 +459,8 @@ function Modal({ seed, onClose }) {
                 <div className="sk" style={{ height: 80, borderRadius: "var(--r)" }} />
               </div>
             )}
+
+            <BookmarkTracking t={track} />
 
             <div className="feat-grid">
               {Object.entries(feats).map(([k, v]) => (
