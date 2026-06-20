@@ -10,47 +10,68 @@ const CONF = { high: "ok", medium: "warn", low: "mut", info: "mut" };
 const SENT = { pos: { kind: "ok", label: "긍정" }, neg: { kind: "warn", label: "부정" }, neu: { kind: "mut", label: "중립" } };
 const biasKind = (b) => (/긍정|호재|상승/.test(b || "") ? "up" : /부정|악재|하락/.test(b || "") ? "down" : "mut");
 
-/** 예측 검증 — /api/driver-forward-ic (이 페이지 예측 드라이버가 실제 익일 결과를 얼마나 맞췄는지: forward IC·승률) */
-function DriverValidation() {
-  const { data, loading, error } = useApi("/api/driver-forward-ic");
-  if (loading) return <><SectionHd icon="target-arrow" title="예측 검증" /><div className="sk" style={{ height: 70, borderRadius: "var(--r)" }} /></>;
-  if (error || !data) return null;
-  const observing = data.status === "observing" || (data.samples_logged != null && data.min_sample != null && data.samples_logged < data.min_sample);
-  // 측정 완료 시 드라이버별 점수 배열을 방어적으로 탐색
-  const rows = (Array.isArray(data.drivers) && data.drivers) || (Array.isArray(data.ic) && data.ic) || [];
+function ProgressLine({ label, n, min }) {
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".8rem", marginBottom: 5 }}>
+        <span style={{ color: "var(--muted)" }}>{label}</span>
+        <b className="num">{n ?? 0} / {min ?? 10}</b>
+      </div>
+      <Heat v={((n ?? 0) / (min || 10)) * 100} />
+    </div>
+  );
+}
+
+/** 예측 검증 — /api/prediction-scorecard(전체 신뢰도 점수·요인적중·개선점) + /api/driver-forward-ic(드라이버별 forward IC·승률) */
+function PredictionValidation() {
+  const sc = useApi("/api/prediction-scorecard");
+  const fic = useApi("/api/driver-forward-ic");
+  if (sc.loading && fic.loading) return <><SectionHd icon="target-arrow" title="예측 검증 · 신뢰도" /><div className="sk" style={{ height: 80, borderRadius: "var(--r)" }} /></>;
+  const s = sc.data, f = fic.data;
+  if (!s && !f) return null;
+  const scObs = !s || s.status === "observing" || (s.samples_graded != null && s.min_sample != null && s.samples_graded < s.min_sample);
+  const ficObs = !f || f.status === "observing" || (f.samples_logged != null && f.min_sample != null && f.samples_logged < f.min_sample);
+  const measured = !scObs || !ficObs;
+  const rows = (f && Array.isArray(f.drivers) && f.drivers) || (f && Array.isArray(f.ic) && f.ic) || [];
+  const improvements = (s && (s.improvements || s.improvement_points)) || [];
+  const factors = (s && Array.isArray(s.factors) && s.factors) || [];
+
   return (
     <>
-      <SectionHd icon="target-arrow" title="예측 검증" desc="이 페이지 예측이 실제 익일 결과를 얼마나 맞췄는지 (forward IC·승률)"
-        right={<Badge kind={observing ? "warn" : "ok"} dot>{observing ? "표본 수집 중" : "측정 완료"}</Badge>} />
+      <SectionHd icon="target-arrow" title="예측 검증 · 신뢰도" desc="이 페이지 예측이 실제 익일 결과를 얼마나 맞췄는지 — 점수로 개선점 도출"
+        right={<Badge kind={measured ? "ok" : "warn"} dot>{measured ? "측정 완료" : "표본 수집 중"}</Badge>} />
       <div className="card card-pad">
-        {observing ? (
-          <>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".8rem", marginBottom: 6 }}>
-              <span style={{ color: "var(--muted)" }}>드라이버 스냅샷 누적</span>
-              <b className="num">{data.samples_logged ?? 0} / {data.min_sample ?? 10}</b>
-            </div>
-            <Heat v={((data.samples_logged ?? 0) / (data.min_sample || 10)) * 100} />
-          </>
-        ) : (
-          <>
-            <div className="grid grid-stats" style={{ marginBottom: rows.length ? 8 : 0 }}>
-              {data.hit_rate != null && <div className="card stat"><div className="k">승률</div><div className="v num">{fixed(data.hit_rate, 0)}%</div></div>}
-              {data.overall_ic != null && <div className="card stat"><div className="k">종합 IC</div><div className="v num" style={{ color: `var(--${dir(data.overall_ic)})` }}>{fixed(data.overall_ic, 3)}</div></div>}
-              {data.samples != null && <div className="card stat"><div className="k">표본</div><div className="v num">{data.samples}</div></div>}
-            </div>
-            {rows.length > 0 && (
-              <table className="tbl"><thead><tr><th>드라이버</th><th className="r">forward IC</th><th className="r">승률</th><th className="r">표본</th></tr></thead>
-                <tbody>{rows.map((r, i) => (
-                  <tr key={i}><td><b>{r.category || r.name}</b></td>
-                    <td className="r num" style={{ color: `var(--${dir(r.ic ?? r.forward_ic)})` }}>{fixed(r.ic ?? r.forward_ic, 3)}</td>
-                    <td className="r num">{(r.win_rate ?? r.hit ?? r.hit_rate) != null ? fixed(r.win_rate ?? r.hit ?? r.hit_rate, 0) + "%" : "-"}</td>
-                    <td className="r num">{r.n ?? r.samples ?? "-"}</td></tr>
-                ))}</tbody>
-              </table>
-            )}
-          </>
+        {/* 측정 완료 점수 */}
+        {(s && (s.reliability_score != null || s.score != null || s.hit_rate != null)) && (
+          <div className="grid grid-stats" style={{ marginBottom: 10 }}>
+            {(s.reliability_score ?? s.score) != null && <div className="card stat"><div className="k">예측 신뢰도</div><div className="v num">{fixed(s.reliability_score ?? s.score, 0)}</div></div>}
+            {s.hit_rate != null && <div className="card stat"><div className="k">적중률</div><div className="v num">{fixed(s.hit_rate, 0)}%</div></div>}
+            {s.samples_graded != null && <div className="card stat"><div className="k">채점 표본</div><div className="v num">{s.samples_graded}</div></div>}
+          </div>
         )}
-        {data.note && <p className="force-note" style={{ marginTop: 8 }}>{stripEmoji(data.note)}</p>}
+        {/* 진행바 (수집 중) */}
+        {scObs && <ProgressLine label="예측 채점 누적" n={s?.samples_graded ?? s?.samples_logged} min={s?.min_sample} />}
+        {ficObs && <ProgressLine label="드라이버 스냅샷 누적" n={f?.samples_logged} min={f?.min_sample} />}
+
+        {/* 드라이버별 forward IC (측정 완료 시) */}
+        {rows.length > 0 && (
+          <table className="tbl"><thead><tr><th>드라이버</th><th className="r">forward IC</th><th className="r">승률</th><th className="r">표본</th></tr></thead>
+            <tbody>{rows.map((r, i) => (
+              <tr key={i}><td><b>{r.category || r.name}</b></td>
+                <td className="r num" style={{ color: `var(--${dir(r.ic ?? r.forward_ic)})` }}>{fixed(r.ic ?? r.forward_ic, 3)}</td>
+                <td className="r num">{(r.win_rate ?? r.hit ?? r.hit_rate) != null ? fixed(r.win_rate ?? r.hit ?? r.hit_rate, 0) + "%" : "-"}</td>
+                <td className="r num">{r.n ?? r.samples ?? "-"}</td></tr>
+            ))}</tbody>
+          </table>
+        )}
+        {/* 요인별 적중 / 개선점 (측정 완료 시) */}
+        {factors.length > 0 && (
+          <div className="sig-chips" style={{ marginTop: 8 }}>{factors.map((x, i) => <span className="sig-chip" key={i}>{x.name || x.factor}{(x.hit ?? x.hit_rate) != null ? ` ${fixed(x.hit ?? x.hit_rate, 0)}%` : ""}</span>)}</div>
+        )}
+        {improvements.length > 0 && (
+          <ul className="why-list" style={{ marginTop: 8 }}>{improvements.slice(0, 5).map((x, i) => <li key={i}>{stripEmoji(typeof x === "string" ? x : x.text || x.note)}</li>)}</ul>
+        )}
+        {(s?.note || f?.note) && <p className="force-note" style={{ marginTop: 8 }}>{stripEmoji(s?.note || f?.note)}</p>}
       </div>
     </>
   );
@@ -118,8 +139,8 @@ export default function NextDayPage() {
         })}
       </div>
 
-      {/* 예측 검증 (forward IC·승률) */}
-      <DriverValidation />
+      {/* 예측 검증 · 신뢰도 (scorecard + forward IC) */}
+      <PredictionValidation />
 
       {/* 영향 섹터 + 아시아 */}
       <div className="nd-grid nd-grid-2">
