@@ -7,7 +7,7 @@ import { stripEmoji } from "../lib/format.js";
 import {
   CAL_CATS, CAT_ORDER, catMeta, marketLabel, monthGrid, asEvents,
   ymd, ddayNum, ddayLabel, todayMidnight, impMeta, impRank, eventImpact,
-  eventAction, buildShadeMap, marketImpactRank, marketImpactMeta, isMajorEvent,
+  eventAction, buildShadeMap, marketImpactRank, isMajorEvent,
 } from "../lib/calendar.js";
 
 const WD = ["일", "월", "화", "수", "목", "금", "토"];
@@ -134,7 +134,11 @@ export default function CalendarPage() {
               {(() => { const n = ddayNum(selDay); return n != null ? <span className={"cal-dl-dday" + (n === 0 ? " today" : "")}>{ddayLabel(n)}</span> : null; })()}
               <span className="cal-dl-cnt">{selEvents.length}건</span>
             </h3>
-            {selEvents.length === 0 ? <Empty icon="calendar-off">선택한 날짜에 일정이 없습니다</Empty> : (
+            {selEvents.length === 0 ? (() => {
+              const wd = (() => { const t = Date.parse((selDay || "") + "T00:00:00"); return isNaN(t) ? -1 : new Date(t).getDay(); })();
+              const weekend = wd === 0 || wd === 6;
+              return <Empty icon="calendar-off">{weekend ? "주말(휴장)이라 등록된 일정이 없습니다" : "선택한 날짜에 등록된 일정이 없습니다 (공시·일정 미등록)"}</Empty>;
+            })() : (
               <ul className="cal-events">
                 {selEvents.map((e, i) => <EventRow key={e.id || i} e={e} />)}
               </ul>
@@ -152,7 +156,6 @@ function EventRow({ e }) {
   const clickable = !!e.symbol;
   const imp = impMeta(e.importance);
   const showImp = impRank(e.importance) >= 1; // 보통·높음만 배지 표시(낮음은 생략)
-  const mImp = marketImpactMeta(e);
   const showMImp = marketImpactRank(e) >= 2; // 증시영향 '큼'만 강조 배지
   const major = isMajorEvent(e);
   const impact = eventImpact(e);
