@@ -482,6 +482,35 @@ a { color: inherit; text-decoration: none; }
 .fhc-net { font-weight: 700; min-width: 66px; text-align: right; font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .fhc-grid { grid-template-columns: 1fr; } }
 
+/* 해외 자금흐름 (global-flow) + 범위/기준일 칩 */
+.gf-hd-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.gf-scope { font-size: .7rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.gf-regime { display: inline-flex; align-items: center; gap: 4px; font-size: .72rem; font-weight: 700;
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: var(--r); white-space: nowrap; }
+.gf-regime i { font-size: .9rem; }
+.gf-regime.gf-up { color: var(--up); border-color: color-mix(in srgb, var(--up) 40%, var(--border)); }
+.gf-regime.gf-down { color: var(--down); border-color: color-mix(in srgb, var(--down) 40%, var(--border)); }
+.gf-regime.gf-muted { color: var(--muted); }
+.gf-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; }
+.gf-side { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; }
+.gf-rot { flex-wrap: wrap; }
+.gf-etf { margin-left: 6px; font-size: .62rem; font-weight: 700; color: var(--muted); vertical-align: middle;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 0 4px; }
+.gf-krlink { flex-basis: 100%; min-width: 0; display: flex; align-items: center; gap: 3px; margin-top: 2px;
+  font-size: .7rem; color: var(--muted); }
+.gf-krlink i { font-size: .8rem; flex-shrink: 0; color: var(--primary); }
+.gf-krlink-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gf-assets { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; }
+.gf-asset { display: flex; flex-direction: column; gap: 2px; padding: 8px;
+  border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); min-width: 0; }
+.gf-as-nm { font-size: .68rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gf-as-v { font-size: .92rem; font-weight: 700; }
+.gf-impl { margin: 12px 0 0; font-size: .78rem; line-height: 1.5; display: flex; gap: 6px; color: var(--text); }
+.gf-impl i { color: var(--primary); margin-top: 2px; flex-shrink: 0; }
+.gf-impl-lbl { display: block; font-size: .68rem; color: var(--muted); margin-bottom: 1px; }
+.gf-disc { margin: 8px 0 0; font-size: .68rem; color: var(--muted); line-height: 1.45; }
+@media (max-width: 760px) { .gf-grid { grid-template-columns: 1fr; } }
+
 /* badges / chips */
 .badge { display: inline-flex; align-items: center; gap: 5px; font-size: .68rem; font-weight: 700;
   padding: 3px 9px; border-radius: var(--pill); white-space: nowrap; max-width: 100%;
