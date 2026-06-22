@@ -31,12 +31,15 @@ function OvernightContext() {
     { k: "美 10년물", v: u.ust_10y_chg },
   ].filter((x) => x.v != null);
   const rk = /위험선호|risk-on/i.test(data.regime_hint || "") ? "up" : /위험회피|risk-off/i.test(data.regime_hint || "") ? "down" : "mut";
+  // 실제 미국 완료 세션일(us_session_date) 우선 — as_of 는 수집일이라 휴장/주말엔 세션일과 다름.
+  const sess = data.us_session_date || data.as_of;
+  const stale = data.us_session_date && data.as_of && data.us_session_date !== data.as_of;
   return (
     <div className="card card-pad ovc" style={{ marginBottom: 14 }}>
       <div className="ovc-hd">
         <i className="ti ti-world-bolt" aria-hidden="true" /> 간밤 미국 증시
         {data.regime_hint && <Badge kind={rk} dot>{data.regime_hint}</Badge>}
-        {data.as_of && <span className="ovc-asof num">{data.as_of}</span>}
+        {sess && <span className="ovc-asof num" title="직전 미국 정규장(완료 세션) 기준일">직전장 {sess}</span>}
       </div>
       <div className="ovc-idx">
         {idx.map((it) => (
@@ -48,6 +51,9 @@ function OvernightContext() {
       </div>
       {Array.isArray(data.leading_signals) && data.leading_signals.length > 0 && (
         <ul className="ovc-sig">{data.leading_signals.slice(0, 3).map((s, i) => <li key={i}>{stripEmoji(s)}</li>)}</ul>
+      )}
+      {stale && data.freshness_note && (
+        <p className="ovc-note"><i className="ti ti-info-circle" aria-hidden="true" />{stripEmoji(data.freshness_note)}</p>
       )}
     </div>
   );
