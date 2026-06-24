@@ -57,7 +57,7 @@ function SparkBars({ series }) {
 function InvestorDrill({ label, stocks, onPick }) {
   return (
     <div className="sfd-drill">
-      <div className="sfd-drill-h"><i className="ti ti-list-search" aria-hidden="true" />{label} 순매수 상위 종목</div>
+      <div className="sfd-drill-h"><i className="ti ti-list-search" aria-hidden="true" />{label} 자금 집중 종목<span className="sfd-drill-sub">매수 빨강 / 매도 파랑</span></div>
       <ul className="sfd-drill-list">
         {stocks.map((s, i) => {
           const v = pickNum(s, ["net_eok", "net", "eok", "value"]);

@@ -532,6 +532,7 @@ a { color: inherit; text-decoration: none; }
 .sfd-drill { border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); padding: 7px 8px; }
 .sfd-drill-h { display: flex; align-items: center; gap: 4px; font-size: .68rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
 .sfd-drill-h i { font-size: .82rem; color: var(--primary); }
+.sfd-drill-sub { margin-left: auto; font-size: .62rem; font-weight: 500; color: var(--faint); }
 .sfd-drill-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .sfd-drill-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border-soft); }
 .sfd-drill-list li:last-child { border-bottom: 0; }
