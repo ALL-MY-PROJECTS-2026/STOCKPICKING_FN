@@ -22,29 +22,62 @@ function FreshChip({ date, fallback }) {
   return null;
 }
 
-/** 유입/유출 한 컬럼 (자금흐름 막대) */
-function FlowColumn({ title, icon, rows, kind }) {
-  const max = Math.max(1, ...rows.map((r) => Math.abs(r.net_eok)));
+/** +면 상승색(빨강)/-면 하락색(파랑)/0이면 muted — 투자자별 순매수 부호색 */
+const flowColor = (v) => `var(--${v > 0 ? "up" : v < 0 ? "down" : "muted"})`;
+
+/** flow_quality 배지 메타 (BN: 강한유입/편중유입/강한유출/혼조) */
+const QUAL_META = {
+  "강한유입": { cls: "up", icon: "trending-up" },
+  "강한유출": { cls: "down", icon: "trending-down" },
+  "혼조": { cls: "mut", icon: "arrows-shuffle" },
+};
+const qualMeta = (q) =>
+  QUAL_META[q] || (q && q.includes("편중") ? { cls: "warn", icon: "alert-triangle" } : { cls: "mut", icon: "minus" });
+
+/** 총자본 섹터 자금흐름 상세 카드 — 테마별 (외국인+기관) 순매수 + 투자자 분리·품질지표 */
+function SectorFlowDetail({ items }) {
+  const max = Math.max(1, ...items.map((r) => Math.abs(r.net_eok || 0)));
   return (
-    <div className="card card-pad">
-      <div className="sect-hd" style={{ marginBottom: 12 }}>
-        <i className={"ti ti-" + icon} style={{ color: `var(--${kind})` }} />
-        {title}
-        <span className="sect-sub">{rows.length}개 테마</span>
-      </div>
-      {rows.length === 0 ? <Empty /> : (
-        <div className="secflow">
-          {rows.map((r) => (
-            <div className="secrow" key={r.theme + r.dir}>
-              <span className="nm" title={r.theme}>{r.theme}</span>
-              <div className="track">
-                <i style={{ width: (Math.abs(r.net_eok) / max) * 100 + "%", background: `var(--${kind})` }} />
-              </div>
-              <span className="val" style={{ color: `var(--${kind})` }}>{eokInt(r.net_eok)}</span>
+    <div className="sfd-grid">
+      {items.map((r) => {
+        const dirKind = r.dir === "inflow" ? "up" : r.dir === "outflow" ? "down" : "muted";
+        const q = qualMeta(r.flow_quality);
+        return (
+          <div className="card card-pad sfd-card" style={{ "--dc": `var(--${dirKind})` }} key={r.theme}>
+            <div className="sfd-top">
+              <span className="sfd-th" title={r.theme}>{r.theme}</span>
+              {r.flow_quality && (
+                <span className={"sfd-qual sfd-" + q.cls} title="자금흐름 품질(쏠림·일관성 종합)">
+                  <i className={"ti ti-" + q.icon} aria-hidden="true" />{r.flow_quality}
+                </span>
+              )}
             </div>
-          ))}
-        </div>
-      )}
+            <div className="sfd-net">
+              <b className="num" style={{ color: `var(--${dirKind})` }}>{eokInt(r.net_eok)}</b>
+              <span className="sfd-net-lbl">총 순매수(외국인+기관)</span>
+            </div>
+            <div className="sfd-track"><i style={{ width: (Math.abs(r.net_eok || 0) / max) * 100 + "%", background: `var(--${dirKind})` }} /></div>
+            <div className="sfd-split">
+              <div className="sfd-inv">
+                <span className="sfd-inv-k"><i className="ti ti-world" aria-hidden="true" />외국인</span>
+                <span className="sfd-inv-v num" style={{ color: flowColor(r.foreign_eok) }}>{eokInt(r.foreign_eok)}</span>
+              </div>
+              <div className="sfd-inv">
+                <span className="sfd-inv-k"><i className="ti ti-building-bank" aria-hidden="true" />기관</span>
+                <span className="sfd-inv-v num" style={{ color: flowColor(r.institution_eok) }}>{eokInt(r.institution_eok)}</span>
+              </div>
+            </div>
+            <div className="sfd-meta">
+              {r.led_by && <span className="sfd-led" title="주도 주체(부호 기준)">주도 {r.led_by}</span>}
+              {r.consistency_pct != null && <span className="sfd-m" title="N거래일 중 순유입일 비율 — 꾸준함">일관성 {r.consistency_pct}%</span>}
+              {r.breadth_pct != null && <span className="sfd-m" title="테마 내 순유입 종목 비율 — 광범위함">매수폭 {r.breadth_pct}%</span>}
+              {r.concentration_pct != null && <span className="sfd-m" title="최대 1종목이 차지하는 절대비중 — 쏠림">집중도 {r.concentration_pct}%</span>}
+              {r.stock_count != null && <span className="sfd-m" title="분석 종목 수">{r.stock_count}종목</span>}
+              {r.per_stock_eok != null && <span className="sfd-m" title="종목당 평균 순매수">종목당 {eokInt(r.per_stock_eok)}</span>}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -197,15 +230,16 @@ function GlobalFlow() {
 /** 섹터 자금흐름 — /api/sector-flow (테마별 순매수, 유입=빨강 / 유출=파랑) */
 export default function SectorFlowPage() {
   const { data, loading, error, reload } = useApi("/api/sector-flow");
-  const inflow = data?.inflow || [];
-  const outflow = data?.outflow || [];
+  const items = (data?.items || []).slice().sort((a, b) => (b.net_eok || 0) - (a.net_eok || 0));
   const domDate = freshDate(data);
+  const cov = data?.coverage;
+  const covWarn = cov && cov.consistent === false;
   return (
     <>
       {/* 🇰🇷 국내 자금흐름 (유지) */}
       <FlowHeatCross />
-      <SectionHd icon="arrows-exchange" title="섹터 자금흐름" count={loading ? null : (data?.n ?? inflow.length + outflow.length)}
-        desc={data?.note || "테마별 순매수(억) — 유입=빨강 / 유출=파랑"}
+      <SectionHd icon="arrows-exchange" title="총자본 섹터 자금흐름" count={loading ? null : (data?.n ?? items.length)}
+        desc={data?.note || "테마별 (외국인+기관) 총 순매수(억) · 투자자 분리·일관성·쏠림 동반 — 유입=빨강 / 유출=파랑"}
         right={!loading && (
           <span className="gf-hd-right">
             <ScopeChip kr />
@@ -213,11 +247,17 @@ export default function SectorFlowPage() {
           </span>
         )} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
-        loading ? <div className="grid" style={{ gridTemplateColumns: "1fr 1fr" }}><Skeletons n={2} /></div> : (
-          <div className="secflow-cols">
-            <FlowColumn title="자금 유입" icon="trending-up" rows={inflow} kind="up" />
-            <FlowColumn title="자금 유출" icon="trending-down" rows={outflow} kind="down" />
-          </div>
+        loading ? <div className="sfd-grid"><Skeletons n={6} cls="sk" /></div> :
+        items.length === 0 ? <Empty>표시할 섹터 자금흐름이 없습니다</Empty> : (
+          <>
+            {covWarn && (
+              <p className="sfd-cov"><i className="ti ti-alert-triangle" aria-hidden="true" />
+                {data.data_quality || "일별 분석종목수 편차로 합계가 왜곡될 수 있습니다 — per_stock·품질지표 참고"}
+                {cov.min != null && cov.max != null ? ` (일별 ${cov.min}~${cov.max}종목)` : ""}
+              </p>
+            )}
+            <SectorFlowDetail items={items} />
+          </>
         )}
 
       {/* 🌍 해외 자금흐름 (신규 — 하단 카드) */}

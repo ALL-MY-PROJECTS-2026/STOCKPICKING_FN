@@ -486,6 +486,39 @@ a { color: inherit; text-decoration: none; }
 .fhc-net { font-weight: 700; min-width: 66px; text-align: right; font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .fhc-grid { grid-template-columns: 1fr; } }
 
+/* 총자본 섹터 자금흐름 상세 (외국인/기관 분리 + 품질지표) */
+.sfd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(284px, 1fr)); gap: 12px; }
+.sfd-card { border-top: 3px solid var(--dc); display: flex; flex-direction: column; gap: 8px; }
+.sfd-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sfd-th { font-weight: 700; font-size: .92rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sfd-qual { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; font-size: .66rem; font-weight: 700;
+  padding: 1px 6px; border: 1px solid var(--border); border-radius: var(--r); white-space: nowrap; }
+.sfd-qual i { font-size: .8rem; }
+.sfd-up { color: var(--up); border-color: color-mix(in srgb, var(--up) 38%, var(--border)); }
+.sfd-down { color: var(--down); border-color: color-mix(in srgb, var(--down) 38%, var(--border)); }
+.sfd-warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 38%, var(--border)); }
+.sfd-mut { color: var(--muted); }
+.sfd-net { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.sfd-net b { font-size: 1.12rem; font-weight: 800; }
+.sfd-net-lbl { font-size: .64rem; color: var(--muted); }
+.sfd-track { height: 6px; background: var(--bg); border-radius: var(--r); overflow: hidden; }
+.sfd-track i { display: block; height: 100%; border-radius: var(--r); }
+.sfd-split { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.sfd-inv { display: flex; flex-direction: column; gap: 1px; padding: 6px 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); min-width: 0; }
+.sfd-inv-k { display: flex; align-items: center; gap: 3px; font-size: .64rem; color: var(--muted); }
+.sfd-inv-k i { font-size: .78rem; }
+.sfd-inv-v { font-size: .84rem; font-weight: 700; }
+.sfd-meta { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.sfd-led { font-size: .66rem; font-weight: 700; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 1px 6px; }
+.sfd-m { font-size: .66rem; color: var(--muted); white-space: nowrap; }
+.sfd-cov { display: flex; align-items: flex-start; gap: 5px; margin: 0 0 12px; padding: 7px 9px;
+  font-size: .7rem; line-height: 1.45; color: var(--muted);
+  background: var(--bg); border: 1px solid color-mix(in srgb, var(--warn) 30%, var(--border)); border-radius: var(--r); }
+.sfd-cov i { color: var(--warn); margin-top: 1px; flex-shrink: 0; font-size: .85rem; }
+@media (max-width: 520px) { .sfd-grid { grid-template-columns: 1fr; } }
+
 /* 해외 자금흐름 (global-flow) + 범위/기준일 칩 */
 .gf-hd-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .gf-scope { font-size: .7rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
