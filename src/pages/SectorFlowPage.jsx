@@ -114,7 +114,7 @@ function SfdCard({ r, rank, max }) {
   return (
     <div className="card card-pad sfd-card" style={{ "--dc": `var(--${dirKind})` }}>
       <div className="sfd-top">
-        <span className="sfd-rank num" title="순매수 순위">#{rank}</span>
+        <span className="sfd-rank num" title="현재 정렬 기준 순위">#{rank}</span>
         <span className="sfd-th" title={r.theme}>{r.theme}</span>
         {r.flow_quality && (
           <span className={"sfd-qual sfd-" + q.cls} title="자금흐름 품질(쏠림·일관성 종합)">
@@ -360,10 +360,22 @@ function GlobalFlow() {
   );
 }
 
+/** 총자본 섹터 정렬 기준 — 자본규모/오늘유입/유입강도는 해당 필드 있을 때만 노출 */
+const SF_SORTS = [
+  { v: "net", label: "5일 순매수순", get: (r) => r.net_eok ?? -1e18 },
+  { v: "cap", label: "자본규모순", get: (r) => pickCapEok(r) ?? -1e18, need: (r) => pickCapEok(r) != null },
+  { v: "today", label: "오늘 순유입순", get: (r) => pickNum(r, ["today_net_eok", "today_net"]) ?? -1e18, need: (r) => pickNum(r, ["today_net_eok", "today_net"]) != null },
+  { v: "intensity", label: "유입강도순", get: (r) => pickNum(r, ["net_pct_of_cap", "net_pct"]) ?? -1e18, need: (r) => pickNum(r, ["net_pct_of_cap", "net_pct"]) != null },
+];
+
 /** 섹터 자금흐름 — /api/sector-flow (테마별 순매수, 유입=빨강 / 유출=파랑) */
 export default function SectorFlowPage() {
   const { data, loading, error, reload } = useApi("/api/sector-flow");
-  const items = (data?.items || []).slice().sort((a, b) => (b.net_eok || 0) - (a.net_eok || 0));
+  const [sort, setSort] = useState("net");
+  const raw = data?.items || [];
+  const sortOpts = SF_SORTS.filter((s) => !s.need || raw.some(s.need));
+  const sorter = sortOpts.find((s) => s.v === sort) || sortOpts[0];
+  const items = raw.slice().sort((a, b) => sorter.get(b) - sorter.get(a));
   const domDate = freshDate(data);
   const cov = data?.coverage;
   const covWarn = cov && cov.consistent === false;
@@ -378,6 +390,11 @@ export default function SectorFlowPage() {
         desc={data?.note || "테마별 (외국인+기관) 총 순매수(억) · 투자자 분리·일관성·쏠림 동반 — 유입=빨강 / 유출=파랑"}
         right={!loading && (
           <span className="gf-hd-right">
+            {items.length > 1 && sortOpts.length > 1 && (
+              <select className="bm-sort sf-sort" value={sorter.v} onChange={(e) => setSort(e.target.value)} aria-label="섹터 정렬 기준">
+                {sortOpts.map((s) => <option key={s.v} value={s.v}>{s.label}</option>)}
+              </select>
+            )}
             <ScopeChip kr />
             {(data?.flow_basis || data?.is_market_open != null) && (
               <span className={"sfd-basis " + (open ? "sfd-basis-prov" : "sfd-basis-fix")}
