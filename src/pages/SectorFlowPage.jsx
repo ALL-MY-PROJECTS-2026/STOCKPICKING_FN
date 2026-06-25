@@ -7,6 +7,24 @@ import { useDetail } from "../components/DetailModal.jsx";
 const eokInt = (v) =>
   v == null || isNaN(v) ? "-" : (v >= 0 ? "+" : "") + Math.round(v).toLocaleString("ko-KR") + "억";
 
+/** 총자본 등 큰 금액(억 단위) → 1조 이상이면 'N.N조', 아니면 'N,NNN억' (부호 없음) */
+const eokCap = (v) => {
+  if (v == null || isNaN(v)) return "-";
+  const n = Math.round(v);
+  if (Math.abs(n) >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, "") + "조";
+  return n.toLocaleString("ko-KR") + "억";
+};
+
+/** 테마 총자본(확보 자본/시총 규모) — BN 필드명·단위(억 vs 원) 방어적 흡수 → 항상 '억' 반환 */
+const pickCapEok = (r) => {
+  const eokKeys = ["total_capital_eok", "total_cap_eok", "capital_eok", "market_cap_eok", "total_market_cap_eok",
+    "theme_capital_eok", "total_value_eok", "mcap_eok", "cap_eok", "holdings_eok", "total_holdings_eok"];
+  for (const k of eokKeys) { const v = r && r[k]; if (typeof v === "number") return v; }
+  const wonKeys = ["total_capital", "total_cap", "capital", "market_cap", "total_market_cap", "total_value", "mcap", "cap"];
+  for (const k of wonKeys) { const v = r && r[k]; if (typeof v === "number") return v / 1e8; }
+  return null;
+};
+
 /** 등락률 ±0.00% (해외 ETF change_pct) */
 const pct1 = (v) => (v == null || isNaN(v) ? "-" : (v >= 0 ? "+" : "") + Number(v).toFixed(2) + "%");
 
@@ -83,6 +101,7 @@ function SfdCard({ r, rank, max }) {
   const dirKind = r.dir === "inflow" ? "up" : r.dir === "outflow" ? "down" : "muted";
   const q = qualMeta(r.flow_quality);
   const indiv = pickNum(r, ["individual_eok", "retail_eok", "person_eok", "individual"]);
+  const cap = pickCapEok(r);
   const leaders = pickArr(r, ["top_stocks", "leaders", "top_contributors", "top_names"]);
   const series = pickArr(r, ["daily_trend", "series", "daily", "by_date", "daily_net"]);
   const fStocks = pickArr(r, ["top_stocks_foreign", "foreign_stocks", "foreign_top"]);
@@ -106,6 +125,17 @@ function SfdCard({ r, rank, max }) {
         <span className="sfd-net-lbl">총 순매수(외국인+기관)</span>
       </div>
       <div className="sfd-track"><i style={{ width: (Math.abs(r.net_eok || 0) / max) * 100 + "%", background: `var(--${dirKind})` }} /></div>
+      {cap != null && (
+        <div className="sfd-cap" title="해당 테마에 확보된 총 자본(시가총액·투입자본 규모) — 순매수 절대액의 기준 규모">
+          <span className="sfd-cap-k"><i className="ti ti-building-bank" aria-hidden="true" />테마 총자본</span>
+          <b className="sfd-cap-v num">{eokCap(cap)}</b>
+          {cap > 0 && r.net_eok != null && (
+            <span className="sfd-cap-r" title="순매수 ÷ 총자본 — 자본 대비 자금 유입 강도">
+              유입강도 {(Math.abs(r.net_eok) / cap * 100).toFixed(2)}%
+            </span>
+          )}
+        </div>
+      )}
       <div className={"sfd-split" + (indiv != null ? " sfd-split3" : "")}>
         {fStocks ? (
           <button className={"sfd-inv sfd-inv-btn" + (openInv === "foreign" ? " on" : "")}

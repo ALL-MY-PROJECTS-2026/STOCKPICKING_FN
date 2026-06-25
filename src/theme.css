@@ -503,6 +503,14 @@ a { color: inherit; text-decoration: none; }
 .sfd-net-lbl { font-size: .64rem; color: var(--muted); }
 .sfd-track { height: 6px; background: var(--bg); border-radius: var(--r); overflow: hidden; }
 .sfd-track i { display: block; height: 100%; border-radius: var(--r); }
+/* 테마 총자본(확보 자본 규모) — 순매수와 시각 구분(중립 보라/회색 톤) */
+.sfd-cap { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px;
+  background: var(--surface-2); border-radius: var(--r-sm); padding: 5px 9px; }
+.sfd-cap-k { display: inline-flex; align-items: center; gap: 4px; font-size: .68rem; color: var(--muted); font-weight: 600; }
+.sfd-cap-k i { font-size: .85rem; color: var(--primary); }
+.sfd-cap-v { font-size: .92rem; font-weight: 800; color: var(--text); }
+.sfd-cap-r { margin-left: auto; font-size: .64rem; color: var(--faint);
+  border: 1px solid var(--border-soft); border-radius: var(--pill); padding: 0 6px; }
 .sfd-split { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .sfd-inv { display: flex; flex-direction: column; gap: 1px; padding: 6px 8px;
   background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); min-width: 0; }
