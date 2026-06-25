@@ -511,6 +511,11 @@ a { color: inherit; text-decoration: none; }
 .sfd-cap-v { font-size: .92rem; font-weight: 800; color: var(--text); }
 .sfd-cap-r { margin-left: auto; font-size: .64rem; color: var(--faint);
   border: 1px solid var(--border-soft); border-radius: var(--pill); padding: 0 6px; }
+/* 오늘 순유입(오늘 들어와 잔류 중인 자금) — 5일 누적과 구분, 가장 신선 */
+.sfd-today { display: flex; align-items: baseline; gap: 6px; }
+.sfd-today-k { display: inline-flex; align-items: center; gap: 4px; font-size: .7rem; color: var(--muted); font-weight: 600; }
+.sfd-today-k i { font-size: .92rem; color: var(--accent); }
+.sfd-today-v { font-size: 1rem; font-weight: 800; margin-left: auto; }
 .sfd-split { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .sfd-inv { display: flex; flex-direction: column; gap: 1px; padding: 6px 8px;
   background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); min-width: 0; }

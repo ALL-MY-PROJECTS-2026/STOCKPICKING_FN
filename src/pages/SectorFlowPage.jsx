@@ -102,6 +102,8 @@ function SfdCard({ r, rank, max }) {
   const q = qualMeta(r.flow_quality);
   const indiv = pickNum(r, ["individual_eok", "retail_eok", "person_eok", "individual"]);
   const cap = pickCapEok(r);
+  const today = pickNum(r, ["today_net_eok", "today_net", "todayNetEok", "today_inflow_eok"]);
+  const netPct = pickNum(r, ["net_pct_of_cap", "net_pct", "pct_of_cap"]);
   const leaders = pickArr(r, ["top_stocks", "leaders", "top_contributors", "top_names"]);
   const series = pickArr(r, ["daily_trend", "series", "daily", "by_date", "daily_net"]);
   const fStocks = pickArr(r, ["top_stocks_foreign", "foreign_stocks", "foreign_top"]);
@@ -122,16 +124,22 @@ function SfdCard({ r, rank, max }) {
       </div>
       <div className="sfd-net">
         <b className="num" style={{ color: `var(--${dirKind})` }}>{eokInt(r.net_eok)}</b>
-        <span className="sfd-net-lbl">총 순매수(외국인+기관)</span>
+        <span className="sfd-net-lbl">5일 누적 순매수(외국인+기관)</span>
       </div>
       <div className="sfd-track"><i style={{ width: (Math.abs(r.net_eok || 0) / max) * 100 + "%", background: `var(--${dirKind})` }} /></div>
+      {today != null && (
+        <div className="sfd-today" title="오늘(최신 거래일) 순유입 — 오늘 들어와 현재 잔류 중인 외국인+기관 순매수">
+          <span className="sfd-today-k"><i className="ti ti-calendar-up" aria-hidden="true" />오늘 순유입</span>
+          <b className="sfd-today-v num" style={{ color: flowColor(today) }}>{eokInt(today)}</b>
+        </div>
+      )}
       {cap != null && (
-        <div className="sfd-cap" title="해당 테마에 확보된 총 자본(시가총액·투입자본 규모) — 순매수 절대액의 기준 규모">
+        <div className="sfd-cap" title="해당 테마에 확보된 총 자본(시가총액 합) — 순매수 절대액의 기준 규모">
           <span className="sfd-cap-k"><i className="ti ti-building-bank" aria-hidden="true" />테마 총자본</span>
           <b className="sfd-cap-v num">{eokCap(cap)}</b>
-          {cap > 0 && r.net_eok != null && (
-            <span className="sfd-cap-r" title="순매수 ÷ 총자본 — 자본 대비 자금 유입 강도">
-              유입강도 {(Math.abs(r.net_eok) / cap * 100).toFixed(2)}%
+          {(netPct != null || (cap > 0 && r.net_eok != null)) && (
+            <span className="sfd-cap-r" title="순매수 ÷ 총자본 — 자본 대비 자금 유입 강도(5일)">
+              유입강도 {(netPct != null ? netPct : Math.abs(r.net_eok) / cap * 100).toFixed(2)}%
             </span>
           )}
         </div>
