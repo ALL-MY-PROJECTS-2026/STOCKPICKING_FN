@@ -371,7 +371,7 @@ const SF_SORTS = [
 /** 섹터 자금흐름 — /api/sector-flow (테마별 순매수, 유입=빨강 / 유출=파랑) */
 export default function SectorFlowPage() {
   const { data, loading, error, reload } = useApi("/api/sector-flow");
-  const [sort, setSort] = useState("net");
+  const [sort, setSort] = useState("cap"); // 기본: 자본규모순(cap 필드 없으면 sortOpts[0]=순매수순으로 폴백)
   const raw = data?.items || [];
   const sortOpts = SF_SORTS.filter((s) => !s.need || raw.some(s.need));
   const sorter = sortOpts.find((s) => s.v === sort) || sortOpts[0];
