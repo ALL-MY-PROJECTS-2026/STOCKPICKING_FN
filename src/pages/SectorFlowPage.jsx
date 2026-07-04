@@ -108,9 +108,10 @@ function SfdCard({ r, rank, max }) {
   const series = pickArr(r, ["daily_trend", "series", "daily", "by_date", "daily_net"]);
   const fStocks = pickArr(r, ["top_stocks_foreign", "foreign_stocks", "foreign_top"]);
   const iStocks = pickArr(r, ["top_stocks_institution", "institution_stocks", "institution_top"]);
+  const gStocks = pickArr(r, ["top_stocks_individual", "individual_stocks", "individual_top", "retail_stocks"]);
   const toggle = (k) => setOpenInv((o) => (o === k ? null : k));
-  const drill = openInv === "foreign" ? fStocks : openInv === "institution" ? iStocks : null;
-  const drillLabel = openInv === "foreign" ? "외국인" : "기관";
+  const drill = openInv === "foreign" ? fStocks : openInv === "institution" ? iStocks : openInv === "individual" ? gStocks : null;
+  const drillLabel = openInv === "foreign" ? "외국인" : openInv === "institution" ? "기관" : "개인";
   return (
     <div className="card card-pad sfd-card" style={{ "--dc": `var(--${dirKind})` }}>
       <div className="sfd-top">
@@ -170,10 +171,18 @@ function SfdCard({ r, rank, max }) {
           </div>
         )}
         {indiv != null && (
-          <div className="sfd-inv" title="개인 순매수(참고 — 총 순매수엔 미포함, 보통 외인·기관의 반대편)">
-            <span className="sfd-inv-k"><i className="ti ti-user" aria-hidden="true" />개인</span>
-            <span className="sfd-inv-v num" style={{ color: flowColor(indiv) }}>{eokInt(indiv)}</span>
-          </div>
+          gStocks ? (
+            <button className={"sfd-inv sfd-inv-btn" + (openInv === "individual" ? " on" : "")}
+              onClick={() => toggle("individual")} aria-expanded={openInv === "individual"} title="개인 종목별 내역 보기">
+              <span className="sfd-inv-k"><i className="ti ti-user" aria-hidden="true" />개인<i className={"ti ti-chevron-down sfd-chev" + (openInv === "individual" ? " up" : "")} aria-hidden="true" /></span>
+              <span className="sfd-inv-v num" style={{ color: flowColor(indiv) }}>{eokInt(indiv)}</span>
+            </button>
+          ) : (
+            <div className="sfd-inv" title="개인 순매수(참고 — 총 순매수엔 미포함, 보통 외인·기관의 반대편)">
+              <span className="sfd-inv-k"><i className="ti ti-user" aria-hidden="true" />개인</span>
+              <span className="sfd-inv-v num" style={{ color: flowColor(indiv) }}>{eokInt(indiv)}</span>
+            </div>
+          )
         )}
       </div>
       {drill && drill.length > 0 && <InvestorDrill label={drillLabel} stocks={drill} onPick={open} />}
