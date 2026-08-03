@@ -5,6 +5,7 @@ import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls, Segmented } f
 import { useDetail } from "../components/DetailModal.jsx";
 import MyBookmarkButton from "../components/MyBookmarkButton.jsx";
 import PromptCopyButton from "../components/PromptCopyButton.jsx";
+import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import { won, pct, dir, arrow, fixed } from "../lib/format.js";
 
 const num = (v, f = -1e9) => (v == null || isNaN(v) ? f : Number(v));
@@ -110,6 +111,7 @@ export default function BookmarkPage() {
             </select>
           </div>
         } />
+      <TrackRecordBanner />
       {sm && (
         <div className="bm-summary">
           {sm.avg_value != null && <span>평균 가치 <b className="num">{fixed(sm.avg_value, 1)}</b></span>}

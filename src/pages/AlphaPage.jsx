@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, Segmented, ListControls } from "../components/ui.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
+import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import { useListView } from "../lib/useListView.js";
 import { won, fixed } from "../lib/format.js";
 
@@ -43,6 +44,7 @@ export default function AlphaPage() {
       <SectionHd icon={tab.icon} title="알파 팩터 픽" count={loading ? null : rows.length}
         desc={tab.desc}
         right={<Segmented value={sel} onChange={setSel} options={TABS.map((t) => ({ value: t.value, label: t.label }))} />} />
+      <TrackRecordBanner />
       <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="card card-pad"><Skeletons n={1} /></div> :

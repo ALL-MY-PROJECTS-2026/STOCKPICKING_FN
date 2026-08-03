@@ -1,6 +1,7 @@
 import { useApi } from "../lib/useApi.js";
 import { useListView } from "../lib/useListView.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
+import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import StockCard from "../components/StockCard.jsx";
 import { fixed } from "../lib/format.js";
 
@@ -14,6 +15,7 @@ export default function AutoPicksPage() {
       <SectionHd icon="bolt" title="자동 픽" count={loading ? null : picks.length}
         desc="자동 발굴 엔진 선정 — 점수·세력·뉴스 종합"
         right={data?.generated_at && <span className="count-chip">{data.generated_at}</span>} />
+      <TrackRecordBanner />
       <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> : (
         <div className="grid grid-stocks">

@@ -1,5 +1,6 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
+import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
 import PromptCopyButton from "../components/PromptCopyButton.jsx";
 import { useListView } from "../lib/useListView.js";
@@ -18,6 +19,7 @@ export default function ProposalsPage() {
       <SectionHd icon="bulb" title="발굴 제안" count={loading ? null : items.length}
         desc={stripEmoji(data?.horizon?.text) || "다중 신호 기반 관심 제안 (표시 전용·매매 아님)"}
         right={data?.posture?.tier && <Badge kind="mut" dot>국면 {data.posture.tier}</Badge>} />
+      <TrackRecordBanner />
       <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-themes"><Skeletons n={6} /></div> :

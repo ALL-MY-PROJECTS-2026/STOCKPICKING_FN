@@ -1,5 +1,6 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls, LazyMount } from "../components/ui.jsx";
+import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import StockCard from "../components/StockCard.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
 import PromptCopyButton from "../components/PromptCopyButton.jsx";
@@ -18,6 +19,7 @@ function ConsensusSection() {
         desc={data?.note || "여러 발굴 신호가 동시에 겹친 고신뢰 종목"}
         right={data?.pool && typeof data.pool === "object" &&
           <span className="count-chip">신호 {Object.keys(data.pool).length}종</span>} />
+      <TrackRecordBanner />
       <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-stocks"><Skeletons n={6} /></div> :

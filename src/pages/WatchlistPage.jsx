@@ -1,5 +1,6 @@
 import { useApi } from "../lib/useApi.js";
 import { SectionHd, Skeletons, Empty, ErrBox, Badge, ListControls } from "../components/ui.jsx";
+import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import { useDetail } from "../components/DetailModal.jsx";
 import PromptCopyButton from "../components/PromptCopyButton.jsx";
 import { useListView } from "../lib/useListView.js";
@@ -16,6 +17,7 @@ export default function WatchlistPage() {
       <SectionHd icon="eye" title="자동 워치리스트" count={loading ? null : items.length}
         desc={data?.note || "다중 신호·근거 기반 자동 선별 워치리스트"}
         right={data?.adaptive != null && <span className="count-chip">{data.adaptive ? "적응형" : "고정"} 가중</span>} />
+      <TrackRecordBanner />
       <ListControls view={lv} />
       {error ? <ErrBox onRetry={reload}>{error}</ErrBox> :
         loading ? <div className="grid grid-stocks"><Skeletons n={9} /></div> :
