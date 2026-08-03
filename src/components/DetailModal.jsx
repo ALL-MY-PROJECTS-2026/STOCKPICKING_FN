@@ -379,7 +379,7 @@ function Modal({ seed, onClose }) {
               {seed.code}{seed.theme ? " · " + seed.theme : ""}
               <SrcLink href={SRC.main(seed.code)} label="네이버" />
             </div>
-            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>추천 종목</Badge></span>}
+            {seed.bookmarked && <span style={{ marginTop: 6, display: "inline-block" }}><Badge kind="warn" dot>서버 선별</Badge></span>}
           </div>
           <div className="modal-price">
             <div className="num" style={{ fontSize: "1.5rem", fontWeight: 800 }}>{won(price)}</div>
@@ -395,7 +395,7 @@ function Modal({ seed, onClose }) {
           <div className="modal-body">
             <div className="signal-banner" style={{ borderColor: sigColor + "55", background: sigColor + "12" }}>
               <div>
-                <div className="lbl">예측 신호 <span style={{ color: "var(--faint)", fontWeight: 400 }}>(1단계 룰)</span></div>
+                <div className="lbl">데이터 신호 <span style={{ color: "var(--faint)", fontWeight: 400 }}>(1단계 룰 · 참고용)</span></div>
                 <div className="sig" style={{ color: sigColor }}>{stripEmoji(d.signal_label || d.signal)}</div>
               </div>
               <div className="conf">

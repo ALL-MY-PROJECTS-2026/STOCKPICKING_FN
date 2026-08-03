@@ -70,7 +70,7 @@ function BmCard({ c }) {
           </span>
         )}
         {c.fin_grade && <span className="bm-sc" title="재무 등급">재무 <b>{c.fin_grade}</b></span>}
-        {sig && <Badge kind={sig.kind} dot title="예측 신호">{sig.label}</Badge>}
+        {sig && <Badge kind={sig.kind} dot title="데이터 신호 (룰 기반 · 참고용)">{sig.label}</Badge>}
       </div>
       <div className="scard-metrics">
         <span>경과 <b className="num">D+{c.elapsed_days}</b></span>
@@ -100,8 +100,8 @@ export default function BookmarkPage() {
 
   return (
     <>
-      <SectionHd icon="star" title="추천 종목" count={loading ? null : cards.length}
-        desc="운영 서버가 선별한 추천 — 시점 대비 수익률 추적 (읽기 전용)"
+      <SectionHd icon="star" title="서버 선별 종목" count={loading ? null : cards.length}
+        desc="운영 서버가 데이터 신호로 선별한 종목 — 시점 대비 수익률 추적 (읽기 전용 · 참고용 · 투자 권유 아님)"
         right={
           <div className="bm-controls">
             <Segmented value={market} onChange={setMarket} options={MK} />

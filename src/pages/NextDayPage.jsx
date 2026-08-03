@@ -41,7 +41,7 @@ function ProgressLine({ label, n, min }) {
 function PredictionValidation() {
   const sc = useApi("/api/prediction-scorecard");
   const fic = useApi("/api/driver-forward-ic");
-  if (sc.loading && fic.loading) return <><SectionHd icon="target-arrow" title="예측 검증 · 신뢰도" /><div className="sk" style={{ height: 80, borderRadius: "var(--r)" }} /></>;
+  if (sc.loading && fic.loading) return <><SectionHd icon="target-arrow" title="브리핑 적중 이력 · 신뢰도" /><div className="sk" style={{ height: 80, borderRadius: "var(--r)" }} /></>;
   const s = sc.data, f = fic.data;
   if (!s && !f) return null;
   const scObs = !s || s.status === "observing" || (s.samples_graded != null && s.min_sample != null && s.samples_graded < s.min_sample);
@@ -53,13 +53,13 @@ function PredictionValidation() {
 
   return (
     <>
-      <SectionHd icon="target-arrow" title="예측 검증 · 신뢰도" desc="이 페이지 예측이 실제 익일 결과를 얼마나 맞췄는지 — 점수로 개선점 도출"
+      <SectionHd icon="target-arrow" title="브리핑 적중 이력 · 신뢰도" desc="이 브리핑의 방향 신호가 실제 익일 결과와 얼마나 맞았는지 — 투명 공개 (참고용)"
         right={<Badge kind={measured ? "ok" : "warn"} dot>{measured ? "측정 완료" : "표본 수집 중"}</Badge>} />
       <div className="card card-pad">
         {/* 측정 완료 점수 — 폭 꽉 채워 균형 */}
         {(s && (s.reliability_score != null || s.score != null || s.hit_rate != null)) && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 8, marginBottom: 10 }}>
-            {(s.reliability_score ?? s.score) != null && <div className="card stat"><div className="k">예측 신뢰도</div><div className="v num">{fixed(s.reliability_score ?? s.score, 0)}</div></div>}
+            {(s.reliability_score ?? s.score) != null && <div className="card stat"><div className="k">신뢰도 점수</div><div className="v num">{fixed(s.reliability_score ?? s.score, 0)}</div></div>}
             {s.hit_rate != null && <div className="card stat"><div className="k">적중률</div><div className="v num">{fixed(s.hit_rate, 0)}%</div></div>}
             {s.samples_graded != null && <div className="card stat"><div className="k">채점 표본</div><div className="v num">{s.samples_graded}</div></div>}
           </div>
@@ -67,7 +67,7 @@ function PredictionValidation() {
         {/* 진행바 (수집 중) — 2열 배치로 균형 */}
         {(scObs || ficObs) && (
           <div className="nd-val-prog">
-            {scObs && <ProgressLine label="예측 채점 누적" n={s?.samples_graded ?? s?.samples_logged} min={s?.min_sample} />}
+            {scObs && <ProgressLine label="적중 채점 누적" n={s?.samples_graded ?? s?.samples_logged} min={s?.min_sample} />}
             {ficObs && <ProgressLine label="드라이버 스냅샷 누적" n={f?.samples_logged} min={f?.min_sample} />}
           </div>
         )}
@@ -96,14 +96,14 @@ function PredictionValidation() {
   );
 }
 
-/** 다음날 증시 예측 — /api/next-day-insight (간밤 글로벌·수급·이벤트 종합 → 익일 시초가·장중 영향, 카드 그리드) */
+/** 다음날 증시 브리핑 — /api/next-day-insight (간밤 글로벌·수급·이벤트 종합 → 익일 시초가·장중 영향, 카드 그리드) */
 export default function NextDayPage() {
   const { data, loading, error, reload } = useApi("/api/next-day-insight");
   const [openDriver, setOpenDriver] = useState(null);
 
-  if (loading) return <><SectionHd icon="crystal-ball" title="다음날 증시 예측" /><div className="nd-grid"><Skeletons n={6} cls="sk-card" /></div></>;
-  if (error) return <><SectionHd icon="crystal-ball" title="다음날 증시 예측" /><ErrBox onRetry={reload}>{error}</ErrBox></>;
-  if (!data) return <><SectionHd icon="crystal-ball" title="다음날 증시 예측" /><Empty>데이터 없음</Empty></>;
+  if (loading) return <><SectionHd icon="report-analytics" title="다음날 증시 브리핑" /><div className="nd-grid"><Skeletons n={6} cls="sk-card" /></div></>;
+  if (error) return <><SectionHd icon="report-analytics" title="다음날 증시 브리핑" /><ErrBox onRetry={reload}>{error}</ErrBox></>;
+  if (!data) return <><SectionHd icon="report-analytics" title="다음날 증시 브리핑" /><Empty>데이터 없음</Empty></>;
 
   const drivers = (data.drivers || []).slice().sort((a, b) => (STRENGTH[a.strength]?.rank ?? 3) - (STRENGTH[b.strength]?.rank ?? 3));
   const sc = data.scenarios || [];
@@ -117,8 +117,8 @@ export default function NextDayPage() {
 
   return (
     <>
-      <SectionHd icon="crystal-ball" title="다음날 증시 예측"
-        desc="간밤 글로벌·수급·이벤트 종합 — 익일 시초가·장중 영향"
+      <SectionHd icon="report-analytics" title="다음날 증시 브리핑"
+        desc="간밤 글로벌·수급·이벤트 사실 종합 (참고용 · 투자 권유 아님)"
         right={data.as_of_us_session && <span className="count-chip">미국세션 {data.as_of_us_session}</span>} />
 
       {/* 시나리오 카드 */}
