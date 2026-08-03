@@ -29,7 +29,7 @@ export default function ConnectionBanner() {
   return (
     <div className="conn-banner" role="alert">
       <i className="ti ti-loader" aria-hidden="true" />
-      <span className="cb-msg">잠시 서버 업데이트 중이라 연결이 지연되고 있어요 — 잠시만 기다려 주세요. 복구되면 자동으로 표시됩니다.</span>
+      <span className="cb-msg">서버 연결이 지연되고 있어요 — <b>마지막으로 받은 데이터를 표시</b>하고 있습니다. 복구되면 자동으로 최신화됩니다.</span>
       <button className="btn" onClick={() => location.reload()}>새로고침</button>
     </div>
   );
