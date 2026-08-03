@@ -142,6 +142,8 @@ const TITLES = {
   "/watchlist": ["자동 워치리스트", "다중 신호·근거 기반 자동 선별"],
   "/etf": ["ETF 순위", "추세 · 자금 흐름 기준 ETF"],
   "/signals": ["신호 검증", "백테스트 · 신뢰도 · 캘리브레이션"],
+  "/privacy": ["개인정보처리방침", "정보 제공 서비스 · 서버측 개인정보 미수집"],
+  "/terms": ["이용약관", "정보 제공 목적 · 투자 권유 아님"],
 };
 
 export default function AppShell() {
@@ -209,6 +211,18 @@ export default function AppShell() {
         </header>
         <ConnectionBanner />
         <main className="content"><ErrorBoundary key={loc.pathname}><Outlet /></ErrorBoundary></main>
+        <footer className="site-foot">
+          <p className="foot-disc">
+            <i className="ti ti-info-circle" aria-hidden="true" />
+            본 서비스는 공개·사실 데이터를 <b>정보 제공 목적</b>으로 표시합니다. 특정 종목의 매매를 권유하거나 투자자문을 제공하지 않으며, <b>모든 투자 판단과 책임은 이용자 본인</b>에게 있습니다. 데이터는 지연·오류가 있을 수 있고 과거 성과는 미래를 보장하지 않습니다.
+          </p>
+          <div className="foot-links">
+            <NavLink to="/privacy">개인정보처리방침</NavLink>
+            <span aria-hidden="true">·</span>
+            <NavLink to="/terms">이용약관</NavLink>
+            <span className="foot-copy">© {new Date().getFullYear()} StockPicking · 국내주식 발굴 정보</span>
+          </div>
+        </footer>
       </div>
     </div>
   );

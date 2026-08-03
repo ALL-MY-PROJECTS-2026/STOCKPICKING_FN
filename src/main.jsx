@@ -22,6 +22,7 @@ import BookmarkPage from "./pages/BookmarkPage.jsx";
 import MyBookmarksPage from "./pages/MyBookmarksPage.jsx";
 import EtfPage from "./pages/EtfPage.jsx";
 import SignalsPage from "./pages/SignalsPage.jsx";
+import { PrivacyPage, TermsPage } from "./pages/LegalPages.jsx";
 
 // HashRouter — 정적 호스팅에서도 새로고침/딥링크 안전.
 const router = createHashRouter([
@@ -47,6 +48,8 @@ const router = createHashRouter([
       { path: "my", element: <MyBookmarksPage /> },
       { path: "etf", element: <EtfPage /> },
       { path: "signals", element: <SignalsPage /> },
+      { path: "privacy", element: <PrivacyPage /> },
+      { path: "terms", element: <TermsPage /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
