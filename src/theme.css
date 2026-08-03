@@ -954,6 +954,22 @@ a { color: inherit; text-decoration: none; }
   .cal-legend { gap: 5px 10px; }
 }
 
+/* ===== 광고 / 제휴 슬롯 (구조만 · 라벨 명시) ===== */
+.ad-slot { position: relative; border: 1px dashed var(--border); border-radius: var(--r);
+  background: color-mix(in srgb, var(--muted) 4%, var(--bg)); display: flex; align-items: center;
+  justify-content: center; gap: 8px; color: var(--faint); }
+.ad-tag { position: absolute; top: 4px; left: 6px; font-size: .58rem; font-weight: 700; letter-spacing: .02em;
+  color: var(--muted); background: var(--panel); border: 1px solid var(--border); border-radius: 2px; padding: 0 4px; }
+.ad-tag.partner { color: var(--primary); border-color: color-mix(in srgb, var(--primary) 40%, var(--border)); }
+.ad-ph { font-size: .72rem; }
+.ad-leaderboard { min-height: 90px; margin: 20px 26px 0; padding: 12px; }
+.partner-slot { min-height: 66px; padding: 12px 12px 12px 14px; justify-content: flex-start; }
+.partner-slot.compact { margin-bottom: 8px; }
+.partner-body { display: flex; flex-direction: column; gap: 1px; text-align: left; }
+.partner-body b { font-size: .8rem; color: var(--text); font-weight: 700; }
+.partner-sub { font-size: .66rem; color: var(--faint); }
+@media (max-width: 640px) { .ad-leaderboard { margin: 16px 14px 0; min-height: 70px; } }
+
 /* ===== 선별 종목 실제 성과 배너 (정직 표기 · 리스크 완충) ===== */
 .track-rec { display: flex; gap: 9px; align-items: flex-start; margin: 0 0 14px; padding: 11px 13px;
   border: 1px solid color-mix(in srgb, var(--warn) 32%, var(--border)); border-radius: var(--r);

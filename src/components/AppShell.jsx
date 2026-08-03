@@ -5,6 +5,7 @@ import { pct, dir, arrow, won } from "../lib/format.js";
 import SearchBox from "./SearchBox.jsx";
 import ConnectionBanner from "./ConnectionBanner.jsx";
 import ErrorBoundary from "./ErrorBoundary.jsx";
+import { AdSlot, PartnerSlot } from "./AdSlot.jsx";
 
 const NAV = [
   { sec: "오늘" },
@@ -205,6 +206,7 @@ export default function AppShell() {
           )
         )}
         <div className="sidebar-foot">
+          <PartnerSlot compact />
           <div className="nav-item" role="button" tabIndex={0}
             aria-label={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -229,6 +231,7 @@ export default function AppShell() {
         </header>
         <ConnectionBanner />
         <main className="content"><ErrorBoundary key={loc.pathname}><Outlet /></ErrorBoundary></main>
+        <AdSlot id="footer-leaderboard" format="leaderboard" />
         <footer className="site-foot">
           <p className="foot-disc">
             <i className="ti ti-info-circle" aria-hidden="true" />

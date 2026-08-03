@@ -6,6 +6,10 @@ import TrackRecordBanner from "../components/TrackRecordBanner.jsx";
 import { useListView } from "../lib/useListView.js";
 import { won, fixed } from "../lib/format.js";
 
+// 엔드포인트 상태(회차 #9 점검): alpha-picks·quality-picks·value-alpha 는 BN 이 '미래 삭제 예정(alias)'로
+//   표기했으나, 후보 canonical(signal-alpha/value-picks 등)은 **응답 스키마가 전혀 다르다**
+//   (예: signal-alpha 는 top 랭킹이 아니라 가중치·검증 리포트). 따라서 지금 교체하면 이 표가 깨진다.
+//   현재 모두 정상 응답하므로 유지하고, BN 이 '동일 스키마' 신규 경로를 제공하면 그때 교체할 것.
 const TABS = [
   { value: "alpha-picks", label: "알파", icon: "chart-arrows", desc: "팩터 알파 스코어 랭킹" },
   { value: "quality-picks", label: "퀄리티", icon: "diamond", desc: "재무 우량 팩터 Z 합산 랭킹" },
