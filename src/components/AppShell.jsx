@@ -158,7 +158,25 @@ export default function AppShell() {
   useEffect(() => { setOpen(false); }, [loc.pathname]);
 
   const [title, sub] = TITLES[loc.pathname] || ["StockPicking", ""];
-  useEffect(() => { document.title = `${title} · StockPicking`; }, [title]);
+  useEffect(() => {
+    // 라우트별 SEO 메타 동적 갱신 — 제목·설명·OG·canonical (정적 SPA 내 클라이언트 갱신)
+    document.title = `${title} · StockPicking`;
+    const desc = (sub ? sub + " — " : "") + "국내주식 공개·사실 데이터 정보 (투자 권유 아님)";
+    const base = "https://all-my-projects-2026.github.io/STOCKPICKING_FN/";
+    const url = base + (loc.pathname && loc.pathname !== "/" ? "#" + loc.pathname : "");
+    const setMeta = (sel, attr, val) => {
+      let el = document.head.querySelector(sel);
+      if (!el) { el = document.createElement("meta"); const [k, v] = attr; el.setAttribute(k, v); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta('meta[name="description"]', ["name", "description"], desc);
+    setMeta('meta[property="og:title"]', ["property", "og:title"], `${title} · StockPicking`);
+    setMeta('meta[property="og:description"]', ["property", "og:description"], desc);
+    setMeta('meta[property="og:url"]', ["property", "og:url"], url);
+    let canon = document.head.querySelector('link[rel="canonical"]');
+    if (!canon) { canon = document.createElement("link"); canon.setAttribute("rel", "canonical"); document.head.appendChild(canon); }
+    canon.setAttribute("href", url);
+  }, [title, sub, loc.pathname]);
 
   return (
     <div className={"app" + (open ? " nav-open" : "")}>

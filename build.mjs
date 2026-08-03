@@ -51,7 +51,27 @@ try {
   writeFileSync("dist/index.html", html);
   // GitHub Pages: Jekyll 처리 비활성(_ 시작 파일/폴더 보존)
   writeFileSync("dist/.nojekyll", "");
-  console.log(`OK js=${jsFile} css=${cssFile}`);
+
+  // ── SEO: robots.txt + sitemap.xml (색인 유도) ──
+  const SITE = "https://all-my-projects-2026.github.io/STOCKPICKING_FN/";
+  writeFileSync(
+    "dist/robots.txt",
+    `User-agent: *\nAllow: /\nSitemap: ${SITE}sitemap.xml\n`
+  );
+  // HashRouter 라 라우트는 #프래그먼트(색인 단위는 홈). 주요 섹션을 참고 URL 로 병기.
+  const routes = ["", "#/brief", "#/next-day", "#/calendar", "#/themes", "#/rebound",
+    "#/flow", "#/sectors", "#/value", "#/alpha", "#/auto", "#/consensus", "#/proposals",
+    "#/signals", "#/etf", "#/bookmarks", "#/privacy", "#/terms"];
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = routes.map((r) =>
+    `  <url>\n    <loc>${SITE}${r}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${r ? "weekly" : "daily"}</changefreq>\n    <priority>${r ? "0.7" : "1.0"}</priority>\n  </url>`
+  ).join("\n");
+  writeFileSync(
+    "dist/sitemap.xml",
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
+  );
+
+  console.log(`OK js=${jsFile} css=${cssFile} + robots.txt + sitemap.xml(${routes.length})`);
   process.exit(0);
 } catch (e) {
   console.error("BUILD FAILED:", e.message);
